@@ -1,0 +1,10 @@
+{
+  "pack": {
+    "description": "Persistent resources provided by plugins",
+    "min_format": [
+      107,
+      1
+    ],
+    "max_format": 107
+  }
+}

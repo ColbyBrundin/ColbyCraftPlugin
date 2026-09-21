@@ -1,0 +1,20 @@
+name: VanillaKFC
+version: '1.0-SNAPSHOT'
+main: com.example.vanillakfc.VanillaKFC
+api-version: '26.3'
+author: YourName
+description: A test Paper plugin
+
+commands:
+  lightdebug:
+    description: Toggle a private overlay marking nearby spots dark enough for hostile mobs to spawn.
+    usage: /lightdebug [radius] [block|total]
+    permission: vanillakfc.debug
+
+permissions:
+  vanillakfc.debug:
+    description: Use the plugin's debug overlays.
+    # Everyone, not just operators - the overlay is private to whoever turns it
+    # on and changes nothing in the world, so there's nothing to gate. Set this
+    # to op (or revoke the node) to restrict it again.
+    default: true

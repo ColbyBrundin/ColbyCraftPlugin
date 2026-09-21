@@ -1,0 +1,667 @@
+VANILLAKFC - FULL LIST OF GAMEPLAY CHANGES FROM VANILLA MINECRAFT
+==================================================================
+
+Complete inventory of every gameplay change made by VanillaKFC, derived directly from the source (src/main/java/com/example/vanillakfc/**,
+src/main/resources/resourcepack/**). It's a Paper server plugin (targets Paper API 26.3), not a client mod - it only affects servers running this
+jar.
+
+Where vanilla has a well-established, stable value, it's listed for comparison.
+
+
+QUICK-REFERENCE: EVERY NUMERIC CHANGE
+==================================================================
+
+System                                              | Vanilla                | VanillaKFC
+-----------------------------------------------------------------------------------------------------------
+Bed/Respawn Anchor wrong-dimension explosion power   | 5.0                     | 1.0 (same as a ghast fireball)
+Baby animal growth time (bred, not wild)             | ~20 min                 | ~60 min (3x)
+Cat max health                                       | 10 (5 hearts)           | x2 - 20 (10 hearts)
+Cat deaths before dying for good                     | 1                       | 9 - a lethal blow spends a
+                                                                                 life instead, 8 times over
+Creeper follow range                                 | 16 blocks (default)     | 32 blocks
+Creeper step height                                  | 0.6 (can't clear block) | 1.2 (clears a full block)
+Creeper jump strength                                | 0.42 (default)          | x1.5
+Creeper explosion radius                             | 3 (6 when charged)      | 4 (8 when charged)
+Creeper natural-spawn success rate                   | 100% of attempts        | 35% of attempts
+Creeper natural pod size                             | 1 (solo spawns)         | up to 2, 50% chance of a 2nd
+Crop growth (all 8 farmland crops)                   | any time, any light     | full sky light required; half
+                                                       random-tick roll         rate at night/thunderstorm; no
+                                                                                 crop may run more than 2 stages
+                                                                                 ahead of its neighbours
+Crop field: time for a 9x9 wheat plot to finish      | ~103 min (last crop)    | ~186 min, but first and last
+(hydrated, chunk loaded, simulated)                    first crop at ~15 min     crop land ~46 min apart instead
+                                                                                 of ~88 min apart
+Death: XP level lost                                 | resets to 0, drops      | flat -3 levels (floored at 0),
+                                                        orbs (up to 100 XP)      no orbs drop
+Death: gear (weapons/tools/armor/shield/elytra/bow/  | drops on the ground     | stays with player, returned
+trident)                                                                        on respawn
+Item despawn time (player death drops only)          | 6000 ticks (5 min)      | 12000 ticks (10 min)
+XP gain                                              | unlimited               | capped at 500 raw XP points
+                                                                                 per 5-minute server-wide window
+Enderman melee damage                                | 4.5/7/10.5              | -2.0 flat from whichever
+                                                        (Easy/Normal/Hard)       applies
+Enderman block pickup                                | can pick up blocks      | blocked (all blocks)
+Iron tool durability (sword/pickaxe/axe/shovel/hoe)  | 250                     | 400
+Iron Helmet/Chestplate/Leggings/Boots durability     | 165/240/225/195         | 240/330/310/275
+Diamond tool durability                              | 1561                    | 2000
+Diamond Helmet/Chestplate/Leggings/Boots durability  | 363/528/495/429         | 500/700/650/575
+Unbreaking chance to still take damage (lvl 1/2/3)   | 50%/33.3%/25% tools,    | 75%/60%/50%, on every item
+                                                       80%/73.3%/70% armor       and every action
+Sword durability cost per block mined                | 2 (vs 1 for other       | unchanged - vanilla applies
+                                                       tools)                    it, the Unbreaking curve
+                                                                                 then scales it
+Copper Axe damage / attack speed                     | 9.0 / 0.8               | 7.0 / 0.9
+Iron Axe damage / attack speed                       | 9.0 / 0.9               | 7.0 / 1.0
+Iron Hoe attack speed                                | 3.0                     | 2.0
+Stone Axe damage / attack speed                      | 9.0 / 0.8               | 7.0 / 0.9
+Diamond Sword / Pickaxe / Shovel damage              | 7.0 / 5.0 / 5.5         | 8.0 / 6.0 / 6.5 (+1 each,
+                                                                                 speed unchanged)
+Netherite Sword / Pickaxe / Shovel damage            | 8.0 / 6.0 / 6.5         | 9.0 / 7.0 / 7.5 (+1 each,
+                                                                                 speed unchanged)
+Mace raw base damage (before armor/resistance)       | uncapped (scales with   | capped at 40.0
+                                                        fall distance)
+Spear charge-attack bonus (relative-velocity damage) | uncapped (scales with   | capped at 5x the hit's damage
+                                                        relative velocity)       without the charge bonus
+Anvil repair-with-material                           | 1 ingot restores 25%    | ingots do nothing; 1 tier-block
+                                                        durability               (iron/gold/diamond/netherite)
+                                                                                 restores 75%
+Anvil prior-work penalty growth per block repair     | n -> 2n + 1             | n -> n + ceil(1.5 x (n + 1)),
+                                                        (0,1,3,7,15,31)          i.e. 50% bigger jumps
+                                                                                 (0,2,7,19,49) - "Too Expensive!"
+                                                                                 after 4 repairs instead of 6
+Enchanting Table recipe                              | 2 Diamonds + Book +     | 2 Diamond Blocks + Book +
+                                                        4 Obsidian               4 Obsidian
+Drowned thrown-trident damage                        | 8                       | 4 (half; melee and player
+                                                                                 tridents untouched)
+Lightning strike chance per loaded chunk per tick     | 1 in 100,000            | plus an added, independent
+(storm)                                                                         1-in-100,000 roll (effective
+                                                                                 rate roughly double vanilla)
+Skeleton movement speed while targeting              | normal                  | x0.2 (a -0.8 multiplicative
+                                                                                 penalty)
+Skeleton follow range                                | 16 blocks (default)     | 32 blocks
+Skeleton shot interval (Easy/Normal)                 | ~3s (~60 ticks)         | fixed 6s (120 ticks) exactly
+Skeleton shot interval (Hard)                        | ~2s (~40 ticks)         | fixed 5s (100 ticks) exactly
+Skeleton arrow velocity                              | normal                  | 4x, re-aimed straight at the
+                                                                                 target instead of vanilla's
+                                                                                 slow-speed arc (which would
+                                                                                 otherwise send it sailing
+                                                                                 high overhead)
+Skeleton damage (Easy/Normal/Hard)                   | 4.5/7/10.5 (roughly,    | flat 3/4/5, covers both arrows
+                                                        velocity-dependent for   and melee
+                                                        arrows)
+Tamed wolf max health                                | 40                      | 100
+Tamed wolf attack damage                             | normal                  | x1.5
+Spider movement speed                                | 0.3 (base)              | x1.5
+Iron Golem death drops                               | iron ingots + poppy     | none (all drops and XP
+                                                        chance, some XP          cleared)
+Chain (minecraft:chain) crafting output               | vanilla amount          | doubled
+Chainmail armor crafting                             | no recipe exists        | added (shaped, all iron chain)
+Leather armor recipe                                 | leather only            | leather (or rotten flesh 1:1)
+                                                                                 + string + wood planks, same
+                                                                                 shapes as other armor tiers
+Food saturation: 5 raw/cooked meats, carrot/potato/  | e.g. cooked beef 12.8,  | doubled (nutrition/hunger
+baked potato/beetroot/melon slice/bread                bread 6.0, carrot 3.6    restored is unchanged)
+Hostile mob natural-spawn pod cooldown               | none                    | any hostile natural spawn
+                                                                                 blocks any other hostile
+                                                                                 species from naturally
+                                                                                 spawning within 6 blocks
+                                                                                 (X/Z) for 5 minutes
+Zombie natural spawn pack density                    | vanilla pack size       | roughly doubled (one bonus
+                                                                                 zombie spawned per natural
+                                                                                 zombie spawn)
+Elytra + Mending                                     | can be combined at an   | Mending is stripped from any
+                                                        anvil                    Elytra, from an anvil or
+                                                                                 (defensively) an enchanting
+                                                                                 table
+Sleeping through a night, repeatedly                 | no penalty              | starting on the 2nd
+                                                                                 consecutive slept night, an
+                                                                                 escalating chance (+25% per
+                                                                                 extra night, guaranteed by
+                                                                                 night 5) of a 20-minute
+                                                                                 thunderstorm right after
+                                                                                 waking; sleeping is blocked
+                                                                                 entirely during any
+                                                                                 thunderstorm
+Nether <-> Overworld portal coordinate ratio         | 8:1 (1 Nether block =   | 1:1 (unscaled)
+                                                        8 Overworld blocks)
+Nether roof (above the bedrock ceiling, Y>=128)      | safe to stand on        | void damage (4 dmg/10 ticks,
+                                                                                 bypasses invulnerability)
+Fishing treasure - enchanted book odds               | 1 in 6 (~16.7%)         | 1 in 12 (~8.3%, exactly half)
+Fortune ore-block drop count (level I/II/III)        | ~uniform, see section 9 | custom table, see section 9
+Lapis Ore base drop (no Fortune)                     | random 4-9              | flat 1
+Fortune on crop drop counts (see section 9)          | raises the drop count   | no effect - same as an
+                                                                                 unenchanted tool
+End City treasure - diamond gear weight (8 pieces)   | 3 each                  | 1 each
+End City treasure - gold ingot / iron ingot weight   | 15 / 10                 | 20 / 15
+End City treasure - diamond / emerald weight         | 5 / 2                   | 7 / 3
+End City treasure - diamond gear enchant pool        | on_random_loot (can     | in_enchanting_table (no
+                                                        include Mending/curses/  Mending, curses, or Frost
+                                                        Frost Walker)            Walker); iron gear unchanged
+
+
+1. COMBAT & HOSTILE MOBS
+==================================================================
+
+Creepers (CreeperListener, CreeperBehaviorTask)
+------------------------------------------------------------------
+- Perception & mobility: follow range 16->32 blocks; step height 0.6->1.2 (clears a full block without jumping); jump strength x1.5.
+- Explosion radius: 3->4 (6->8 charged); vanilla's charged-doubling still applies on top.
+- Natural spawning: only 35% of spawn attempts succeed (vanilla: 100%, solo). A successful spawn can add a 2nd creeper within 24 blocks (50% chance,
+  capped at 2 total).
+- Active chase: while targeting a player (and not frozen, see below), re-paths straight at them at speed factor 3.0. Throttled to once per 2 blocks of
+  target movement or every 10 ticks, rather than every tick, to stop erratic path flip-flopping around obstacles.
+- Short-term memory: after losing sight of its target, keeps walking toward its last known position for 3s if that spot is still within 16 blocks.
+  Movement only - doesn't restore the actual target, so swelling/igniting still needs a genuine re-spot.
+- Freeze-when-watched: while any player has unobstructed line of sight (40 blocks, ~90 degree cone, 9 hitbox sample points), movement speed is zeroed
+  (can still turn to face them). "Any player" is literal and always has been - a bystander watching a creeper chase someone else freezes it just as
+  dead as the person it is after. The creeper's own target has no special standing in the check.
+- See-through blocks don't count as obstruction (as of 2026-09-20). The sight ray stops at anything with a collision box, so a player watching from
+  inside a base - through a window, over a fence, behind iron bars - was not registering as watching at all, and the creeper carried on as if
+  unobserved. Glass (all colours, tinted included), glass panes, iron bars, chains, fences and fence gates, scaffolding, ice, barriers and light
+  blocks are now transparent to the check. Leaves, slabs, stairs and walls still block it - they really do hide what's behind them.
+- Freezing stops the creeper outright, not just its steering (as of 2026-09-20). Zeroing the speed attribute leaves two things running: the momentum
+  of a chase at speed factor 3.0, which friction takes the better part of a second to bleed off while the creeper keeps drifting toward its target,
+  and the queued path, ready to resume the instant the freeze lifts. Both are now cleared on the tick the freeze goes on. Horizontal velocity is
+  zeroed only on that transition, not every frozen tick, so a watched creeper can still be knocked back when hit.
+- Fuse blocked while watched: can't start swelling (hit-trigger or proximity/LoS trigger) while watched, unless already mid-fuse (which continues
+  unaffected).
+- Flees cats within 12 blocks - unchanged vanilla behavior, just replicated (no exposed API to retune it).
+- Charged creepers are exempt from all of the above - always treated as "unwatched."
+
+Endermen (EndermanListener, EndermanDodgeSoundPackListener)
+------------------------------------------------------------------
+- Can no longer pick up blocks (placement unaffected).
+- Melee damage: flat -2.0 off vanilla's difficulty-scaled damage (Easy 4.5->2.5, Normal 7->5, Hard 10.5->8.5).
+- Dodge: 50% chance to dodge any player melee hit entirely - teleports 3-7 blocks away, 65% biased into a 30 degree cone directly behind the attacker
+  (custom sound on the biased case, vanilla teleport sound otherwise).
+- Pillar-punish: a hit landed while the attacker is standing at least one block above the Enderman's feet has a 50% chance to trigger a counter
+  instead - teleport directly behind the player, hit with knockback strong enough to knock them off their perch, teleport back ~0.4s later.
+
+Skeletons (SkeletonListener)
+------------------------------------------------------------------
+- Movement speed cut to x0.2 while actively targeting (stationary snipers instead of walking shooters).
+- Follow range 16->32 blocks.
+- Shot interval hard-locked to an exact tick count: 120 ticks (6s) on Easy/Normal, 100 ticks (5s) on Hard - vs vanilla's ~60/~40-tick cooldowns -
+  tracked by server tick count so it can't drift under lag. Every draw that starts always ends in a fired arrow.
+- Every arrow leaves at 4x vanilla's velocity, re-aimed straight at the target instead of vanilla's slow-speed arc (which, scaled up as-is, would sail
+  high over the target's head).
+- Never idle with a target in view: since frozen movement stops it from repositioning to keep sight, a lost target now falls back to whoever last
+  damaged it (if visible), then the nearest visible player - only goes target-less if neither is actually in view.
+- Damage flattened to a fixed 3 (Easy) / 4 (Normal) / 5 (Hard), for both arrows and melee, replacing vanilla's velocity-dependent damage (which the 4x
+  shot speed would otherwise inflate well past normal).
+
+Spiders (SpiderListener)
+------------------------------------------------------------------
+- Movement speed x1.5 (vanilla base 0.3). Cave Spiders are a distinct entity type and untouched by this listener.
+
+Iron Golems (IronGolemListener)
+------------------------------------------------------------------
+- Drop nothing on death - vanilla's iron ingots (0-2, more with Looting), poppy chance, and any XP are all cleared.
+
+Zombies (ZombiePodListener)
+------------------------------------------------------------------
+- Every natural zombie spawn additionally spawns one extra zombie at the same spot (tagged so it isn't doubled again), roughly doubling natural pack
+  density.
+
+Drowned (DrownedTridentListener)
+------------------------------------------------------------------
+- Tridents thrown by a Drowned deal half damage (8 -> 4 raw, before armor). Only the thrown projectile is affected, matched by its shooter - a
+  Drowned's melee hit is untouched, and so is any trident thrown or swung by a player. Halving happens pre-armor, so an armoured target takes slightly
+  more than half of what it used to (armor absorbs a smaller share of a weaker hit); unarmoured, it's exactly half.
+
+All hostile mobs - pod spawn cooldown (PodSpawnCooldownListener)
+------------------------------------------------------------------
+- New mechanic: once any hostile mob naturally spawns, no hostile mob of any species may naturally spawn within 6 blocks of that X/Z column (any
+  height) for the next 5 minutes. Spawner spawns, breeding, and spawn eggs are unaffected - only natural world spawns are gated. Scoped to Bukkit's
+  broad Enemy interface (includes Slime, MagmaCube, Ghast, Shulker, Phantom, Hoglin), not just the narrower Monster interface.
+
+Mace (MaceDamageListener)
+------------------------------------------------------------------
+- Raw base damage (hit + crit + fall-distance smash bonus, before armor/resistance) is capped at 40.0. Vanilla's fall-scaling smash bonus is otherwise
+  unbounded, so extreme fall setups (elytra + wind charges, etc.) could produce arbitrarily large hits.
+
+Spear (SpearDamageListener)
+------------------------------------------------------------------
+- The charge-attack bonus (extra damage scaled by relative velocity between attacker and target) is capped at 5x whatever the hit would have dealt
+  without it (base weapon damage, including Sharpness). Applies to all 7 tiers (Wood/Stone/Copper/Iron/Gold/Diamond/Netherite). Smite and Bane of
+  Arthropods aren't factored into the reference damage the cap is based on, so a Smite/Bane spear's effective cap against its favored target is
+  slightly tighter than fully vanilla-accurate.
+
+Beds & Respawn Anchors (BedExplosionListener)
+------------------------------------------------------------------
+- Wrong-dimension explosion power (beds in the Nether/End, respawn anchors outside the Nether) is reduced from vanilla's 5.0 down to 1.0 - the same
+  power as a ghast fireball.
+
+Lightning (LightningListener)
+------------------------------------------------------------------
+- Adds a second, independent ~1-in-100,000-per-loaded-chunk-per-tick strike roll during thunderstorms, striking the highest block in a random column
+  of that chunk - vanilla's own roll still fires alongside it, combining into roughly double vanilla's normal strike rate.
+- Gated on both isThundering() and hasStorm() being true (not just the former) - separate flags that always agree under vanilla's natural cycle but
+  could desync via a command or another plugin; requiring both closes off any way this roll could fire without an actual storm overhead.
+
+
+2. DEATH, PROGRESSION & SLEEP
+==================================================================
+
+Death drops & XP loss (DeathDropListener)
+------------------------------------------------------------------
+- Gear survives death: any sword, spear, pickaxe, axe, hoe, shovel, armor piece, shield, bow, crossbow, trident, elytra, or mace is pulled from the
+  death-drop list and silently returned to the player's inventory on respawn (overflow drops on the ground if full). Everything else drops normally.
+- XP softened, not reset: vanilla resets level to 0 and spawns orbs worth up to min(level x 7, 100). This instead drops no orbs and subtracts a flat 3
+  levels (floored at 0) - remaining progress toward the next level is kept, then reset to 0% within the new, reduced level.
+- Slower despawn: items dropped from a player's death take twice as long to despawn - 12,000 ticks (10 min) instead of vanilla's 6,000 (5 min).
+  Implemented by tagging each death drop and cancelling its first despawn; vanilla resets a cancelled item's age to 0, so it simply lives a second
+  full cycle. Like any dropped item it only ages while its chunk is loaded, so 10 minutes is of loaded time, not wall clock.
+  (Was silently broken until 2026-09-19: tagging hooked EntityDropItemEvent, which Paper never fires for death drops - nothing was ever tagged and
+  every death drop vanished at vanilla's 5 minutes. Tagging now matches each spawning item against the death's own drop list.)
+
+XP gain cap (XpCapListener)
+------------------------------------------------------------------
+- New mechanic: each player can gain at most 500 raw XP points (not levels) within any rolling 5-minute, server-wide-aligned window. Applies to any
+  positive XP source routed through the vanilla point-grant event (mob kills, orb pickup, mining, breeding, fishing, furnace pickup, villager
+  trading). "/xp add ... levels" and other direct level grants are a separate event this cap doesn't touch.
+
+Sleep streaks (SleepStreakListener)
+------------------------------------------------------------------
+- New mechanic: sleeping through the night on consecutive nights builds a streak. Starting on the 2nd consecutive night, each additional night adds
+  another 25% chance of a 20-minute thunderstorm rolling in right after everyone wakes (2nd = 25%, 3rd = 50%, 4th = 75%, 5th = guaranteed). A
+  triggered storm - or a night that passes without a qualifying sleep - resets the streak to 0. (The step was 1/3 per night, guaranteed by night 4,
+  until 2026-09-20.)
+- The reset happens at sunrise on any unslept night, not lazily at the next sleep. (Until 2026-09-18 it was lazy: the stored streak was only ever
+  touched by a sleep, so the storm odds were right but every announcement reported a stale, already-broken streak.)
+- Straw beds (new in 26.3) are covered by all of this: they have no separate event, so they build the streak and are refused during a storm exactly
+  like an ordinary bed.
+- Entering a bed is also blocked outright during any thunderstorm (vanilla or plugin-triggered), so a player can't sleep through the punishment storm
+  to keep the streak alive. Both the thunder and storm flags must be set, since the thunder flag alone can linger after a weather transition with a
+  clear, bright sky - blocking sleep then looked like the plugin inventing a storm that wasn't there.
+- Vanilla's daytime refusal message is reworded from "You can sleep only at night or during thunderstorms" to "You can sleep only at night", since
+  this plugin makes the thunderstorm half untrue. Only that one message is replaced; other bed refusals are left alone.
+- Chat/console announcements, to the affected world: the streak at each nightfall, an increase when a night is slept through, a reset when day breaks
+  on an unslept night (only if there was a streak to lose), the storm rolling in, and that storm passing. A vanilla storm ending says nothing, because
+  it didn't reset anything.
+- Both streak announcements quote the storm odds that streak is buying, rather than leaving players to work them out: nightfall reports what sleeping
+  tonight would risk ("Current sleep streak: 2. Sleeping tonight: 50% chance of a thunderstorm."), and a slept-through night reports what sleeping
+  again tomorrow would. The tomorrow-night figure is omitted when that sleep just triggered a storm, since the streak is back to 0 and the storm
+  message arrives a tick later anyway. Getting that right means the storm is rolled before the announcement is composed, not after it is sent.
+- Day and night are read from the world clock (ticks 12523-23478, via the shared WorldClock helper), not sky brightness. Brightness is what Minecraft's own isDayTime() measures, and
+  weather dims it: a daytime thunderstorm read as "night", and rain clearing at dusk read as a false sunrise that wiped a streak. Worlds with no
+  day/night cycle (Nether, End) are skipped entirely.
+
+
+3. TOOLS, WEAPONS & ARMOR
+==================================================================
+
+Durability (DurabilityListener)
+------------------------------------------------------------------
+  Item                                    Vanilla max durability   New max durability
+  Iron Sword/Pickaxe/Axe/Shovel/Hoe       250                      400
+  Iron Helmet                             165                      240
+  Iron Chestplate                         240                      330
+  Iron Leggings                           225                      310
+  Iron Boots                              195                      275
+  Diamond Sword/Pickaxe/Axe/Shovel/Hoe    1561                     2000
+  Diamond Helmet                          363                      500
+  Diamond Chestplate                      528                      700
+  Diamond Leggings                        495                      650
+  Diamond Boots                           429                      575
+
+  Gold and Netherite gear durability are untouched by this listener.
+
+Weapon/tool damage & attack speed (WeaponStatListener)
+------------------------------------------------------------------
+Base player attack damage (1.0) and attack speed (4.0) are vanilla; tool/weapon modifiers are stored under vanilla's own attribute IDs
+(minecraft:base_attack_damage / minecraft:base_attack_speed) rather than a plugin-namespaced one, so tooltips render exactly like an unmodified
+vanilla item's - green, unsigned, damage above speed, full computed total - instead of a generic blue/signed bonus line. Because a custom modifier
+replaces vanilla's entire per-item default, every overridden item below restates both damage and speed even where only one actually changed:
+
+  Item                Vanilla damage / speed        New damage / speed
+  Copper Axe           9.0 / 0.8                      7.0 / 0.9
+  Iron Axe             9.0 / 0.9                      7.0 / 1.0
+  Iron Hoe             1.0 / 3.0                      1.0 / 2.0
+  Stone Axe            9.0 / 0.8                      7.0 / 0.9
+  Diamond Sword        7.0 / 1.6                      8.0 / 1.6
+  Diamond Pickaxe      5.0 / 1.2                      6.0 / 1.2
+  Diamond Shovel       5.5 / 1.0                      6.5 / 1.0
+  Diamond Spear        4.0 / 0.95                     5.0 / 0.95
+  Netherite Sword      8.0 / 1.6                      9.0 / 1.6
+  Netherite Pickaxe    6.0 / 1.2                      7.0 / 1.2
+  Netherite Shovel     6.5 / 1.0                      7.5 / 1.0
+  Netherite Spear      5.0 / 0.87                     6.0 / 0.87
+
+Applied at crafting, on pickup, and re-verified against every item in a player's inventory on join - checked against the actual stored modifier
+amounts rather than an "already applied" flag, so gear crafted under an earlier/buggier version of this formula self-corrects automatically.
+
+Unbreaking enchantment (UnbreakingListener)
+------------------------------------------------------------------
+Vanilla's damage-negation chance is 100 / (level + 1) for tools and weapons; this replaces it with a shallower curve, 100 / (1 + level / 3):
+
+  Unbreaking level   Vanilla chance to still take damage   New chance
+  I                  50%                                    75%
+  II                 33.3%                                  60%
+  III                25%                                    50%
+
+Vanilla uses a second, shallower curve for armour - 1 - 2L/(5L+5), i.e. 80% / 73.3% / 70% - which the same replacement curve above now also applies
+to, so armour is slightly better off at level I and worse off at level III than vanilla.
+
+- Applies to every item Unbreaking can go on and every action that costs durability - bows, crossbows, tridents, shields, fishing rods, shears, flint
+  & steel and brushes included, alongside the tools, weapons, armour and Elytra that were always covered.
+- How, since 2026-09-20: by scaling the damage rather than by re-rolling the chance. Vanilla rolls Unbreaking internally and only raises its
+  durability event for damage that survived - a roll of zero skips the event entirely - so a plugin cannot make damage land more often than vanilla
+  decided, only change the number it is handed. Multiplying that number by (new curve / vanilla curve) puts the expected durability loss per use
+  exactly on the curve in the table: x1.5 / x1.8 / x2.0 for tools and weapons, x0.9375 / x0.8182 / x0.7143 for armour. Unbreaking III on a tool
+  therefore fires at vanilla's 25% and takes 2 points, costing the same over an item's life as the intended 50% chance of 1 point. Verified by
+  simulation across tools, 2-point sword block breaks and multi-point armour hits.
+- Trade-off: granularity, not rate. Wear arrives in fewer, larger steps than the percentages literally describe and any individual use can differ;
+  total item lifetime cannot. Where the multiplier is below 1 (armour), a scaled roll can come out at zero points and the damage is dropped.
+- Vanilla's own rules still apply and simply arrive as a number to scale: swords costing 2 durability per block broken, armour taking a fraction of
+  the hit, an Elytra costing 1 per second airborne, and an item breaking at 0.
+- Bug fixed 2026-09-20: before this, nothing outside a fixed list of four actions took durability damage at all. The previous design cancelled
+  vanilla's durability event for every Unbreaking item and re-applied the loss by hand from block-break, melee, armour-damage and Elytra handlers, so
+  anything no handler reached had its damage cancelled with nothing putting it back. An Unbreaking bow was simply indestructible, as were crossbows,
+  tridents, shields, fishing rods, shears, flint & steel and brushes. Scaling the event instead removes the class of bug: there is no list of covered
+  actions left to be missing from.
+
+Elytra & Mending (ElytraEnchantListener)
+------------------------------------------------------------------
+- Mending can no longer end up on an Elytra by any means - stripped if produced by combining at an anvil, and defensively stripped if it's ever
+  somehow rolled at an enchanting table.
+
+Anvil repair-with-material (AnvilRepairListener)
+------------------------------------------------------------------
+- For iron/gold/diamond/netherite tools, weapons, and armor: vanilla's "1 ingot restores 25% durability" is fully replaced. Ingots no longer repair
+  these items - instead, 1 block of the matching tier material (Iron/Gold/Diamond/Netherite Block) restores 75% durability, consuming as many blocks
+  as needed (up to what's available, so at most 2).
+- Each block repair raises the item's prior-work penalty - the hidden counter added to every future anvil cost - by 50% more than a vanilla anvil use
+  would. Vanilla takes n to 2n+1 (an increase of n+1); this takes n to n + ceil(1.5 x (n+1)). From new, that runs 0, 2, 7, 19, 49 against vanilla's
+  0, 1, 3, 7, 15, 31, so an item reaches "Too Expensive!" after 4 block repairs instead of 6. The higher penalty carries into anything else done with
+  that item at an anvil afterwards.
+- Level cost follows vanilla's formula: the item's existing penalty plus 1 level per block consumed.
+- Two long-standing bugs fixed alongside that (2026-09-19): block repairs never raised the penalty at all (the result was a straight copy of the
+  input), and the level cost ignored the item's anvil history entirely, charging 1 level per block however worn the item was. Vanilla's "Too
+  Expensive!" refusal at 40 levels was also being skipped, because it is checked before the plugin substitutes its own result; it is now re-applied
+  (creative exempt).
+- Known gap, unchanged: renaming an item in the same operation as a block repair still discards the new name.
+
+
+4. CRAFTING & RECIPES (CustomRecipes, RecipeDiscoveryListener)
+==================================================================
+- Ingot -> block gear recipes: every iron, gold, and diamond tool, weapon, armor piece, and the Shield now use a block of the tier material instead of
+  loose ingots/gems - 1 block per ingot slot for tools/weapons/shield, 2 blocks for armor pieces. Every valid slot arrangement is registered as its
+  own recipe variant, so the block can go in any of the original ingot slots.
+- Enchanting Table reworked the same way: both of its Diamonds become Diamond Blocks (the Book and 4 Obsidian are unchanged). It keeps vanilla's Misc
+  recipe-book tab rather than the Equipment tab the gear recipes use.
+- One recipe-book entry per item: only the first slot arrangement is ever shown. The others stay fully craftable but are never revealed, so a pickaxe
+  occupies one book entry instead of one per block position. Of 255 registered recipes, 201 are hidden alternates, leaving 54 book entries. Minecraft
+  draws one fixed shape per recipe and offers no way to cycle a single entry through several, so this consolidates the display rather than rotating
+  it. Crafting via a hidden arrangement does not add it to the book.
+- Recipes now appear in the book once a player is holding the ingredients, like vanilla's own. Vanilla drives that off per-recipe advancements that
+  only exist for minecraft:-namespaced recipes, so the 237 recipes registered under this plugin's namespace were previously invisible until a player
+  happened to craft one by hand - which is what made them show up "only after making one". Players carrying alternates unlocked by the older build get
+  them cleared on join.
+- Netherite Block recipe rebuilt as a fixed 2x2 shape (top-left of the grid) of Netherite Ingots.
+- Netherite smithing upgrades switched to Block: every smithing-table upgrade recipe now takes a Netherite Block as its "addition" instead of an
+  ingot.
+- Chain output doubled (vanilla's ingredients/shape otherwise untouched).
+- Chainmail armor recipes added: no vanilla recipe exists for any of the 4 pieces; this adds one for each, mirroring other armor tiers' shapes with
+  Chains filling every ingredient slot.
+- Leather armor reworked: all 4 recipes replaced - instead of leather-only, each needs Leather (or Rotten Flesh, 1-for-1) plus String and Wood Planks
+  (any type), using the same L/S/P shapes as other armor tiers.
+- Recipe book category fixed: every rebuilt recipe above is explicitly placed in the Equipment tab. A freshly constructed recipe defaults to Misc, and
+  since each fully replaces the vanilla recipe under its original key, leaving the default would have silently moved them all to Misc.
+
+
+5. VILLAGER TRADING - LIBRARIANS (VillagerTradeListener)
+==================================================================
+Every librarian trade for levels 1-4 (Novice-Expert) is generated directly by this listener - no bundled datapack. Level 5 ("Master") adds nothing: a
+librarian just keeps whatever book it already rolled at level 3. Vanilla's own trade-unlock pipeline still fires as a librarian levels up, but any
+enchanted-book trade it tries to add is cancelled outright at every level (see safety net below); the listener tops up whatever's missing for the
+villager's current level each time a player opens its trade menu.
+
+- Novice (1): always has both "24 Paper -> 1 Emerald" (16 uses) and "9 Emerald -> 1 Bookshelf" (12 uses) - matching vanilla exactly, with vanilla's
+  own generic enchanted-book candidate (normally also in this pool) kept out.
+- Apprentice (2): always has both "4 Book -> 1 Emerald" (12 uses) and "1 Emerald -> 1 Lantern" (12 uses).
+- Journeyman (3):
+    - Always exactly one of "5 Ink Sac -> 1 Emerald" or "1 Emerald -> 4 Glass" (12 uses), chosen once per villager and fixed for life.
+    - Always guaranteed an enchanted-book trade, chosen once and fixed for life (reaching level 5 doesn't re-roll it). With trade_rebalance enabled,
+      the enchant is drawn with even odds from a biome-specific pool: that biome's 2-3 regular enchants (level 1-2, 5-32 emeralds) plus its
+      strongest/"Master"-tier enchant (table below) as one more equally-likely option, at its fixed level and vanilla's higher master-tier price
+      (11-36 emeralds at level 3, 8-26 lower). With trade_rebalance disabled, the enchant is instead drawn uniformly from the full generic pool
+      (regular-tier only, no biome flavor) - same as vanilla's non-biome-specific trades.
+- Expert (4):
+    - Always guaranteed a "2 Writable Books -> 1 Emerald" trade.
+    - Never offers a plain enchanted-book trade.
+    - Always exactly one of "5 Emerald -> 1 Clock" or "4 Emerald -> 1 Compass" (12 uses), chosen once and fixed thereafter.
+- Each biome's folded-in strongest enchant is checked directly against this Minecraft version's actual trade_rebalance data (extracted from the server
+  jar). Swamp is changed from vanilla's Mending to Thorns II; the other six match vanilla exactly:
+
+    Biome        Strongest enchantment
+    Desert       Efficiency III
+    Jungle       Unbreaking II
+    Plains       Protection III
+    Savanna      Sharpness III
+    Snow         Silk Touch I
+    Swamp        Thorns II  (vanilla: Mending)
+    Taiga        Fortune II
+
+- Safety net, all levels: any enchanted-book trade vanilla's own trade-unlock pipeline tries to add (base pool, or the trade_rebalance overlay if
+  enabled) is cancelled outright - every enchanted-book trade a librarian ends up with comes from this listener alone (this is what fixed the original
+  "enchanted book at Novice level" bug).
+- Curses excluded: Curse of Binding and Curse of Vanishing are in no pool, and any curse-enchanted book a librarian already has (from before this
+  rule, or another source) is stripped and replaced the next time its trade menu opens. Frost Walker stays tradeable (Snow's biome pool, plus the
+  generic fallback) - it's a treasure enchantment, not a curse. Mending is never in either pool.
+
+
+6. FARMING & FOOD
+==================================================================
+
+Crop growth (CropGrowthListener)
+------------------------------------------------------------------
+Applies to everything in vanilla's own #minecraft:crops tag - Wheat, Carrots, Potatoes, Beetroot, Pumpkin/Melon stems, and (added 2026-09-19)
+Torchflower and Pitcher crops, which an older hand-kept list had missed. Nether Wart is not in that tag and stays excluded, as do plants that don't
+grow on farmland (sugar cane, cactus, bamboo, berries, cocoa, kelp):
+- Half growth rate at night and during thunderstorms - vanilla grows on random ticks regardless of time or weather. This was a total block until
+  2026-09-18; halving it instead cut the time for a full field by ~29%.
+- Night is taken from the world clock (ticks 12523-23478, via the shared WorldClock helper), not sky brightness, so ordinary rain around dusk no
+  longer counts as night. Thunderstorms
+  are penalised explicitly instead.
+- Requires a clear sky (sky light 15 in the column above) - glass, trapdoors, and bars still allow growth, but any solid roof blocks it entirely.
+  Vanilla farmland crops don't need sky access at all.
+- No crop may run more than 2 growth stages ahead of the least-grown crop of the same type within 4 blocks; one sitting at that trailing edge grows at
+  full rate. This is what keeps a field maturing together: vanilla growth is a per-block lottery, so a field planted in one go finishes raggedly.
+  Simulated over a solid 9x9 hydrated wheat plot with the chunk held loaded, the gap between the first and last crop maturing falls from ~88 min to
+  ~46 min, with the full field taking ~186 min against vanilla's ~103. The cost is that nothing ripens early any more: the first crop now lands at
+  ~137 min instead of ~15.
+- Consequence worth knowing: one crop replanted into an otherwise mature field counts as the trailing edge and briefly holds the rest back. It
+  resolves on its own, since trailing crops grow at full rate.
+- The old "2/3 of growth rolls kept" thinning is retired (set to 1.0). Once the neighbour cap existed it was worth only ~10% of the field's time,
+  because trailing crops skip the thinning roll and most crops sit at the trailing edge most of the time.
+- Bone meal is entirely exempt and behaves exactly as in vanilla - no sky requirement, no night penalty, and it can push a crop past its neighbours.
+  (Until 2026-09-19 every rule above applied to bone meal too, since Paper reports bone-meal growth through the same event as natural growth; the
+  neighbour cap refused it outright on any crop already 2 stages ahead.)
+- Unaffected: a stem's Pumpkin or Melon still appears at vanilla's rate once the stem is mature, because that growth is reported against the empty
+  block the fruit fills, not the stem.
+
+Animal breeding growth (BreedingGrowthListener)
+------------------------------------------------------------------
+- Baby animals produced by breeding (not wild-spawned) take 3x as long to mature - their starting negative age counter is multiplied by 3 at birth.
+  Vanilla's ~20-minute maturation becomes ~60 minutes under this plugin.
+
+Food saturation (FoodSaturationListener)
+------------------------------------------------------------------
+Doubles the saturation value (satiety duration, not nutrition/hunger restored) of the 5 breedable-animal meats (raw and cooked) plus plain
+farmland-crop foods and bread:
+
+  Food              Vanilla saturation   New saturation
+  Beef (raw)        1.8                   3.6
+  Cooked Beef       12.8                  25.6
+  Porkchop (raw)    1.8                   3.6
+  Cooked Porkchop   12.8                  25.6
+  Chicken (raw)     1.2                   2.4
+  Cooked Chicken    7.2                   14.4
+  Mutton (raw)      1.2                   2.4
+  Cooked Mutton     9.6                   19.2
+  Rabbit (raw)      1.8                   3.6
+  Cooked Rabbit     6.0                   12.0
+  Carrot            3.6                   7.2
+  Potato            0.6                   1.2
+  Baked Potato      6.0                   12.0
+  Beetroot          1.2                   2.4
+  Melon Slice       1.2                   2.4
+  Bread             6.0                   12.0
+
+Fish, rotten flesh, composite dishes (pumpkin pie, beetroot soup, stews), and non-farmland foods (apples, berries, golden carrot) are unaffected.
+
+
+7. COSMETIC / NON-MECHANICAL ADDITION
+==================================================================
+
+Custom Enderman dodge sound (EndermanDodgeSoundPackListener)
+------------------------------------------------------------------
+Hosts a tiny resource pack (a self-run local HTTP server) that adds one new, purely additive sound event, played when an Enderman's dodge-teleport
+lands with the "behind the player" bias. It never overrides any vanilla sound and layers safely alongside a player's own resource packs.
+- Host and port come from config.yml (resource-pack-host, resource-pack-port; defaults 127.0.0.1 and 25566). The default only reaches players
+  connecting from the same machine the server runs on - a public deployment needs a reachable host set here and that port opened.
+- Pack format declares 97 (26.3) and accepts formats 88 upwards. It previously pinned max_format to 88 (26.2 only), which made 26.3 clients reject the
+  whole pack: every vanilla Enderman sound kept working while this one silently never played.
+
+
+8. WORLD / DIMENSIONS
+==================================================================
+
+Nether portal scaling (NetherPortalScaleListener)
+------------------------------------------------------------------
+- Vanilla links the Nether and Overworld at an 8:1 ratio (1 Nether block = 8 Overworld blocks); this is rewritten to a flat 1:1 ratio. The X/Z an
+  entity stands on when stepping through a portal is the X/Z it arrives at on the other side, unscaled, still clamped to the destination world's
+  border. Target world, Y, and facing are left untouched - only X/Z scaling changes.
+- End portals are unaffected - the End's coordinate_scale already matches the Overworld's in vanilla.
+
+Nether roof void damage (NetherRoofVoidDamageListener)
+------------------------------------------------------------------
+- New mechanic: the Nether's bedrock roof can never generate above Y=127 (derived from the dimension's noise settings - min_y 0, height 128, roof
+  carved 6 blocks from the top, matching logical_height of 128). Any player at Y >= 128 while in the Nether takes vanilla's out-of-world damage (4
+  dmg/10 ticks), bypassing Creative/Spectator invulnerability and totems, exactly like vanilla's own below-world void damage.
+
+
+9. LOOT TABLES
+==================================================================
+
+Fishing treasure pool (FishingLootListener)
+------------------------------------------------------------------
+- Vanilla's fishing treasure pool has 6 equal-weight entries (name tag, saddle, bow, fishing rod, book, nautilus shell), making an enchanted book a
+  1-in-6 (~16.7%) pick. This halves it to 1-in-12 (~8.3%): on a book catch, a coin flip either keeps it or re-rolls the real vanilla treasure table
+  (rejecting further books), so the freed-up probability lands back on the other five entries in their original proportions instead of being deleted.
+
+Fortune on ore blocks (FortuneLootListener)
+------------------------------------------------------------------
+- Applies to coal, copper, diamond, emerald, gold, iron, lapis, nether gold, and nether quartz ore (+ deepslate variants), and amethyst clusters -
+  every block using vanilla's minecraft:ore_drops Fortune formula. Blocks using a different bonus formula (redstone, glowstone, etc.) are untouched
+  here - the crops among them are covered by CropFortuneListener below - and Silk Touch bypasses this entirely, same as vanilla.
+
+    Fortune level   Vanilla (~uniform)              New probability table
+    I               1x 66.7%, 2x 33.3%              1x 60%, 2x 40%
+    II              1x 50%, 2x 25%, 3x 25%           1x 40%, 2x 50%, 3x 10%
+    III             1x 40%, 2x 20%, 3x 20%, 4x 20%   1x 20%, 2x 60%, 3x 10%,
+                                                      4x 10%
+
+  Fortune levels above III (only reachable via commands) fall through to unmodified vanilla behavior.
+- Lapis Ore's base drop (no Fortune) is flattened from vanilla's randomized 4-9 to a flat 1, matching every other ore in this list - Fortune scales
+  the count from there using the table above, not vanilla's randomized base roll.
+
+Fortune on crops (CropFortuneListener)
+------------------------------------------------------------------
+- Fortune no longer raises crop yields at all. Breaking a mature crop with a Fortune tool drops exactly what the same break would have dropped with an
+  unenchanted one, so farming scales by planting more rather than by enchanting the hoe.
+- Covers the crops vanilla actually scales with Fortune: wheat and beetroot (their seeds), carrots and potatoes (the vegetable itself), nether wart,
+  and melon blocks. Crops Fortune never affected (cocoa, sweet berries, pumpkin, torchflower, pitcher pod) need nothing and are not listed.
+- The replacement yield is re-rolled from the broken block's own loot table, via BlockState#getDrops with a copy of the tool that has Fortune stripped
+  off - there is no drop table written out here, so nothing to drift when a crop is retuned upstream, and the parts Fortune never touched (a potato's
+  2% poisonous potato, for instance) keep their vanilla odds.
+- Because both rolls are random, the plain re-roll can come out above what Fortune happened to produce - a Fortune I hoe draws zero wheat seeds about
+  3% of the time, where the plain roll usually would not. Clamping downward only would quietly leave crops worse than vanilla, so a shortfall is
+  dropped directly at the block instead.
+
+End City treasure chests (EndCityLootListener)
+------------------------------------------------------------------
+- Loot weight changes: applied post-hoc to vanilla's own generated loot - each roll's real item is kept, dropped, or duplicated with probability
+  derived from newWeight/oldWeight, so untouched entries keep their exact original odds instead of being renormalized against a shared pool total.
+
+    Entry                           Vanilla weight   New weight
+    Diamond gear (8 pieces, each)   3                1
+    Gold ingot                      15               20
+    Iron ingot                      10               15
+    Diamond                         5                7
+    Emerald                         2                3
+
+  Everything else (iron gear, saddle, horse armor, beetroot seeds, the smithing template pool) is unchanged.
+- Diamond gear enchantment pool restricted: vanilla enchants the diamond (and iron) gear here from #minecraft:on_random_loot (levels 20-39), which
+  includes 4 treasure enchantments a normal enchanting table could never roll - Mending, Frost Walker, and both curses. For diamond gear only, any
+  treasure enchantment vanilla picked is discarded and re-rolled using only non-treasure enchantments (#minecraft:in_enchanting_table), reading each
+  candidate's real weight/cost-range/item-compatibility live from the server's enchantment registry rather than a hardcoded list. Iron gear is
+  unaffected and can still roll Mending, Frost Walker, or either curse.
+
+Concrete powder in water (ConcretePowderListener)
+------------------------------------------------------------------
+- New mechanic: vanilla only converts concrete powder to concrete when it's a placed block touching water; the dropped/thrown item form never
+  converts. A concrete powder item stack (any amount) sitting continuously in water for 3 seconds is swapped in place for the matching concrete color,
+  same stack size. Leaving the water resets the wait.
+
+Pet health display (PetHealthDisplayListener)
+------------------------------------------------------------------
+- New mechanic: any tamed pet (Wolf, Cat, Parrot, or a tamed horse/donkey/mule/llama - anything Tameable once owned) shows current/max health as an
+  always-visible floating label above its name-tag height. This is a separate label (an invisible marker armor stand), not the pet's own custom name,
+  so a real name tag and vanilla's default death message stay untouched - an earlier version wrote health straight into the pet's customName,
+  polluting real names and death messages; any pet still carrying that pollution gets repaired to its real name (or cleared) on sight. Repositioned
+  every tick to track a moving pet continuously; the health text is only re-sent when it actually changes. Removed the moment its pet dies.
+
+Cat nine lives (CatLivesListener)
+------------------------------------------------------------------
+- New mechanic: cats have double vanilla's max health (10 -> 20) and nine lives. A blow that would kill a cat instead spends a life - the damage is
+  cancelled, the cat is restored to full health, and the Totem of Undying sound plays. The ninth such blow is the one that sticks: a cat survives
+  eight deaths and dies on the next, and the counter reads 9 down to 1 before the cat is gone.
+- The count shows on its own gold floating label ("9 lives", "1 life") above the cat, 0.3 blocks above where the health label sits so the two stack
+  rather than overlap. Always visible, on stray cats as well as tamed ones - deliberately independent of the health label, which is permanent once a
+  cat is tamed but only look-triggered while it is stray.
+- Lives live in the cat's own persistent data, not a plugin-side map, so the count survives restarts, chunk unloads and being carried between worlds.
+  Cats that predate this listener start with the full nine the first time they are seen, and the doubled health is applied as a keyed attribute
+  modifier so the same sweep can't double it twice.
+- A revive also extinguishes the cat and grants the same brief invulnerability window an ordinary hit does. Cancelling the damage event means vanilla
+  never sets that window itself, so without both a cat could burn or be hit through several lives in the space of a second.
+- Exempt, and fatal however many lives remain: /kill, the void, and the world border (reviving in the last two just feeds the cat back into the same
+  damage next tick). Anything that kills without raising a damage event at all - a plugin calling setHealth(0) - can't be intercepted either.
+
+Hostile mob and passive animal health display (MobHealthDisplayListener)
+------------------------------------------------------------------
+- New mechanic: any hostile mob (Zombie, Skeleton, Creeper, Spider, Enderman, Slime, Ghast, Shulker, etc. - anything Enemy) or untamed passive animal
+  (cows, sheep, pigs, chickens, wild horses - anything Animals) shows current/max health
+  the same way as the pet display above, except the label only exists while a player is actually looking directly at that mob - appearing and
+  disappearing with their aim rather than staying up permanently. "Looking at" requires both a precise crosshair hit on the mob's hitbox and an
+  unobstructed line of sight (can't be seen through a wall the crosshair ray geometrically passes behind). Polled every tick for both the aim check
+  and label position.
+- Tamed animals are excluded here, since the pet display above already gives them a permanent label; without that exclusion a pet would carry two
+  stacked labels. Look-triggered rather than always-visible matters more for animals than it did for hostiles: a render distance routinely holds whole
+  herds and full farm pens, and permanent labels would mean an armor stand per animal, all re-positioned every tick.
+
+Tamed wolves (TamedWolfListener)
+------------------------------------------------------------------
+- Max health raised from vanilla's 40 to 100, and melee damage increased 50% above vanilla's base. Applied on taming (deferred a tick so it lands
+  after vanilla's own post-tame processing, since applying it same-tick was observed getting silently reverted), and reinforced by a periodic scan
+  over every tamed wolf in the world - covering puppies bred from two already-tamed wolves (pre-tamed, no taming event to hook) and wolves already
+  tamed before this listener loaded (e.g. an earlier session). Max health is corrected on every scan pass regardless of prior state; only the
+  attack-damage multiply (unsafe to repeat) is gated behind a persistent "already buffed" tag. Wild, untamed wolves are unaffected.
+
+
+VERSION NOTES
+==================================================================
+- Targets Paper API 26.3 (pinned to 26.3.build.16-alpha; Paper had published no stable 26.3 build as of 2026-09-19, so this should be re-pinned when
+  one ships). plugin.yml declares api-version 26.3, so the plugin will not load on an older server. Requires Java 25, as Paper 26.x does.
+- Crop-growth timings quoted above come from a Monte-Carlo simulation calibrated to vanilla's random-tick rate (3/4096 per block per tick) and its 1/6
+  growth roll for a solid field, with the chunk held loaded throughout - not from measured in-game play.
+- Vanilla comparison numbers above use long-stable Minecraft values (durability, saturation, attack damage/speed, follow
+  range, explosion radius, step height, jump strength, the Unbreaking formula, and the ~1-in-100,000 lightning roll) that have held constant across
+  many versions.
+- The strongest enchant folded into each of the seven biomes' Journeyman pools is verified directly against this Minecraft version's actual
+  trade_rebalance data (extracted from the server jar). Swamp is the only intentional deviation (Mending -> Thorns II); the other six match vanilla's
+  own values exactly.
+- Likewise, the fishing/Fortune/End City vanilla baselines in section 9, and the Y=127 nether roof ceiling in section 8, are all read directly from
+  this version's actual loot table and noise settings data (extracted from the server jar), not guessed.
+
