@@ -21,6 +21,7 @@ import com.example.vanillakfc.listeners.FishingLootListener;
 import com.example.vanillakfc.listeners.FoodSaturationListener;
 import com.example.vanillakfc.listeners.FortuneLootListener;
 import com.example.vanillakfc.listeners.MobHealthDisplayListener;
+import com.example.vanillakfc.listeners.HappyGhastListener;
 import com.example.vanillakfc.listeners.IronGolemListener;
 import com.example.vanillakfc.listeners.LightningListener;
 import com.example.vanillakfc.listeners.MaceDamageListener;
@@ -40,6 +41,7 @@ import com.example.vanillakfc.listeners.WeaponStatListener;
 import com.example.vanillakfc.listeners.XpCapListener;
 import com.example.vanillakfc.listeners.ZombiePodListener;
 import com.example.vanillakfc.recipes.CustomRecipes;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerResourcePackStatusEvent;
@@ -53,6 +55,7 @@ public class VanillaKFC extends JavaPlugin {
     private NetherRoofVoidDamageListener netherRoofVoidDamageListener;
     private ConcretePowderListener concretePowderListener;
     private PetHealthDisplayListener petHealthDisplayListener;
+    private HappyGhastListener happyGhastListener;
     private CatLivesListener catLivesListener;
     private TamedWolfListener tamedWolfListener;
     private MobHealthDisplayListener mobHealthDisplayListener;
@@ -86,7 +89,12 @@ public class VanillaKFC extends JavaPlugin {
 
         lightLevelDebug = new LightLevelDebug(this);
         getServer().getPluginManager().registerEvents(lightLevelDebug, this);
-        getCommand("lightdebug").setExecutor(lightLevelDebug);
+        // Paper plugins have no commands: block and no getCommand(); the
+        // registrar event is where a command tree gets handed over, and it
+        // re-fires on /reload so it has to be a handler, not a one-off call.
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
+                event.registrar().register(lightLevelDebug.buildCommand(),
+                        "Toggle a private overlay marking nearby spots dark enough for hostile mobs to spawn."));
         lightLevelDebug.start();
         getServer().getPluginManager().registerEvents(new CropGrowthListener(), this);
         getServer().getPluginManager().registerEvents(new FoodSaturationListener(), this);
@@ -138,6 +146,10 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(catLivesListener, this);
         catLivesListener.start();
 
+        happyGhastListener = new HappyGhastListener(this);
+        happyGhastListener.start();
+
+        getLogger().info("Unbreaking datapack " + UnbreakingDatapack.describe() + ".");
         getLogger().info("VanillaKFC has been enabled!");
     }
 
@@ -169,6 +181,9 @@ public class VanillaKFC extends JavaPlugin {
         }
         if (catLivesListener != null) {
             catLivesListener.stop();
+        }
+        if (happyGhastListener != null) {
+            happyGhastListener.stop();
         }
         if (sleepStreakListener != null) {
             sleepStreakListener.stop();

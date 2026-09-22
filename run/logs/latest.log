@@ -1,77 +1,78 @@
-[00:45:16] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
-[00:45:16] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
-[00:45:16] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[00:45:17] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
-[00:45:17] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
-[00:45:17] [ServerMain/INFO]: [PluginInitializerManager] Bukkit plugins (1):
+[23:20:19] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
+[23:20:19] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
+[23:20:19] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[23:20:20] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[23:20:20] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[23:20:20] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
  - VanillaKFC (1.0-SNAPSHOT)
-[00:45:20] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
-[00:45:22] [Worker-Main-2/INFO]: Loaded 1866 advancements
-[00:45:22] [Server thread/INFO]: Starting minecraft server version 26.3
-[00:45:22] [Server thread/INFO]: Loading properties
-[00:45:22] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
-[00:45:22] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
-[00:45:22] [Server thread/INFO]: Server Ping Player Sample Count: 12
-[00:45:22] [Server thread/INFO]: Using 4 threads for Netty based IO
-[00:45:23] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
-[00:45:23] [Server thread/INFO]: Default game type: SURVIVAL
-[00:45:23] [Server thread/INFO]: Generating keypair
-[00:45:23] [Server thread/INFO]: Starting Minecraft server on *:25565
-[00:45:23] [Server thread/INFO]: Paper: Using Java compression from Velocity.
-[00:45:23] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
-[00:45:23] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
-[00:45:23] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
-[00:45:23] [Server thread/INFO]: Preparing level "world"
-[00:45:23] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
-[00:45:23] [Server thread/INFO]: Prepared spawn area in 1 ms
-[00:45:23] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
-[00:45:23] [Server thread/INFO]: Preparing spawn area: 100%
-[00:45:23] [Server thread/INFO]: Prepared spawn area in 3 ms
-[00:45:23] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
-[00:45:23] [Server thread/INFO]: Prepared spawn area in 1 ms
-[00:45:23] [Server thread/INFO]: Done preparing level "world" (0.452s)
-[00:45:23] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
-[00:45:25] [Server thread/INFO]: [VanillaKFC] Registered 255 recipes (237 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 54 book entries).
-[00:45:25] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
-[00:45:25] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
-[00:45:25] [Server thread/INFO]: [spark] Starting background profiler...
-[00:45:25] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
-[00:45:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[00:45:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[00:45:25] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[00:45:25] [Server thread/INFO]: Running delayed init tasks
-[00:45:25] [Server thread/INFO]: Done (9.998s)! For help, type "help"
-[00:45:25] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 10 builds behind ***
-[00:45:25] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
-[00:45:26] [Server thread/INFO]: Only a player can toggle the light overlay.
-[00:45:27] [Server thread/INFO]: System chat: Stopping the server
-[00:45:27] [Server thread/INFO]: Stopping server
-[00:45:27] [Server thread/INFO]: [VanillaKFC] Disabling VanillaKFC v1.0-SNAPSHOT
-[00:45:27] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been disabled!
-[00:45:27] [Server thread/INFO]: Saving players
-[00:45:27] [Server thread/INFO]: Saving worlds
-[00:45:27] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
-[00:45:27] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
-[00:45:27] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
-[00:45:27] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
-[00:45:27] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
-[00:45:27] [Server thread/INFO]: All RegionFile I/O tasks to complete
-[00:45:27] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
-[00:45:27] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...
+[23:20:24] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[23:20:25] [Worker-Main-3/INFO]: Loaded 1866 advancements
+[23:20:26] [Server thread/INFO]: Starting minecraft server version 26.3
+[23:20:26] [Server thread/INFO]: Loading properties
+[23:20:26] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
+[23:20:26] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[23:20:26] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[23:20:26] [Server thread/INFO]: Using 4 threads for Netty based IO
+[23:20:26] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
+[23:20:26] [Server thread/INFO]: Default game type: SURVIVAL
+[23:20:26] [Server thread/INFO]: Generating keypair
+[23:20:26] [Server thread/INFO]: Starting Minecraft server on *:25565
+[23:20:26] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[23:20:26] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[23:20:26] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
+[23:20:26] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[23:20:26] [Server thread/INFO]: Preparing level "world"
+[23:20:27] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[23:20:27] [Server thread/INFO]: Preparing spawn area: 100%
+[23:20:27] [Server thread/INFO]: Prepared spawn area in 2 ms
+[23:20:27] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[23:20:27] [Server thread/INFO]: Prepared spawn area in 1 ms
+[23:20:27] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[23:20:27] [Server thread/INFO]: Prepared spawn area in 0 ms
+[23:20:27] [Server thread/INFO]: Done preparing level "world" (0.448s)
+[23:20:27] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
+[23:20:28] [Server thread/INFO]: [VanillaKFC] Registered 255 recipes (237 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 54 book entries).
+[23:20:28] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
+[23:20:28] [Server thread/INFO]: [VanillaKFC] Unbreaking datapack active as 'VanillaKFC/vanillakfc' - Unbreaking applies its curve directly.
+[23:20:28] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
+[23:20:28] [Server thread/INFO]: [spark] Starting background profiler...
+[23:20:28] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[23:20:28] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[23:20:28] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[23:20:28] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[23:20:28] [Server thread/INFO]: Running delayed init tasks
+[23:20:28] [Server thread/INFO]: Done (10.542s)! For help, type "help"
+[23:20:28] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 16 builds behind ***
+[23:20:28] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[23:20:28] [Server thread/INFO]: System chat: There are 5 data pack(s) enabled: [vanilla (built-in)], [trade_rebalance (feature)], [file/bukkit (world)], [paper (built-in)], [VanillaKFC/vanillakfc (plugin)]
+[23:20:31] [Server thread/INFO]: System chat: Stopping the server
+[23:20:31] [Server thread/INFO]: Stopping server
+[23:20:31] [Server thread/INFO]: [VanillaKFC] Disabling VanillaKFC v1.0-SNAPSHOT
+[23:20:31] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been disabled!
+[23:20:31] [Server thread/INFO]: Saving players
+[23:20:31] [Server thread/INFO]: Saving worlds
+[23:20:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[23:20:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[23:20:31] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[23:20:31] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[23:20:31] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[23:20:31] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[23:20:31] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[23:20:31] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

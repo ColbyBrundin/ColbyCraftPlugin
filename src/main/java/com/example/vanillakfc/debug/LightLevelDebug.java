@@ -7,8 +7,12 @@ import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
+import com.mojang.brigadier.Command;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -41,9 +45,16 @@ import java.util.UUID;
  * <p>Only spots something could actually stand in are considered - a passable,
  * non-liquid block resting on a solid one. Without that, every solid block
  * underground qualifies as dark and the whole view fills with markers.
+ *
+ * <p>The command is a Brigadier tree rather than a string of arguments parsed
+ * by hand, since this is a Paper plugin and that is the only way it can be
+ * registered. It also means {@code radius} is range-checked by the server
+ * before it ever arrives, and {@code block}/{@code total} tab-complete, which
+ * the hand-parsed version never did.
  */
-public final class LightLevelDebug implements CommandExecutor, Listener {
+public final class LightLevelDebug implements Listener {
 
+    private static final String PERMISSION = "vanillakfc.debug";
     private static final int DEFAULT_RADIUS = 12;
     private static final int MAX_RADIUS = 32;
     private static final int VERTICAL_RANGE = 4;
@@ -79,39 +90,66 @@ public final class LightLevelDebug implements CommandExecutor, Listener {
         enabled.remove(event.getPlayer().getUniqueId());
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage("§cOnly a player can toggle the light overlay.");
-            return true;
-        }
+    /**
+     * <pre>
+     * /lightdebug                     toggle off if on, else on at defaults
+     * /lightdebug &lt;block|total&gt;       on at the default radius, chosen scale
+     * /lightdebug &lt;radius&gt;            on at that radius, block light
+     * /lightdebug &lt;radius&gt; &lt;block|total&gt;
+     * </pre>
+     */
+    public LiteralCommandNode<CommandSourceStack> buildCommand() {
+        return Commands.literal("lightdebug")
+                .requires(source -> source.getSender().hasPermission(PERMISSION))
+                .executes(this::toggle)
+                .then(Commands.literal("block")
+                        .executes(context -> enable(context, DEFAULT_RADIUS, false)))
+                .then(Commands.literal("total")
+                        .executes(context -> enable(context, DEFAULT_RADIUS, true)))
+                .then(Commands.argument("radius", IntegerArgumentType.integer(1, MAX_RADIUS))
+                        .executes(context -> enable(context, radiusOf(context), false))
+                        .then(Commands.literal("block")
+                                .executes(context -> enable(context, radiusOf(context), false)))
+                        .then(Commands.literal("total")
+                                .executes(context -> enable(context, radiusOf(context), true))))
+                .build();
+    }
 
-        if (enabled.remove(player.getUniqueId()) != null && args.length == 0) {
+    private static int radiusOf(CommandContext<CommandSourceStack> context) {
+        return IntegerArgumentType.getInteger(context, "radius");
+    }
+
+    // The bare command is the only form that turns the overlay off, matching
+    // what it has always done: naming any setting means "show me this", not
+    // "stop showing me".
+    private int toggle(CommandContext<CommandSourceStack> context) {
+        Player player = playerOf(context);
+        if (player == null) return Command.SINGLE_SUCCESS;
+
+        if (enabled.remove(player.getUniqueId()) != null) {
             player.sendMessage("§eLight overlay off.");
-            return true;
+            return Command.SINGLE_SUCCESS;
         }
+        return enable(context, DEFAULT_RADIUS, false);
+    }
 
-        int radius = DEFAULT_RADIUS;
-        boolean useTotalLight = false;
-        for (String arg : args) {
-            if (arg.equalsIgnoreCase("total")) {
-                useTotalLight = true;
-            } else if (arg.equalsIgnoreCase("block")) {
-                useTotalLight = false;
-            } else {
-                try {
-                    radius = Math.clamp(Integer.parseInt(arg), 1, MAX_RADIUS);
-                } catch (NumberFormatException e) {
-                    player.sendMessage("§cUsage: /" + label + " [radius] [block|total]");
-                    return true;
-                }
-            }
-        }
+    private int enable(CommandContext<CommandSourceStack> context, int radius, boolean useTotalLight) {
+        Player player = playerOf(context);
+        if (player == null) return Command.SINGLE_SUCCESS;
 
         enabled.put(player.getUniqueId(), new Settings(radius, useTotalLight));
         player.sendMessage("§eLight overlay on - marking spots with "
                 + (useTotalLight ? "total light" : "block light") + " 0 within " + radius + " blocks.");
-        return true;
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static Player playerOf(CommandContext<CommandSourceStack> context) {
+        CommandSender sender = context.getSource().getSender();
+        if (sender instanceof Player player) {
+            return player;
+        }
+        sender.sendMessage("§cOnly a player can toggle the light overlay.");
+        return null;
     }
 
     private void render() {

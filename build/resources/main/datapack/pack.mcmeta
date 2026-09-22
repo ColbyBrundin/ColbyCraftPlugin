@@ -1,0 +1,7 @@
+{
+  "pack": {
+    "description": "VanillaKFC: hands Unbreaking's durability roll to the plugin; reworks Bane of Arthropods; doubles base blaze rod drops and makes each rod smelt 16 items.",
+    "min_format": 121,
+    "max_format": 121
+  }
+}

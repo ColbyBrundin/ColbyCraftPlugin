@@ -1,15 +1,12 @@
 name: VanillaKFC
 version: '${version}'
 main: com.example.vanillakfc.VanillaKFC
+# Runs before the server loads its registries, which is the only point at which
+# the bundled Unbreaking datapack can be registered.
+bootstrapper: com.example.vanillakfc.VanillaKFCBootstrap
 api-version: '26.3'
 author: YourName
 description: A test Paper plugin
-
-commands:
-  lightdebug:
-    description: Toggle a private overlay marking nearby spots dark enough for hostile mobs to spawn.
-    usage: /lightdebug [radius] [block|total]
-    permission: vanillakfc.debug
 
 permissions:
   vanillakfc.debug:

@@ -47,10 +47,16 @@ Diamond tool durability                              | 1561                    |
 Diamond Helmet/Chestplate/Leggings/Boots durability  | 363/528/495/429         | 500/700/650/575
 Unbreaking chance to still take damage (lvl 1/2/3)   | 50%/33.3%/25% tools,    | 75%/60%/50%, on every item
                                                        80%/73.3%/70% armor       and every action
+Bane of Arthropods (renamed "Bane of the Living")    | +2.5/level vs           | +1.5/level (1.5 to 7.5)
+                                                        arthropods, plus         vs every mob that isn't
+                                                        Slowness IV on them      undead (players excluded);
+                                                                                 no Slowness
 Sword durability cost per block mined                | 2 (vs 1 for other       | unchanged - vanilla applies
                                                        tools)                    it, the Unbreaking curve
                                                                                  then scales it
 Copper Axe damage / attack speed                     | 9.0 / 0.8               | 7.0 / 0.9
+Harnessed Happy Ghast max health                     | 20 (10 hearts)          | 100 (50 hearts); unharnessed
+                                                                                 ones stay at 20
 Iron Axe damage / attack speed                       | 9.0 / 0.9               | 7.0 / 1.0
 Iron Hoe attack speed                                | 3.0                     | 2.0
 Stone Axe damage / attack speed                      | 9.0 / 0.8               | 7.0 / 0.9
@@ -137,6 +143,10 @@ End City treasure - diamond / emerald weight         | 5 / 2                   |
 End City treasure - diamond gear enchant pool        | on_random_loot (can     | in_enchanting_table (no
                                                         include Mending/curses/  Mending, curses, or Frost
                                                         Frost Walker)            Walker); iron gear unchanged
+Blaze rod drops (player kill, no Looting)            | 0-1, avg 0.5            | 0/1/2 at 1/3 each, avg 1 (2x)
+Blaze rod drops - Looting bonus per level            | +0-1, avg +0.5          | unchanged (+0-1, avg +0.5)
+Blaze rod as furnace fuel                            | 12 items (2400 ticks)   | 16 items (3200 ticks); same
+                                                                                 16 in blast furnace/smoker
 
 
 1. COMBAT & HOSTILE MOBS
@@ -167,6 +177,20 @@ Creepers (CreeperListener, CreeperBehaviorTask)
   unaffected).
 - Flees cats within 12 blocks - unchanged vanilla behavior, just replicated (no exposed API to retune it).
 - Charged creepers are exempt from all of the above - always treated as "unwatched."
+
+Happy Ghasts (HappyGhastListener)
+------------------------------------------------------------------
+- A harnessed Happy Ghast has 100 max health (50 hearts) instead of vanilla's 20, so something you fly around on can take a hit instead of dying to a
+  stray skeleton on the way up.
+- "Harnessed" is the definition of a pet here, because a Happy Ghast has no owner the way a wolf or cat does - it isn't Tameable at all - and the
+  harness is the only in-game mark of one being claimed rather than wild. It is what vanilla itself checks (isWearingBodyArmor) before allowing a
+  rider. Wild Happy Ghasts and ghastlings keep vanilla's 20.
+- The boost follows the harness rather than being granted once: removing the harness drops the ceiling back to 20 and brings any health above it down
+  too, so a harness can't be fitted and immediately taken off to keep the health for free. Fitting one on a ghast that was at full health tops it up
+  to the new 100; a wounded one stays wounded.
+- Applied as a keyed attribute modifier derived from the base value rather than a hard-coded +80, so the total is exactly 100 whatever vanilla's base
+  happens to be. Driven by a twice-a-second sweep rather than an equip event, since a harness can also arrive from a dispenser, a command, or a chunk
+  loading a ghast that was already wearing one.
 
 Endermen (EndermanListener, EndermanDodgeSoundPackListener)
 ------------------------------------------------------------------
@@ -224,8 +248,8 @@ Spear (SpearDamageListener)
 ------------------------------------------------------------------
 - The charge-attack bonus (extra damage scaled by relative velocity between attacker and target) is capped at 5x whatever the hit would have dealt
   without it (base weapon damage, including Sharpness). Applies to all 7 tiers (Wood/Stone/Copper/Iron/Gold/Diamond/Netherite). Smite and Bane of
-  Arthropods aren't factored into the reference damage the cap is based on, so a Smite/Bane spear's effective cap against its favored target is
-  slightly tighter than fully vanilla-accurate.
+  the Living aren't factored into the reference damage the cap is based on, so a Smite/Bane spear's effective cap against its favored targets is
+  slightly tighter than fully vanilla-accurate. Since Bane of the Living now boosts nearly every mob, that applies to most of a Bane spear's hits.
 
 Beds & Respawn Anchors (BedExplosionListener)
 ------------------------------------------------------------------
@@ -344,22 +368,41 @@ Vanilla uses a second, shallower curve for armour - 1 - 2L/(5L+5), i.e. 80% / 73
 to, so armour is slightly better off at level I and worse off at level III than vanilla.
 
 - Applies to every item Unbreaking can go on and every action that costs durability - bows, crossbows, tridents, shields, fishing rods, shears, flint
-  & steel and brushes included, alongside the tools, weapons, armour and Elytra that were always covered.
-- How, since 2026-09-20: by scaling the damage rather than by re-rolling the chance. Vanilla rolls Unbreaking internally and only raises its
-  durability event for damage that survived - a roll of zero skips the event entirely - so a plugin cannot make damage land more often than vanilla
-  decided, only change the number it is handed. Multiplying that number by (new curve / vanilla curve) puts the expected durability loss per use
-  exactly on the curve in the table: x1.5 / x1.8 / x2.0 for tools and weapons, x0.9375 / x0.8182 / x0.7143 for armour. Unbreaking III on a tool
-  therefore fires at vanilla's 25% and takes 2 points, costing the same over an item's life as the intended 50% chance of 1 point. Verified by
-  simulation across tools, 2-point sword block breaks and multi-point armour hits.
-- Trade-off: granularity, not rate. Wear arrives in fewer, larger steps than the percentages literally describe and any individual use can differ;
-  total item lifetime cannot. Where the multiplier is below 1 (armour), a scaled roll can come out at zero points and the damage is dropped.
-- Vanilla's own rules still apply and simply arrive as a number to scale: swords costing 2 durability per block broken, armour taking a fraction of
+  & steel and brushes included, alongside the tools, weapons, armour and Elytra that were always covered. Mob-held gear too, through its own event.
+- How, since 2026-09-20: the plugin ships a datapack, bundled inside its own jar, that replaces minecraft:unbreaking with a copy that has no
+  item_damage effect. Vanilla then reduces nothing, its durability event fires on every single use, and the listener applies the curve literally -
+  each point of damage is kept with the probability in the table above. Unbreaking II really is "60% chance to take the point".
+- This is why the plugin is now a Paper plugin rather than a Bukkit one: registering a datapack needs a bootstrapper, which paper-plugin.yml supports
+  and plugin.yml does not. The pack is auto-enabled on start and appears as "VanillaKFC/vanillakfc"; the startup log states which mode is running.
+- Fallback if the datapack is ever disabled: the listener scales instead. Vanilla only raises its event for damage that survived its own roll - a roll
+  of zero skips the event entirely - so a plugin cannot make damage land more often than vanilla decided, only change the number it is handed.
+  Multiplying by (new curve / vanilla curve) puts the expected loss per use on the same curve: x1.5 / x1.8 / x2.0 for tools, x0.9375 / x0.8182 /
+  x0.7143 for armour. The enabled flag is checked per event, not cached, so toggling the pack takes effect immediately - applying the curve on top of
+  a reduction vanilla already made would roughly double an item's intended life.
+- Both paths hit the same average; they differ in spread, which is the entire point of the datapack. Scaling inherits vanilla's coin flip and
+  amplifies it by the multiplier, giving about three times the variance on tools. A golden pickaxe with Unbreaking II averages ~54 blocks either way,
+  but the middle 95% of them runs 43-66 direct against 35-78 scaled. Low-durability tools feel it most, having the fewest rolls to average out.
+  (Armour is the exception and is marginally tighter scaled, since its multiplier is below 1 and so damps rather than amplifies.)
+- Vanilla's own rules still apply and simply arrive as a number to adjust: swords costing 2 durability per block broken, armour taking a fraction of
   the hit, an Elytra costing 1 per second airborne, and an item breaking at 0.
-- Bug fixed 2026-09-20: before this, nothing outside a fixed list of four actions took durability damage at all. The previous design cancelled
+- Checked by "./gradlew unbreakingCheck", which runs the listener's own arithmetic for both paths against an independent transcription of both curves
+  over a million simulated uses per case. It does not cover the event wiring or the armour tag lookup, which need a running server.
+- Bug fixed 2026-09-20: before any of this, nothing outside a fixed list of four actions took durability damage at all. The original design cancelled
   vanilla's durability event for every Unbreaking item and re-applied the loss by hand from block-break, melee, armour-damage and Elytra handlers, so
   anything no handler reached had its damage cancelled with nothing putting it back. An Unbreaking bow was simply indestructible, as were crossbows,
-  tridents, shields, fishing rods, shears, flint & steel and brushes. Scaling the event instead removes the class of bug: there is no list of covered
-  actions left to be missing from.
+  tridents, shields, fishing rods, shears, flint & steel and brushes.
+
+Bane of the Living (bundled datapack: data/minecraft/enchantment/bane_of_arthropods.json)
+------------------------------------------------------------------
+- Bane of Arthropods is renamed "Bane of the Living" and reworked. It now adds +1.5 damage per level (1.5 / 3 / 4.5 / 6 / 7.5 for I-V) against every
+  mob that Smite doesn't boost - i.e. anything not in #minecraft:sensitive_to_smite (all skeletons and zombies, the Wither, phantoms). Vanilla's
+  +2.5/level only hit arthropods.
+- Players are excluded: the bonus is for mobs only, so it does nothing in PvP.
+- Vanilla's Slowness IV on hitting an arthropod is removed - arthropods simply take the same +1.5/level as every other living mob.
+- Unchanged: max level V, same enchanting table/anvil costs and weight, same weapons, and still mutually exclusive with Sharpness and Smite.
+- The name is sent to clients with the rest of the enchantment registry, so every player sees it (no resource pack needed) in tooltips, the
+  enchanting table, anvils and trades. It's plain text rather than a translation key, so it reads "Bane of the Living" in every client language.
+  The internal id is still minecraft:bane_of_arthropods, which is what commands like /enchant take, so existing enchanted items carry over as-is.
 
 Elytra & Mending (ElytraEnchantListener)
 ------------------------------------------------------------------
@@ -512,7 +555,7 @@ farmland-crop foods and bread:
 Fish, rotten flesh, composite dishes (pumpkin pie, beetroot soup, stews), and non-farmland foods (apples, berries, golden carrot) are unaffected.
 
 
-7. COSMETIC / NON-MECHANICAL ADDITION
+7. COSMETIC / NON-MECHANICAL ADDITIONS
 ==================================================================
 
 Custom Enderman dodge sound (EndermanDodgeSoundPackListener)
@@ -523,6 +566,17 @@ lands with the "behind the player" bias. It never overrides any vanilla sound an
   connecting from the same machine the server runs on - a public deployment needs a reachable host set here and that port opened.
 - Pack format declares 97 (26.3) and accepts formats 88 upwards. It previously pinned max_format to 88 (26.2 only), which made 26.3 clients reject the
   whole pack: every vanilla Enderman sound kept working while this one silently never played.
+
+Lowered first-person shield (resource pack, same pack as above)
+------------------------------------------------------------------
+Held normally in the main hand or offhand, the shield sits slightly lower in first person than vanilla, so it covers a little less of the
+screen. Width, tilt and scale are unchanged; it's only moved down.
+- Blocking is untouched: raising the shield switches to vanilla's separate shield_blocking model, which the pack doesn't override, so the blocking
+  view is exactly vanilla.
+- Third person, inventory/GUI, item frames, shelves and dropped shields are all unchanged - the pack's shield.json copies vanilla's values for every
+  display slot except firstperson_righthand/lefthand, whose Y translation drops by 4 (1.75 -> -2.25 right, 0 -> -4 left).
+- Visual only, and only for players who accept the (optional) pack. Unlike the sound, this one does override a vanilla asset, so a player's own pack
+  that also replaces models/item/shield.json will win or lose depending on pack order.
 
 
 8. WORLD / DIMENSIONS
@@ -598,6 +652,20 @@ End City treasure chests (EndCityLootListener)
   treasure enchantment vanilla picked is discarded and re-rolled using only non-treasure enchantments (#minecraft:in_enchanting_table), reading each
   candidate's real weight/cost-range/item-compatibility live from the server's enchantment registry rather than a hardcoded list. Iron gear is
   unaffected and can still roll Mending, Frost Walker, or either curse.
+
+Blaze rod drops (bundled datapack: data/minecraft/loot_table/entities/blaze.json)
+------------------------------------------------------------------
+- Base blaze rod drop doubled. Vanilla's player-kill drop is a uniform 0-1 (avg 0.5); it's now 0, 1 or 2 with exactly 1/3 odds each (avg 1) - the
+  integer uniform roll is inclusive at both ends. Looting's bonus is left as vanilla: each level adds a uniform 0-1 (avg +0.5), so averages go
+  0.5/1/1.5/2 -> 1/1.5/2/2.5 for Looting 0/I/II/III. Still only drops when killed by a player, same as vanilla.
+- Done as a loot-table override in the plugin's datapack (a copy of vanilla's 26.3 file with only the base range widened), so it applies wherever
+  vanilla's table would. Disabling the "VanillaKFC" datapack reverts it (and the Unbreaking and blaze-fuel changes with it).
+
+Blaze rod fuel (bundled datapack: data/minecraft/context_int_provider/cooking/time_blaze_rod.json)
+------------------------------------------------------------------
+- A blaze rod now smelts 16 items instead of 12: its burn time goes from 2400 to 3200 ticks. In 26.3 fuel values are data-driven, so this is a copy
+  of vanilla's file with only the base number changed. Vanilla's divide-by-2 for fast-cooking blocks is kept, so a rod lasts 1600 ticks in a blast
+  furnace or smoker, which cook twice as fast - also 16 items there.
 
 Concrete powder in water (ConcretePowderListener)
 ------------------------------------------------------------------

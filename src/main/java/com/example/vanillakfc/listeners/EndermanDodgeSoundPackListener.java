@@ -26,11 +26,12 @@ import java.util.zip.ZipOutputStream;
 
 /**
  * Hosts a tiny resource pack (bundled under {@code src/main/resources/
- * resourcepack}) that defines exactly one custom sound - the Enderman
- * dodge-teleport clip - and pushes it to every joining player via Paper's
- * per-player resource pack API. It's purely additive (it only ever defines
- * a new namespaced sound event), so it never overrides anything in a
- * player's own installed packs and is safe to layer alongside them.
+ * resourcepack}) and pushes it to every joining player via Paper's
+ * per-player resource pack API. It carries one custom sound - the Enderman
+ * dodge-teleport clip, a new namespaced sound event that overrides nothing -
+ * and one vanilla override: the shield's item model, which lowers the shield
+ * in first person while it's held but not raised (the blocking pose lives in
+ * a separate model that is left vanilla).
  *
  * <p>The pack is served by an embedded HTTP server (bound to all interfaces)
  * on the port from the {@code resource-pack-port} config option (default
@@ -122,7 +123,7 @@ public final class EndermanDodgeSoundPackListener implements Listener {
         if (httpServer == null) return;
         Player player = event.getPlayer();
         player.addResourcePack(packId, buildPackUrl(), packHash,
-                "Adds a custom Enderman dodge-teleport sound (optional)", false);
+                "Adds a custom Enderman dodge-teleport sound and a lower first-person shield (optional)", false);
     }
 
     // Diagnostic: logs whether the client actually accepted/loaded this
