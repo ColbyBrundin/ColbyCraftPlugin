@@ -1,0 +1,16 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:totem_of_undying" },
+    "title": "Dying Grace",
+    "description": "Die 40 times. Practice makes perfect, apparently.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

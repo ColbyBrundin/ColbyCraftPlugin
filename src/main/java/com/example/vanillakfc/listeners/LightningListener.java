@@ -72,6 +72,16 @@ public final class LightningListener {
                 // directly instead.
                 int groundY = world.getHighestBlockAt(x, z).getY() + 1;
                 Location target = new Location(world, x + 0.5, groundY, z + 0.5);
+                // Striking the ground directly also skipped vanilla's
+                // lightning rod redirect, so these strikes never hit a rod -
+                // half of all storm lightning ignored rods entirely. Same
+                // rod search vanilla's own roll does first (the nearest rod
+                // within 128 blocks), and a rod only activates when the
+                // block above it is the one struck.
+                Location rod = world.findLightningRod(target);
+                if (rod != null) {
+                    target = rod.add(0.5, 1, 0.5);
+                }
                 world.strikeLightning(target);
             }
         }

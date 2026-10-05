@@ -1,6 +1,6 @@
 {
   "pack": {
-    "description": "VanillaKFC: hands Unbreaking's durability roll to the plugin; reworks Bane of Arthropods; doubles base blaze rod drops and makes each rod smelt 16 items.",
+    "description": "VanillaKFC: hands Unbreaking's durability roll to the plugin; reworks Bane of Arthropods; turns Fire Protection into Sharper Fangs (wolf armor only) and opens Unbreaking and Thorns to wolf armor; adds the Deep Quiver enchantment; tipped arrows take splash potions; adds a yellow+blue green dye recipe; adds the VanillaKFC advancement tab; doubles base blaze rod drops and makes each rod smelt 16 items.",
     "min_format": 121,
     "max_format": 121
   }

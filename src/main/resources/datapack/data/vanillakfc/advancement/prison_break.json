@@ -1,0 +1,21 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "killed_warden": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": {
+          "type": "minecraft:warden"
+        }
+      }
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:sculk_shrieker" },
+    "title": "Prison Break",
+    "description": "Kill the Warden.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

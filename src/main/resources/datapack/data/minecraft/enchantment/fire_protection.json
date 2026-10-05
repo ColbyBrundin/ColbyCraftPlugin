@@ -1,0 +1,30 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "text": "Sharper Fangs"
+  },
+  "effects": {
+    "minecraft:attributes": [
+      {
+        "id": "vanillakfc:enchantment.sharper_fangs",
+        "attribute": "minecraft:attack_damage",
+        "amount": 4.0,
+        "operation": "add_value"
+      }
+    ]
+  },
+  "max_cost": {
+    "base": 51,
+    "per_level_above_first": 0
+  },
+  "max_level": 1,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 0
+  },
+  "slots": [
+    "body"
+  ],
+  "supported_items": "minecraft:wolf_armor",
+  "weight": 5
+}

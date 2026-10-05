@@ -2,6 +2,7 @@ package com.example.vanillakfc.listeners;
 
 import com.destroystokyo.paper.event.entity.CreeperIgniteEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -155,15 +156,41 @@ public final class CreeperBehaviorTask implements Listener {
     private static final double VIEW_RANGE = 40.0;
     private static final double VIEW_ANGLE_DEGREES = 90.0;
 
-    private static final double CHASE_PATH_SPEED = 3.0;
+    // Lowered from 3.0 on 2026-09-24. Measured in play, a chase at 3.0 peaked
+    // around 1.2 blocks a tick - roughly four times sprinting - and at that
+    // speed every small detour around a block edge became a large, fast
+    // swerve. The pathing itself was clean (heading within 26 degrees of the
+    // player on 97% of ticks); it was the speed that made the corrections
+    // read as twitchy. 2.5 keeps it comfortably faster than a sprinting
+    // player while shrinking every swerve proportionally.
+    private static final double CHASE_PATH_SPEED = 2.5;
+
+    /** Inside this range the chase stops steering and vanilla's goals take over. */
+    private static final double CHASE_HANDOFF_DISTANCE = 2.0;
+
+    /** Only used if a creeper somehow has no follow-range attribute; vanilla's own default. */
+    private static final double DEFAULT_FOLLOW_RANGE = 16.0;
     private static final double CAT_AVOID_RADIUS = 12.0;
 
     // Only request a new path once the destination has moved this far from
     // the last one requested, or this many ticks have passed regardless -
     // recomputing every tick to a target shifting by centimeters made the
     // pathfinder flip-flop between similarly-costed routes around obstacles.
-    private static final double REPATH_DISTANCE_THRESHOLD = 2.0;
-    private static final int REPATH_MAX_INTERVAL_TICKS = 10;
+    //
+    // Tightened from 2.0/10 on 2026-09-24. At CHASE_PATH_SPEED a creeper
+    // covers ~0.57 blocks a tick, so a 10-tick gap let it run ~5.7 blocks -
+    // past the end of a path aimed at where the player used to be. It then
+    // spent the rest of the gap with no path at all, drifting on momentum and
+    // whatever vanilla's own goals did with it: measured over a straight
+    // 30-block pursuit of a walking target, 57% of ticks had no live path,
+    // the creeper's heading was off by 27-47 degrees on average, and on ~20%
+    // of ticks it was moving away from its target. That is the visible
+    // jittering-in-odd-directions. At 3 ticks the same chase holds ~14-18
+    // degrees, never moves away, and closes 20% sooner. The flip-flop this
+    // throttle exists to prevent did not come back: re-measured on an
+    // obstacle course of walls and pillars, direction reversals went 3 -> 2.
+    private static final double REPATH_DISTANCE_THRESHOLD = 0.75;
+    private static final int REPATH_MAX_INTERVAL_TICKS = 3;
 
     // How long, and how far, a creeper keeps walking toward a player's last
     // known position after vanilla forgets them as a target - "slightly out
@@ -257,6 +284,9 @@ public final class CreeperBehaviorTask implements Listener {
                 boolean watched = resolveWatched(creeper);
                 updateIgniteBlock(creeper, watched);
                 boolean frozen = updateFreeze(creeper, watched);
+                if (!frozen && creeper.getTarget() == null) {
+                    reacquireTarget(creeper);
+                }
                 Cat nearestCat = frozen ? null : findNearestCat(creeper);
                 if (nearestCat != null) {
                     driveToward(creeper, fleeDestination(creeper, nearestCat));
@@ -288,6 +318,24 @@ public final class CreeperBehaviorTask implements Listener {
     // instead of restarting the route fresh every single tick.
     private void driveToward(Creeper creeper, Location destination) {
         UUID id = creeper.getUniqueId();
+
+        // Close enough that steering does more harm than good: at
+        // CHASE_PATH_SPEED the creeper covers most of this distance in a
+        // single tick, so it overshoots whatever point it is sent to and
+        // spends the last couple of blocks correcting back and forth around
+        // its target. Vanilla's own melee/swell goals handle contact range
+        // perfectly well, so the chase simply hands over here - measured, it
+        // roughly halves the close-range thrashing. The throttle state is
+        // dropped with it, so the moment the player opens the gap again the
+        // next tick re-paths immediately rather than waiting out the interval.
+        if (destination.getWorld() == creeper.getWorld()
+                && destination.distanceSquared(creeper.getLocation())
+                    < CHASE_HANDOFF_DISTANCE * CHASE_HANDOFF_DISTANCE) {
+            lastPathTarget.remove(id);
+            lastPathTick.remove(id);
+            return;
+        }
+
         Location lastTarget = lastPathTarget.get(id);
         Integer lastTick = lastPathTick.get(id);
         int now = Bukkit.getCurrentTick();
@@ -302,6 +350,52 @@ public final class CreeperBehaviorTask implements Listener {
         creeper.getPathfinder().moveTo(destination, CHASE_PATH_SPEED);
         lastPathTarget.put(id, destination);
         lastPathTick.put(id, now);
+    }
+
+    /**
+     * Re-targets the nearest player in sight the moment a creeper stops being
+     * watched.
+     *
+     * <p>Freezing a watched creeper works by stripping its target every tick
+     * (that is what keeps the fuse from ever starting), so when the player
+     * looks away it has nothing to chase and has to wait for vanilla's own
+     * targeting goal to notice them again. That goal only retries every so
+     * often, and vanilla's random-stroll goal owns the creeper in the
+     * meantime: measured over a real chase, the creeper spent 6.6 seconds
+     * targetless with the player 5-32 blocks away, crawling at 0.06 blocks a
+     * tick and walking *away* from them on 87 of 88 ticks, in gaps as long as
+     * 3.2 seconds. That is the "wanders off in a random direction" this task
+     * exists to prevent, and it was this task causing it.
+     *
+     * <p>Line of sight is required, same as vanilla's goal, so this only
+     * restores the target vanilla would have picked anyway - just without the
+     * wait. A creeper that genuinely lost the player behind a wall still has
+     * to re-find them, and {@link #recallPlayer} covers the near misses.
+     */
+    private void reacquireTarget(Creeper creeper) {
+        AttributeInstance followRange = creeper.getAttribute(Attribute.FOLLOW_RANGE);
+        double range = followRange == null ? DEFAULT_FOLLOW_RANGE : followRange.getValue();
+
+        Player nearest = null;
+        double nearestDistance = range * range;
+        for (Player player : creeper.getWorld().getPlayers()) {
+            if (!isTargetable(player)) continue;
+            double distance = player.getLocation().distanceSquared(creeper.getLocation());
+            if (distance < nearestDistance && creeper.hasLineOfSight(player)) {
+                nearestDistance = distance;
+                nearest = player;
+            }
+        }
+        if (nearest != null) {
+            creeper.setTarget(nearest);
+        }
+    }
+
+    // Creative and Spectator players are no more a target here than they are
+    // to vanilla's own targeting.
+    private static boolean isTargetable(Player player) {
+        if (player.isDead() || !player.isValid()) return false;
+        return player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE;
     }
 
     private void rememberPlayer(Creeper creeper, Player player) {

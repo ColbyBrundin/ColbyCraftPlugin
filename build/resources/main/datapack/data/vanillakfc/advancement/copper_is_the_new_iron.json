@@ -1,0 +1,61 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "crafted_copper_pickaxe": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_pickaxe"
+      }
+    },
+    "crafted_copper_axe": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_axe"
+      }
+    },
+    "crafted_copper_shovel": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_shovel"
+      }
+    },
+    "crafted_copper_hoe": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_hoe"
+      }
+    },
+    "crafted_copper_sword": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_sword"
+      }
+    },
+    "crafted_copper_spear": {
+      "trigger": "minecraft:recipe_crafted",
+      "conditions": {
+        "recipes": "minecraft:copper_spear"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "crafted_copper_pickaxe",
+      "crafted_copper_axe",
+      "crafted_copper_shovel",
+      "crafted_copper_hoe",
+      "crafted_copper_sword",
+      "crafted_copper_spear"
+    ]
+  ],
+  "display": {
+    "icon": {
+      "id": "minecraft:copper_pickaxe"
+    },
+    "title": "Copper is the new Iron",
+    "description": "Craft any copper tool.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

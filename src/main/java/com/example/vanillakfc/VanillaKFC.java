@@ -1,8 +1,11 @@
 package com.example.vanillakfc;
 
+import com.example.vanillakfc.advancements.Advancements;
 import com.example.vanillakfc.listeners.AnvilRepairListener;
 import com.example.vanillakfc.listeners.BedExplosionListener;
 import com.example.vanillakfc.listeners.BreedingGrowthListener;
+import com.example.vanillakfc.listeners.ChargedCreeperDeathMessageListener;
+import com.example.vanillakfc.listeners.ChargedCreeperKillListener;
 import com.example.vanillakfc.listeners.CatLivesListener;
 import com.example.vanillakfc.listeners.CreeperBehaviorTask;
 import com.example.vanillakfc.listeners.CreeperListener;
@@ -11,6 +14,8 @@ import com.example.vanillakfc.listeners.CropFortuneListener;
 import com.example.vanillakfc.listeners.CropGrowthListener;
 import com.example.vanillakfc.debug.LightLevelDebug;
 import com.example.vanillakfc.listeners.DeathDropListener;
+import com.example.vanillakfc.listeners.DeathMilestoneListener;
+import com.example.vanillakfc.listeners.DiamondTradePriceListener;
 import com.example.vanillakfc.listeners.DrownedTridentListener;
 import com.example.vanillakfc.listeners.DurabilityListener;
 import com.example.vanillakfc.listeners.ElytraEnchantListener;
@@ -25,11 +30,13 @@ import com.example.vanillakfc.listeners.HappyGhastListener;
 import com.example.vanillakfc.listeners.IronGolemListener;
 import com.example.vanillakfc.listeners.LightningListener;
 import com.example.vanillakfc.listeners.MaceDamageListener;
+import com.example.vanillakfc.listeners.MobXpListener;
 import com.example.vanillakfc.listeners.NetherPortalScaleListener;
 import com.example.vanillakfc.listeners.NetherRoofVoidDamageListener;
 import com.example.vanillakfc.listeners.PetHealthDisplayListener;
 import com.example.vanillakfc.listeners.PodSpawnCooldownListener;
 import com.example.vanillakfc.listeners.RecipeDiscoveryListener;
+import com.example.vanillakfc.listeners.SharperFangsListener;
 import com.example.vanillakfc.listeners.SkeletonListener;
 import com.example.vanillakfc.listeners.SleepStreakListener;
 import com.example.vanillakfc.listeners.SpearDamageListener;
@@ -38,6 +45,7 @@ import com.example.vanillakfc.listeners.TamedWolfListener;
 import com.example.vanillakfc.listeners.UnbreakingListener;
 import com.example.vanillakfc.listeners.VillagerTradeListener;
 import com.example.vanillakfc.listeners.WeaponStatListener;
+import com.example.vanillakfc.listeners.WolfGuardListener;
 import com.example.vanillakfc.listeners.XpCapListener;
 import com.example.vanillakfc.listeners.ZombiePodListener;
 import com.example.vanillakfc.recipes.CustomRecipes;
@@ -58,6 +66,7 @@ public class VanillaKFC extends JavaPlugin {
     private HappyGhastListener happyGhastListener;
     private CatLivesListener catLivesListener;
     private TamedWolfListener tamedWolfListener;
+    private WolfGuardListener wolfGuardListener;
     private MobHealthDisplayListener mobHealthDisplayListener;
     private RecipeDiscoveryListener recipeDiscoveryListener;
     private SleepStreakListener sleepStreakListener;
@@ -65,6 +74,7 @@ public class VanillaKFC extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Advancements advancements = new Advancements(this);
         getServer().getPluginManager().registerEvents(new DeathDropListener(this), this);
         getServer().getPluginManager().registerEvents(new DurabilityListener(), this);
         getServer().getPluginManager().registerEvents(new BedExplosionListener(), this);
@@ -80,9 +90,16 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ElytraEnchantListener(), this);
         getServer().getPluginManager().registerEvents(new MaceDamageListener(), this);
         getServer().getPluginManager().registerEvents(new SpearDamageListener(), this);
-        getServer().getPluginManager().registerEvents(new AnvilRepairListener(), this);
+        getServer().getPluginManager().registerEvents(new AnvilRepairListener(this, advancements), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListener(this), this);
+        DiamondTradePriceListener diamondTradePriceListener = new DiamondTradePriceListener(this);
+        getServer().getPluginManager().registerEvents(diamondTradePriceListener, this);
+        diamondTradePriceListener.migrateLoaded();
+        SharperFangsListener sharperFangsListener = new SharperFangsListener(this);
+        getServer().getPluginManager().registerEvents(sharperFangsListener, this);
+        sharperFangsListener.convertLoaded();
         getServer().getPluginManager().registerEvents(new XpCapListener(), this);
+        getServer().getPluginManager().registerEvents(new MobXpListener(), this);
         sleepStreakListener = new SleepStreakListener(this);
         getServer().getPluginManager().registerEvents(sleepStreakListener, this);
         sleepStreakListener.start();
@@ -104,6 +121,9 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FortuneLootListener(), this);
         getServer().getPluginManager().registerEvents(new CropFortuneListener(), this);
         getServer().getPluginManager().registerEvents(new EndCityLootListener(), this);
+        getServer().getPluginManager().registerEvents(new DeathMilestoneListener(this, advancements), this);
+        getServer().getPluginManager().registerEvents(new ChargedCreeperKillListener(advancements), this);
+        getServer().getPluginManager().registerEvents(new ChargedCreeperDeathMessageListener(), this);
         getServer().getPluginManager().registerEvents(new ResourcePackStatusLogger(), this);
         CustomRecipes.registerAll(this, getLogger());
 
@@ -138,6 +158,9 @@ public class VanillaKFC extends JavaPlugin {
         tamedWolfListener = new TamedWolfListener(this);
         getServer().getPluginManager().registerEvents(tamedWolfListener, this);
         tamedWolfListener.start();
+        wolfGuardListener = new WolfGuardListener(this);
+        getServer().getPluginManager().registerEvents(wolfGuardListener, this);
+        wolfGuardListener.start();
 
         mobHealthDisplayListener = new MobHealthDisplayListener(this);
         mobHealthDisplayListener.start();
@@ -172,6 +195,9 @@ public class VanillaKFC extends JavaPlugin {
         }
         if (petHealthDisplayListener != null) {
             petHealthDisplayListener.stop();
+        }
+        if (wolfGuardListener != null) {
+            wolfGuardListener.stop();
         }
         if (tamedWolfListener != null) {
             tamedWolfListener.stop();

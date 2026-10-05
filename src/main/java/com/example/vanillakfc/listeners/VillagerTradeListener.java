@@ -1,8 +1,12 @@
 package com.example.vanillakfc.listeners;
 
+import io.papermc.paper.registry.RegistryAccess;
+import io.papermc.paper.registry.RegistryKey;
+import io.papermc.paper.registry.keys.tags.EnchantmentTagKeys;
 import org.bukkit.FeatureFlag;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Villager;
 import org.bukkit.enchantments.Enchantment;
@@ -45,9 +49,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * <p>The world's own minecraft:trade_rebalance feature flag is read (not
  * written) as a deliberate on/off switch for this biome flavor: with it
  * enabled, the enchant is drawn from the biome-specific pool described
- * above; with it disabled, it's drawn uniformly from the full generic pool
- * instead (no biome flavor, no fixed-level entries), same as vanilla's
- * non-biome-specific trades.
+ * above; with it disabled, it's drawn uniformly from every enchantment an
+ * enchanting table could give (the server's own
+ * {@code #minecraft:in_enchanting_table}), at the same level 1-2 and 5-32
+ * emeralds as the biome pools' regular entries - no biome flavor, no
+ * fixed-level entries, same as vanilla's non-biome-specific trades.
  *
  * <p>Vanilla's own trade-unlock pipeline still fires as a librarian levels
  * up. {@link #onVillagerAcquireTrade} cancels any enchanted-book trade it
@@ -101,32 +107,53 @@ public final class VillagerTradeListener implements Listener {
                     new EnchantSpec(Enchantment.FORTUNE, 2))
     );
 
-    // Fallback pool used with trade_rebalance disabled, or for the one case
-    // a villager type isn't one of the seven keys above (shouldn't happen -
-    // Villager.Type only has these seven - but getOrDefault needs somewhere
-    // safe to land). No Mending, no curse enchantments.
-    private static final List<EnchantSpec> GENERIC_POOL = List.of(
-            rolled(Enchantment.SHARPNESS), rolled(Enchantment.SMITE), rolled(Enchantment.BANE_OF_ARTHROPODS), rolled(Enchantment.KNOCKBACK),
-            rolled(Enchantment.FIRE_ASPECT), rolled(Enchantment.LOOTING), rolled(Enchantment.SWEEPING_EDGE),
-            rolled(Enchantment.EFFICIENCY), rolled(Enchantment.SILK_TOUCH), rolled(Enchantment.FORTUNE),
-            rolled(Enchantment.PROTECTION), rolled(Enchantment.FIRE_PROTECTION), rolled(Enchantment.FEATHER_FALLING),
-            rolled(Enchantment.BLAST_PROTECTION), rolled(Enchantment.PROJECTILE_PROTECTION), rolled(Enchantment.RESPIRATION),
-            rolled(Enchantment.AQUA_AFFINITY), rolled(Enchantment.DEPTH_STRIDER), rolled(Enchantment.FROST_WALKER), rolled(Enchantment.THORNS),
-            rolled(Enchantment.POWER), rolled(Enchantment.PUNCH), rolled(Enchantment.FLAME), rolled(Enchantment.INFINITY),
-            rolled(Enchantment.LUCK_OF_THE_SEA), rolled(Enchantment.LURE), rolled(Enchantment.LOYALTY), rolled(Enchantment.IMPALING),
-            rolled(Enchantment.RIPTIDE), rolled(Enchantment.CHANNELING), rolled(Enchantment.MULTISHOT), rolled(Enchantment.QUICK_CHARGE),
-            rolled(Enchantment.PIERCING), rolled(Enchantment.UNBREAKING)
-    );
-
     private static final Set<Enchantment> CURSE_ENCHANTMENTS =
             Set.of(Enchantment.BINDING_CURSE, Enchantment.VANISHING_CURSE);
 
     private final NamespacedKey journeymanSideKey;
     private final NamespacedKey expertSideKey;
+    /**
+     * Pool used with trade_rebalance disabled, and for the one case a villager
+     * type isn't one of the seven keys above (shouldn't happen - Villager.Type
+     * only has these seven - but getOrDefault needs somewhere safe to land).
+     *
+     * <p>Read from the server's own {@code #minecraft:in_enchanting_table}
+     * rather than written out here, so it is exactly what an enchanting table
+     * could give - Mending and the curses are treasure enchantments and so
+     * already absent, no exclusion list needed - and it can't fall behind a
+     * new enchantment the way a hand-kept list did (it was still missing
+     * Breach, Density and Lunge, and still carried Frost Walker, which an
+     * enchanting table has never offered).
+     */
+    private final List<EnchantSpec> genericPool;
 
     public VillagerTradeListener(Plugin plugin) {
         this.journeymanSideKey = new NamespacedKey(plugin, "journeyman_side");
         this.expertSideKey = new NamespacedKey(plugin, "expert_side");
+        this.genericPool = buildGenericPool(plugin);
+    }
+
+    private static List<EnchantSpec> buildGenericPool(Plugin plugin) {
+        Registry<Enchantment> registry = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT);
+        List<EnchantSpec> pool = new ArrayList<>();
+        for (Enchantment enchantment : registry.getTagValues(EnchantmentTagKeys.IN_ENCHANTING_TABLE)) {
+            // Defensive rather than expected: a datapack is free to put either
+            // into the tag, and neither belongs in a librarian's pool.
+            if (enchantment.equals(Enchantment.MENDING) || CURSE_ENCHANTMENTS.contains(enchantment)) continue;
+            pool.add(rolled(enchantment));
+        }
+
+        if (pool.isEmpty()) {
+            // Only reachable if a datapack empties the tag. Better a wider pool
+            // than a librarian with no book trade at all.
+            plugin.getLogger().warning("#minecraft:in_enchanting_table is empty; librarian books fall back to every"
+                    + " non-curse enchantment in the registry.");
+            for (Enchantment enchantment : registry) {
+                if (enchantment.equals(Enchantment.MENDING) || CURSE_ENCHANTMENTS.contains(enchantment)) continue;
+                pool.add(rolled(enchantment));
+            }
+        }
+        return List.copyOf(pool);
     }
 
     @EventHandler
@@ -384,8 +411,8 @@ public final class VillagerTradeListener implements Listener {
     private MerchantRecipe createJourneymanBook(Villager villager) {
         boolean biomeSpecific = villager.getWorld().getFeatureFlags().contains(FeatureFlag.TRADE_REBALANCE);
         List<EnchantSpec> pool = biomeSpecific
-                ? COMMON_ENCHANTS.getOrDefault(villager.getVillagerType(), GENERIC_POOL)
-                : GENERIC_POOL;
+                ? COMMON_ENCHANTS.getOrDefault(villager.getVillagerType(), genericPool)
+                : genericPool;
 
         // Uniform pick across the whole pool - the former "master" entry (if
         // this biome has one and the pool in use is biome-specific) is just

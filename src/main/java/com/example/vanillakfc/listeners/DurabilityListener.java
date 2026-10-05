@@ -1,9 +1,15 @@
 package com.example.vanillakfc.listeners;
 
+import io.papermc.paper.event.entity.EntityDamageItemEvent;
 import org.bukkit.Material;
+import org.bukkit.entity.Wolf;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerItemDamageEvent;
+import org.bukkit.inventory.EntityEquipment;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,22 +40,77 @@ public final class DurabilityListener implements Listener {
         Map.entry(Material.DIAMOND_HELMET,     500),
         Map.entry(Material.DIAMOND_CHESTPLATE, 700),
         Map.entry(Material.DIAMOND_LEGGINGS,   650),
-        Map.entry(Material.DIAMOND_BOOTS,      575)
+        Map.entry(Material.DIAMOND_BOOTS,      575),
+        // Netherite tools and weapons
+        Map.entry(Material.NETHERITE_SWORD,    4000),
+        Map.entry(Material.NETHERITE_SPEAR,    4000),
+        Map.entry(Material.NETHERITE_PICKAXE,  4000),
+        Map.entry(Material.NETHERITE_AXE,      4000),
+        Map.entry(Material.NETHERITE_SHOVEL,   4000),
+        Map.entry(Material.NETHERITE_HOE,      4000),
+        // Netherite armor
+        Map.entry(Material.NETHERITE_HELMET,     750),
+        Map.entry(Material.NETHERITE_CHESTPLATE, 900),
+        Map.entry(Material.NETHERITE_LEGGINGS,   850),
+        Map.entry(Material.NETHERITE_BOOTS,      800),
+        // Trident - not a tier item, so it sits on its own
+        Map.entry(Material.TRIDENT,            400),
+        // Wolf armor (vanilla 64). Its cracking stages are fractions of max
+        // durability - 95%, 69% and 32% remaining - and an Armadillo Scute
+        // repairs 12.5% of it, so all of those scale with this on their own.
+        Map.entry(Material.WOLF_ARMOR,         128)
     );
 
     @EventHandler
     public void onItemDamage(PlayerItemDamageEvent event) {
-        ItemStack item = event.getItem();
+        applyDurability(event.getItem());
+    }
+
+    // Wolf armor wears out on the wolf, which goes through the mob event
+    // rather than the player one. A fallback here - see onWolfDamaged.
+    @EventHandler
+    public void onMobItemDamage(EntityDamageItemEvent event) {
+        applyDurability(event.getItem());
+    }
+
+    // Wolf armor is converted before the hit reaches it, not as it takes the
+    // damage: vanilla notes the armor's cracking stage from its old max
+    // durability just before damaging it, and compares that with the stage
+    // after. Raising the max in between would make the first hit on
+    // unconverted armor play the crack sound and particles even though it
+    // got further from cracking, not closer.
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onWolfDamaged(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Wolf wolf)) return;
+        EntityEquipment equipment = wolf.getEquipment();
+        ItemStack armor = equipment.getItem(EquipmentSlot.BODY);
+        if (armor.getType() != Material.WOLF_ARMOR) return;
+        if (applyDurability(armor)) {
+            // Silent, so putting the converted piece back doesn't play the
+            // armor-equip sound.
+            equipment.setItem(EquipmentSlot.BODY, armor, true);
+        }
+    }
+
+    /**
+     * Also used by {@link PetHealthDisplayListener}, so a wolf's armor counter
+     * shows the new maximum from the start rather than vanilla's until the
+     * wolf's first hit.
+     *
+     * @return true if the item was changed
+     */
+    static boolean applyDurability(ItemStack item) {
         Integer target = CUSTOM_DURABILITY.get(item.getType());
-        if (target == null) return;
+        if (target == null) return false;
 
         ItemMeta meta = item.getItemMeta();
-        if (!(meta instanceof Damageable damageable)) return;
+        if (!(meta instanceof Damageable damageable)) return false;
         // getMaxDamage() throws unless hasMaxDamage() is true (only set once
         // something explicitly overrides it - most items never have it set).
-        if (damageable.hasMaxDamage() && damageable.getMaxDamage() == target) return;
+        if (damageable.hasMaxDamage() && damageable.getMaxDamage() == target) return false;
 
         damageable.setMaxDamage(target);
         item.setItemMeta(meta);
+        return true;
     }
 }

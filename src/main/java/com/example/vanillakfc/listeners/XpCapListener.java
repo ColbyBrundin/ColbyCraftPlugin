@@ -2,8 +2,10 @@ package com.example.vanillakfc.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerExpChangeEvent;
+import org.bukkit.event.player.PlayerItemMendEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +27,15 @@ import java.util.UUID;
  * the cap applies uniformly to any positive amount. Level grants (/xp add
  * ... levels, Player#giveExpLevels) fire PlayerLevelChangeEvent instead and
  * never reach this listener.
+ *
+ * <p>Mending draws from the same budget. An orb's XP goes to repairing
+ * Mending gear first, and only what's left over reaches
+ * {@link PlayerExpChangeEvent} - so before {@link #onItemMend} existed, XP
+ * spent on repairs never counted and a player at the cap could keep mending
+ * indefinitely. Each repair now counts the XP it consumes, is cut down to
+ * what the budget still allows, and is cancelled outright once it's spent.
+ * A cancelled repair hands the orb's XP on to the player as usual, where the
+ * cap then zeroes it, so the orb is still used up.
  */
 public final class XpCapListener implements Listener {
 
@@ -49,14 +60,7 @@ public final class XpCapListener implements Listener {
         }
 
         Player player = event.getPlayer();
-        long window = currentWindowIndex();
-        WindowState state = windowStates.computeIfAbsent(player.getUniqueId(), id -> new WindowState());
-
-        if (state.windowIndex != window) {
-            state.windowIndex = window;
-            state.xpGained = 0;
-            state.warned = false;
-        }
+        WindowState state = currentState(player);
 
         int remaining = XP_CAP - state.xpGained;
         if (remaining <= 0) {
@@ -68,6 +72,59 @@ public final class XpCapListener implements Listener {
             state.xpGained += event.getAmount();
         }
 
+        warnIfCapped(player, state);
+    }
+
+    // HIGHEST so the repair amount settled here is the final one - the XP
+    // counted below is exactly what the repair goes on to consume.
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onItemMend(PlayerItemMendEvent event) {
+        int consumed = event.getConsumedExperience();
+        if (consumed <= 0) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+        WindowState state = currentState(player);
+        int remaining = XP_CAP - state.xpGained;
+
+        if (consumed > remaining) {
+            // Cut the repair down in proportion. Mending's durability-per-XP
+            // comes from enchantment effects Paper won't expose (the event's
+            // getDurabilityToXpOperation() just throws since 1.21), and
+            // getConsumedExperience() is fixed when the event is made, so the
+            // event's own repair-to-XP ratio is the only rate there is to go
+            // on. The server charges the orb for the reduced repair at that
+            // same rate, so this lands on the remaining budget, give or take
+            // integer rounding.
+            int repair = (int) ((long) event.getRepairAmount() * remaining / consumed);
+            if (repair <= 0) {
+                event.setCancelled(true);
+            } else {
+                event.setRepairAmount(repair);
+            }
+            // Either way, the whole remaining budget is gone.
+            state.xpGained = XP_CAP;
+            warnIfCapped(player, state);
+            return;
+        }
+
+        state.xpGained += consumed;
+        warnIfCapped(player, state);
+    }
+
+    private WindowState currentState(Player player) {
+        long window = currentWindowIndex();
+        WindowState state = windowStates.computeIfAbsent(player.getUniqueId(), id -> new WindowState());
+        if (state.windowIndex != window) {
+            state.windowIndex = window;
+            state.xpGained = 0;
+            state.warned = false;
+        }
+        return state;
+    }
+
+    private static void warnIfCapped(Player player, WindowState state) {
         if (state.xpGained >= XP_CAP && !state.warned) {
             state.warned = true;
             player.sendMessage("§cYou've hit the " + XP_CAP

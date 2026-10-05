@@ -34,8 +34,9 @@ Crop field: time for a 9x9 wheat plot to finish      | ~103 min (last crop)    |
 Death: XP level lost                                 | resets to 0, drops      | flat -3 levels (floored at 0),
                                                         orbs (up to 100 XP)      no orbs drop
 Death: gear (weapons/tools/armor/shield/elytra/bow/  | drops on the ground     | stays with player, returned
-trident)                                                                        on respawn
+trident) and arrows                                                             on respawn
 Item despawn time (player death drops only)          | 6000 ticks (5 min)      | 12000 ticks (10 min)
+Mob death XP                                         | vanilla amount          | x1.5 (all mobs)
 XP gain                                              | unlimited               | capped at 500 raw XP points
                                                                                  per 5-minute server-wide window
 Enderman melee damage                                | 4.5/7/10.5              | -2.0 flat from whichever
@@ -45,18 +46,37 @@ Iron tool durability (sword/pickaxe/axe/shovel/hoe)  | 250                     |
 Iron Helmet/Chestplate/Leggings/Boots durability     | 165/240/225/195         | 240/330/310/275
 Diamond tool durability                              | 1561                    | 2000
 Diamond Helmet/Chestplate/Leggings/Boots durability  | 363/528/495/429         | 500/700/650/575
+Netherite tool durability (sword/spear/pickaxe/      | 2031                    | 4000
+  axe/shovel/hoe)
+Netherite Helmet/Chestplate/Leggings/Boots           | 407/592/555/481         | 750/900/850/800
+  durability
+Trident durability                                   | 250                     | 400
+Wolf armor durability                                | 64                      | 128 (cracking stages and
+                                                                                 scute repair scale with it)
+Villager diamond tool/weapon/armor trade cost        | vanilla price           | doubled, capped at 64 (existing
+                                                                                 villagers updated once too)
 Unbreaking chance to still take damage (lvl 1/2/3)   | 50%/33.3%/25% tools,    | 75%/60%/50%, on every item
                                                        80%/73.3%/70% armor       and every action
+Fire Protection (renamed "Sharper Fangs")           | armor; fire damage     | wolf armor only; one level;
+                                                        reduction, I-IV          +4 wolf attack damage. Old
+                                                                                 armor converted
+Wolf armor enchanting                                | not enchantable         | enchanting table (iron-armor
+                                                                                 odds); Thorns, Unbreaking and
+                                                                                 Sharper Fangs
 Bane of Arthropods (renamed "Bane of the Living")    | +2.5/level vs           | +1.5/level (1.5 to 7.5)
                                                         arthropods, plus         vs every mob that isn't
                                                         Slowness IV on them      undead (players excluded);
                                                                                  no Slowness
+Green dye from crafting                              | no recipe (cactus       | yellow dye + blue dye ->
+                                                       smelting only)            2 green dye
 Sword durability cost per block mined                | 2 (vs 1 for other       | unchanged - vanilla applies
                                                        tools)                    it, the Unbreaking curve
                                                                                  then scales it
 Copper Axe damage / attack speed                     | 9.0 / 0.8               | 7.0 / 0.9
 Harnessed Happy Ghast max health                     | 20 (10 hearts)          | 100 (50 hearts); unharnessed
                                                                                  ones stay at 20
+Harnessed Happy Ghast ridden flight speed            | ~3.29 blocks/sec        | 6.0 blocks/sec; unharnessed
+                                                       (slower than walking)     ones stay at ~3.29
 Iron Axe damage / attack speed                       | 9.0 / 0.9               | 7.0 / 1.0
 Iron Hoe attack speed                                | 3.0                     | 2.0
 Stone Axe damage / attack speed                      | 9.0 / 0.8               | 7.0 / 0.9
@@ -69,8 +89,12 @@ Mace raw base damage (before armor/resistance)       | uncapped (scales with   |
 Spear charge-attack bonus (relative-velocity damage) | uncapped (scales with   | capped at 5x the hit's damage
                                                         relative velocity)       without the charge bonus
 Anvil repair-with-material                           | 1 ingot restores 25%    | ingots do nothing; 1 tier-block
-                                                        durability               (iron/gold/diamond/netherite)
+                                                        durability               (iron/gold/diamond) restores
+                                                                                 75%; netherite: 1 ingot
                                                                                  restores 75%
+Anvil trident repair                                 | no repair material      | 1 Heart of the Sea restores
+                                                       exists (2 tridents or     75% durability each (300 of
+                                                       Mending only)             the new 400)
 Anvil prior-work penalty growth per block repair     | n -> 2n + 1             | n -> n + ceil(1.5 x (n + 1)),
                                                         (0,1,3,7,15,31)          i.e. 50% bigger jumps
                                                                                  (0,2,7,19,49) - "Too Expensive!"
@@ -158,8 +182,27 @@ Creepers (CreeperListener, CreeperBehaviorTask)
 - Explosion radius: 3->4 (6->8 charged); vanilla's charged-doubling still applies on top.
 - Natural spawning: only 35% of spawn attempts succeed (vanilla: 100%, solo). A successful spawn can add a 2nd creeper within 24 blocks (50% chance,
   capped at 2 total).
-- Active chase: while targeting a player (and not frozen, see below), re-paths straight at them at speed factor 3.0. Throttled to once per 2 blocks of
-  target movement or every 10 ticks, rather than every tick, to stop erratic path flip-flopping around obstacles.
+- Active chase: while targeting a player (and not frozen, see below), re-paths straight at them at speed factor 2.5 (was 3.0 until 2026-09-24; at
+  3.0 a chase peaked near 1.2 blocks/tick, about four times sprinting, which turned every small detour around a block edge into a large, fast swerve). Throttled to once per 0.75 blocks
+  of target movement or every 3 ticks, rather than every tick, to stop erratic path flip-flopping around obstacles.
+- Chase smoothness fixed 2026-09-24: that throttle used to be 2 blocks / 10 ticks, which at speed factor 3.0 (~0.57 blocks per tick) let a creeper
+  outrun its own path - it reached the end of a route aimed at where the player had been, then spent the rest of the gap with no path at all,
+  coasting on momentum. Measured over a straight 30-block pursuit of a walking target: 57% of ticks with no live path, average heading 27-47 degrees
+  off the target, and ~20% of ticks moving away from it - the "jittering off in odd directions" this was reported as. At 3 ticks / 0.75 blocks the
+  same chase holds 14-18 degrees, never moves away from the target, and closes 20% sooner (85 vs 108 ticks). Re-measured on an obstacle course of
+  walls and pillars to confirm the flip-flopping the throttle guards against did not return: direction reversals went 3 -> 2, contact 194 -> 171
+  ticks. Vanilla's own goals were ruled out as the cause - the random-stroll goal never took the navigation over in any run, and removing it changed
+  nothing.
+- Target re-acquisition (2026-09-24): the instant a creeper stops being watched it re-targets the nearest player it has line of sight to, instead of
+  waiting for vanilla's own targeting goal to come round again. Freezing works by stripping the target every tick, so every glance at a creeper left
+  it with nothing to chase when the player turned away, and vanilla's random-stroll goal filled the gap. Measured over a real chase (run, turn,
+  watch, repeat): the creeper was targetless for 48% of its unfrozen ticks with the player 5-32 blocks away, crawling at 0.06 blocks/tick and walking
+  away from them on 43% of ticks. After the fix, on the same test: 0% targetless, 3% moving away, average heading error 75 -> 26 degrees, and average
+  chase speed 0.39 -> 0.76 blocks/tick. Line of sight is still required, so it only restores the target vanilla would have picked anyway.
+- Contact hand-off (2026-09-24): inside 2 blocks of its target the chase stops steering entirely and leaves the creeper to vanilla's own melee/swell
+  goals. At speed factor 3.0 it covers most of that distance in a single tick, so it would overshoot whatever point it was sent to and circle its
+  target correcting back and forth; measured, handing over roughly halves that close-range thrashing (average heading error while in contact 67 -> 43
+  degrees). The throttle state is cleared on hand-off, so the instant the player opens the gap again the chase re-paths on the next tick.
 - Short-term memory: after losing sight of its target, keeps walking toward its last known position for 3s if that spot is still within 16 blocks.
   Movement only - doesn't restore the actual target, so swelling/igniting still needs a genuine re-spot.
 - Freeze-when-watched: while any player has unobstructed line of sight (40 blocks, ~90 degree cone, 9 hitbox sample points), movement speed is zeroed
@@ -191,6 +234,14 @@ Happy Ghasts (HappyGhastListener)
 - Applied as a keyed attribute modifier derived from the base value rather than a hard-coded +80, so the total is exactly 100 whatever vanilla's base
   happens to be. Driven by a twice-a-second sweep rather than an equip event, since a harness can also arrive from a dispenser, a command, or a chunk
   loading a ghast that was already wearing one.
+- A harnessed Happy Ghast also flies at 6.0 blocks/sec when ridden, against vanilla's ~3.29 - which is slower than walking (4.32) and well under
+  sprinting (5.61). 6.0 puts it just above sprinting. Still nothing like an elytra (~30+); the point of a ghast is hovering and carrying, not speed.
+- Done by raising the ghast's flying_speed attribute from vanilla's 0.05 to ~0.0676, on the same harness-gated, keyed-modifier basis as the health.
+  Not a straight 1.83x, because vanilla's flying speed enters ridden movement twice - once scaling the rider's input (x3.9) and once as the flight
+  speed itself (x5/3) - so terminal speed goes as its square, and x1.35 on the attribute is what doubles-ish the speed. The listener derives the
+  attribute from the target blocks/sec and vanilla's own constants (including the 0.91-per-tick air drag) rather than hard-coding 0.0676, so the
+  intent stays readable if any of them are retuned.
+- Wild Happy Ghasts and ghastlings keep vanilla's speed, so nothing about the ones drifting around the Nether changes.
 
 Endermen (EndermanListener, EndermanDodgeSoundPackListener)
 ------------------------------------------------------------------
@@ -260,6 +311,9 @@ Lightning (LightningListener)
 ------------------------------------------------------------------
 - Adds a second, independent ~1-in-100,000-per-loaded-chunk-per-tick strike roll during thunderstorms, striking the highest block in a random column
   of that chunk - vanilla's own roll still fires alongside it, combining into roughly double vanilla's normal strike rate.
+- Lightning rods: like vanilla's own strikes, this roll first looks for the nearest lightning rod within 128 blocks and strikes the block above it
+  instead. Bug fixed 2026-09-28: it used to strike the random column directly, so rods never caught any of the plugin's strikes - half of all storm
+  lightning ignored rods. A rod only counts if nothing is on top of it (it has to be the highest block in its column), same as vanilla.
 - Gated on both isThundering() and hasStorm() being true (not just the former) - separate flags that always agree under vanilla's natural cycle but
   could desync via a command or another plugin; requiring both closes off any way this roll could fire without an actual storm overhead.
 
@@ -269,8 +323,15 @@ Lightning (LightningListener)
 
 Death drops & XP loss (DeathDropListener)
 ------------------------------------------------------------------
-- Gear survives death: any sword, spear, pickaxe, axe, hoe, shovel, armor piece, shield, bow, crossbow, trident, elytra, or mace is pulled from the
-  death-drop list and silently returned to the player's inventory on respawn (overflow drops on the ground if full). Everything else drops normally.
+- Gear survives death: any sword, spear, pickaxe, axe, hoe, shovel, armor piece, shield, bow, crossbow, trident, elytra, mace, fishing rod,
+  spyglass, shears, flint and steel, brush, carrot on a stick, warped fungus on a stick, or arrow (plain, spectral, or tipped; added 2026-10-04)
+  is pulled from the death-drop list and silently returned
+  to the player's inventory on respawn (overflow drops on the ground if full). Everything else drops normally.
+- Bug fixed 2026-09-24: gear kept on death waited in memory only, so a player who died and quit without pressing respawn lost all of it if the server
+  restarted while they were still on the death screen - it was never written to disk, and nothing cleaned it up for players who never came back
+  either. It now waits on the player's own persistent data (their playerdata file) as well as in memory: memory serves the ordinary die-and-respawn
+  case, the stored copy covers quitting on the death screen and any restart, and a stash that somehow outlives its respawn is handed back on the
+  player's next join. Gear already lost to this can't be recovered.
 - XP softened, not reset: vanilla resets level to 0 and spawns orbs worth up to min(level x 7, 100). This instead drops no orbs and subtracts a flat 3
   levels (floored at 0) - remaining progress toward the next level is kept, then reset to 0% within the new, reduced level.
 - Slower despawn: items dropped from a player's death take twice as long to despawn - 12,000 ticks (10 min) instead of vanilla's 6,000 (5 min).
@@ -279,11 +340,22 @@ Death drops & XP loss (DeathDropListener)
   (Was silently broken until 2026-09-19: tagging hooked EntityDropItemEvent, which Paper never fires for death drops - nothing was ever tagged and
   every death drop vanished at vanilla's 5 minutes. Tagging now matches each spawning item against the death's own drop list.)
 
+Mob XP bonus (MobXpListener)
+------------------------------------------------------------------
+- Every mob drops 50% more XP on death (added 2026-10-02). Vanilla still decides whether a mob drops XP at all (e.g. it must have been killed by a
+  player or tamed wolf), so mobs that drop nothing still drop nothing. Iron Golems stay at 0. Players' own death XP is unaffected.
+- Most mobs drop small amounts, so the result is rounded up or down at random in proportion: a 5-XP mob drops 7 or 8, averaging exactly 7.5.
+- The XP cap below still applies, so the bonus fills the 500-point window faster rather than raising it.
+
 XP gain cap (XpCapListener)
 ------------------------------------------------------------------
 - New mechanic: each player can gain at most 500 raw XP points (not levels) within any rolling 5-minute, server-wide-aligned window. Applies to any
   positive XP source routed through the vanilla point-grant event (mob kills, orb pickup, mining, breeding, fishing, furnace pickup, villager
   trading). "/xp add ... levels" and other direct level grants are a separate event this cap doesn't touch.
+- Mending counts toward the same 500. XP an orb spends repairing Mending gear is added to the player's total; a repair that would go past the cap
+  is cut down to what's left, and once the cap is reached Mending stops repairing until the window resets (the orb is still used up).
+  Bug fixed 2026-10-02: vanilla spends an orb's XP on Mending before the player receives any of it, and the cap only saw what was left over - so
+  XP put into repairs was never counted, and a capped player could keep mending without limit.
 
 Sleep streaks (SleepStreakListener)
 ------------------------------------------------------------------
@@ -328,8 +400,20 @@ Durability (DurabilityListener)
   Diamond Chestplate                      528                      700
   Diamond Leggings                        495                      650
   Diamond Boots                           429                      575
+  Netherite Sword/Spear/Pickaxe/Axe/      2031                     4000
+    Shovel/Hoe
+  Netherite Helmet                        407                      750
+  Netherite Chestplate                    592                      900
+  Netherite Leggings                      555                      850
+  Netherite Boots                         481                      800
+  Trident                                 250                      400
+  Wolf Armor                              64                       128
 
-  Gold and Netherite gear durability are untouched by this listener.
+  Gold gear durability is untouched by this listener.
+- Wolf armor (added 2026-10-04): its cracking stages are fractions of max durability (95%, 69% and 32% remaining), so doubling it moves them from
+  about 61/44/20 to 122/88/41 durability left, and an Armadillo Scute now repairs 16 instead of 8. Converted the moment the wolf wearing it is
+  hurt, just before the hit lands - converting during the hit would set off a false crack sound on the first one. Durability already lost is
+  kept as-is, so a worn piece gains the extra 64 on top of what it had left.
 
 Weapon/tool damage & attack speed (WeaponStatListener)
 ------------------------------------------------------------------
@@ -392,6 +476,47 @@ to, so armour is slightly better off at level I and worse off at level III than 
   anything no handler reached had its damage cancelled with nothing putting it back. An Unbreaking bow was simply indestructible, as were crossbows,
   tridents, shields, fishing rods, shears, flint & steel and brushes.
 
+Deep Quiver (bundled datapack: data/vanillakfc/enchantment/deep_quiver.json)
+------------------------------------------------------------------
+Added 2026-10-04. A new enchantment for bows and crossbows, levels I-III.
+- Each shot has a chance not to use up its arrow: 25% / 40% / 50% at I / II / III - the mirror of this plugin's Unbreaking, which keeps
+  75% / 60% / 50% of durability damage. Works on whichever arrow the game would fire anyway (offhand first, then the inventory), plain or tipped
+  or spectral. For a crossbow the roll is made when it's loaded, which is when a crossbow uses its ammo; Multishot still only ever costs one.
+- An arrow that wasn't used up can't be picked back up once fired, the same as with Infinity, so it can't be used to duplicate arrows.
+- Mutually exclusive with Infinity and Mending (vanilla's own bow exclusive set, which already keeps those two apart), so a bow or crossbow can
+  carry only one of the three.
+- Obtained like any normal enchantment: enchanting table, anvil books, librarian trades (it's in the generic book pool), and loot. Weight 2, as
+  rare as Punch or Flame; enchanting costs as Unbreaking's.
+- Datapack-only: it uses vanilla's own ammo-use effect (what Infinity is built on), set to 0 by a level-based random chance.
+
+Sharper Fangs (bundled datapack: fire_protection.json, thorns.json, unbreaking.json; SharperFangsListener)
+------------------------------------------------------------------
+Added 2026-10-04. Fire Protection is gone as an armor enchantment; in its place is "Sharper Fangs", for wolf armor. (It started out the same day
+as "Wolf Protection", a I-IV all-round damage reduction - see the last two points for what became of it.)
+- Same enchantment underneath (still minecraft:fire_protection), redefined: goes only on wolf armor, has a single level (like Mending or
+  Infinity), and gives the wolf wearing it +4 attack damage - an attribute modifier from the body slot, so it lasts exactly as long as the armor
+  is on. It stacks on top of the tamed-wolf x1.5 (which scales the wolf's base damage), so an armored tamed wolf hits for 4 x 1.5 + 4 = 10
+  instead of 6. Fire Protection's fire reduction and burning-time reduction are both gone.
+- Rarity is Fire Protection's (weight 5); it can come up in the enchanting table at any power (1-51), so every wolf armor slot always has
+  something to offer alongside Thorns and Unbreaking. (Fixed 2026-10-04, as Wolf Protection: it first kept Fire Protection's costs, which start
+  at power 10, and a wolf armor's cheap table slot usually rolled too low for anything and showed up empty, doing nothing when clicked.)
+- No longer on regular armor by any route: enchanting table, anvil books, villager armor trades, loot or mob equipment.
+- Existing enchanted books need no re-id - being the same enchantment, every Fire Protection or Wolf Protection book now reads Sharper Fangs.
+  Desert librarians, whose pool included Fire Protection, now offer Sharper Fangs books in its place, as does the generic pool; new offers are
+  always level I.
+- Thorns and Unbreaking can now go on wolf armor too (book or table). Thorns treats wolf armor like a chestplate, so it can come up in the table.
+  Mending is deliberately still excluded - nothing would ever mend wolf armor, since it is never in a player's equipment.
+- Enchanting table: wolf armor now works in one, with iron armor's enchantability (9), so its rolls - Sharper Fangs, Thorns, Unbreaking - come
+  out at the same odds iron armor gets. Vanilla wolf armor has no enchantability and a datapack can't add one, so the plugin gives it to each piece:
+  when crafted (crafting table or crafter), during the conversion pass below, and when put into an enchanting table, as a catch-all.
+- One-time conversion of existing items: armor (or anything else other than a book or wolf armor) carrying Fire Protection has it replaced with
+  Protection at the same level, and books and wolf armor carrying it above level I (left over from Wolf Protection's I-IV, which the game
+  doesn't lower by itself) are set to I - the bonus is the same at any level, so this is only so they read right. It happens as things load:
+  containers and entities (dropped items, item frames, mob and armor stand equipment - armored wolves included - minecart/boat/animal inventories,
+  villager trade offers) when their chunk loads, and inventories and ender chests when a player joins - each chunk and player only once. Shulker
+  boxes and bundles are searched inside. Each batch converted is logged. The pass was restarted for Sharper Fangs, so chunks and players already
+  covered for Wolf Protection are gone over once more.
+
 Bane of the Living (bundled datapack: data/minecraft/enchantment/bane_of_arthropods.json)
 ------------------------------------------------------------------
 - Bane of Arthropods is renamed "Bane of the Living" and reworked. It now adds +1.5 damage per level (1.5 / 3 / 4.5 / 6 / 7.5 for I-V) against every
@@ -411,14 +536,19 @@ Elytra & Mending (ElytraEnchantListener)
 
 Anvil repair-with-material (AnvilRepairListener)
 ------------------------------------------------------------------
-- For iron/gold/diamond/netherite tools, weapons, and armor: vanilla's "1 ingot restores 25% durability" is fully replaced. Ingots no longer repair
-  these items - instead, 1 block of the matching tier material (Iron/Gold/Diamond/Netherite Block) restores 75% durability, consuming as many blocks
+- For iron/gold/diamond tools, weapons, and armor: vanilla's "1 ingot restores 25% durability" is fully replaced. Ingots no longer repair
+  these items - instead, 1 block of the matching tier material (Iron/Gold/Diamond Block) restores 75% durability, consuming as many blocks
   as needed (up to what's available, so at most 2).
-- Each block repair raises the item's prior-work penalty - the hidden counter added to every future anvil cost - by 50% more than a vanilla anvil use
+- Netherite tools, weapons, and armor take a Netherite Ingot instead of a block: 1 ingot restores 75%, on the same terms otherwise (at most 2 per
+  repair, same penalty and level cost). Netherite Blocks no longer repair them. Changed 2026-10-04
+  (previously a Netherite Block, like the other tiers).
+- Each block (or Netherite Ingot) repair raises the item's prior-work penalty - the hidden counter added to every future anvil cost - by 50% more than a vanilla anvil use
   would. Vanilla takes n to 2n+1 (an increase of n+1); this takes n to n + ceil(1.5 x (n+1)). From new, that runs 0, 2, 7, 19, 49 against vanilla's
   0, 1, 3, 7, 15, 31, so an item reaches "Too Expensive!" after 4 block repairs instead of 6. The higher penalty carries into anything else done with
   that item at an anvil afterwards.
-- Level cost follows vanilla's formula: the item's existing penalty plus 1 level per block consumed.
+- Tridents can be repaired with a Heart of the Sea, 75% of durability each - 300 of the trident's 400 (added 2026-09-25). Purely an
+  addition: vanilla has no repair material for a trident at all, so combining two tridents and Mending were the only options, and both still work.
+- Level cost follows vanilla's formula: the item's existing penalty plus 1 level per unit of material consumed.
 - Two long-standing bugs fixed alongside that (2026-09-19): block repairs never raised the penalty at all (the result was a straight copy of the
   input), and the level cost ignored the item's anvil history entirely, charging 1 level per block however worn the item was. Vanilla's "Too
   Expensive!" refusal at 40 levels was also being skipped, because it is checked before the plugin substitutes its own result; it is now re-applied
@@ -428,6 +558,9 @@ Anvil repair-with-material (AnvilRepairListener)
 
 4. CRAFTING & RECIPES (CustomRecipes, RecipeDiscoveryListener)
 ==================================================================
+- Tipped arrows (added 2026-10-04): 8 Arrows around a Splash Potion, instead of vanilla's Lingering Potion, make 8 Tipped Arrows of that potion.
+  Bundled datapack override of minecraft:tipped_arrow; its recipe-book unlock now triggers on holding a Splash Potion. Lingering potions no longer
+  make tipped arrows. Fletchers still sell them.
 - Ingot -> block gear recipes: every iron, gold, and diamond tool, weapon, armor piece, and the Shield now use a block of the tier material instead of
   loose ingots/gems - 1 block per ingot slot for tools/weapons/shield, 2 blocks for armor pieces. Every valid slot arrangement is registered as its
   own recipe variant, so the block can go in any of the original ingot slots.
@@ -449,6 +582,11 @@ Anvil repair-with-material (AnvilRepairListener)
   Chains filling every ingredient slot.
 - Leather armor reworked: all 4 recipes replaced - instead of leather-only, each needs Leather (or Rotten Flesh, 1-for-1) plus String and Wood Planks
   (any type), using the same L/S/P shapes as other armor tiers.
+- Green dye from yellow + blue (bundled datapack): a shapeless yellow dye + blue dye now makes 2 green dye, matching how orange (red + yellow) and
+  purple (red + blue) already work in vanilla. Vanilla has no crafting recipe for green at all - smelting cactus is the only source - so this adds
+  one rather than replacing anything, and cactus smelting still works. Registered under minecraft:green_dye_from_yellow_blue with a matching recipe
+  advancement, the same pair of files vanilla ships for its own dye mixes, so it unlocks in the recipe book as soon as a player holds either dye.
+  Datapack rather than plugin code, since it needs none of the slot-arrangement machinery the gear recipes above use.
 - Recipe book category fixed: every rebuilt recipe above is explicitly placed in the Equipment tab. A freshly constructed recipe defaults to Misc, and
   since each fully replaces the vanilla recipe under its original key, leaving the default would have silently moved them all to Misc.
 
@@ -468,8 +606,14 @@ villager's current level each time a player opens its trade menu.
     - Always guaranteed an enchanted-book trade, chosen once and fixed for life (reaching level 5 doesn't re-roll it). With trade_rebalance enabled,
       the enchant is drawn with even odds from a biome-specific pool: that biome's 2-3 regular enchants (level 1-2, 5-32 emeralds) plus its
       strongest/"Master"-tier enchant (table below) as one more equally-likely option, at its fixed level and vanilla's higher master-tier price
-      (11-36 emeralds at level 3, 8-26 lower). With trade_rebalance disabled, the enchant is instead drawn uniformly from the full generic pool
-      (regular-tier only, no biome flavor) - same as vanilla's non-biome-specific trades.
+      (11-36 emeralds at level 3, 8-26 lower). With trade_rebalance disabled, the enchant is instead drawn uniformly from the generic pool below,
+      with no biome flavor and no fixed-level entries - same as vanilla's non-biome-specific trades.
+    - Either way, every regular-tier book (i.e. everything except a biome's one folded-in strongest enchant) is level 1 or 2 and costs 5-32 emeralds,
+      capped at the enchantment's own max level - so Silk Touch or Channeling can only ever be level 1.
+    - The generic pool is read live from the server's own #minecraft:in_enchanting_table tag rather than written out in the plugin, so it is exactly
+      what an enchanting table could offer, and a new enchantment is picked up automatically. Mending and both curses are treasure enchantments and so
+      are absent by construction. Changed 2026-09-27: it used to be a hand-kept list, which had fallen behind - it was missing Breach, Density and
+      Lunge, and included Frost Walker, which an enchanting table cannot give.
 - Expert (4):
     - Always guaranteed a "2 Writable Books -> 1 Emerald" trade.
     - Never offers a plain enchanted-book trade.
@@ -490,8 +634,22 @@ villager's current level each time a player opens its trade menu.
   enabled) is cancelled outright - every enchanted-book trade a librarian ends up with comes from this listener alone (this is what fixed the original
   "enchanted book at Novice level" bug).
 - Curses excluded: Curse of Binding and Curse of Vanishing are in no pool, and any curse-enchanted book a librarian already has (from before this
-  rule, or another source) is stripped and replaced the next time its trade menu opens. Frost Walker stays tradeable (Snow's biome pool, plus the
-  generic fallback) - it's a treasure enchantment, not a curse. Mending is never in either pool.
+  rule, or another source) is stripped and replaced the next time its trade menu opens. Frost Walker stays tradeable, but only in Snow's biome pool -
+  it's a treasure enchantment, not a curse, so it left the generic pool when that became the enchanting-table tag. Mending is never in either pool.
+
+Diamond gear trade prices (DiamondTradePriceListener)
+------------------------------------------------------------------
+- Any villager trade selling a diamond sword, spear, pickaxe, axe, shovel, hoe, helmet, chestplate, leggings or boots costs double: every ingredient's
+  count is doubled (emeralds, and diamonds too where a trade asks for them). Enchanted versions included. Added 2026-09-29.
+- Doubled on the base price, so vanilla's discounts (curing, Hero of the Village, reputation) and demand surcharges still apply on top and scale with it.
+- Capped at 64: an ingredient whose doubled count would pass 64 costs 64 instead (e.g. a 40-emerald trade becomes 64, not 80).
+- New trades are doubled as a villager unlocks them. Villagers that already had diamond trades get a one-time pass - at startup, when their chunk
+  loads, or when their trade menu is opened, whichever comes first - and are then marked (diamond_trades_doubled) so nothing is ever doubled twice.
+- Bug fixed 2026-09-29: every doubled trade showed as sold out ("needs to restock") from the moment it appeared. The doubled copy was made with
+  Paper's MerchantRecipe copy constructor, which reads raw fields the server's own trades leave at 0 - so each copy had 0 max uses, and also lost its
+  villager XP and demand pricing. Copies are now built from the trade's real values. Trades already broken this way are rebuilt when the villager is
+  next loaded or its menu opened: 3 uses (vanilla's for every diamond gear trade), villager XP 30 for sword/pickaxe/helmet/chestplate, 10 for the
+  hoe, 15 for the rest, and vanilla's price multiplier. The doubled price is kept.
 
 
 6. FARMING & FOOD
@@ -566,6 +724,45 @@ lands with the "behind the player" bias. It never overrides any vanilla sound an
   connecting from the same machine the server runs on - a public deployment needs a reachable host set here and that port opened.
 - Pack format declares 97 (26.3) and accepts formats 88 upwards. It previously pinned max_format to 88 (26.2 only), which made 26.3 clients reject the
   whole pack: every vanilla Enderman sound kept working while this one silently never played.
+
+Charged creeper death messages (ChargedCreeperDeathMessageListener)
+------------------------------------------------------------------
+Added 2026-10-04. A player killed by a charged creeper's death message names it "Charged Creeper" instead of vanilla's plain "Creeper" (e.g.
+"Steve was blown up by Charged Creeper"). Hovering the name still shows the creeper, as in vanilla, and a creeper with a custom name keeps it.
+- Covers deaths that name the creeper after the fact too, such as "was doomed to fall by Charged Creeper" after a blast knocks a player off a
+  ledge: charged creepers are noted the moment they go off and remembered for a minute, longer than vanilla keeps an attacker in a player's
+  combat history.
+- "Charged Creeper" is plain English text, not translated - unlike vanilla's "Creeper", which each client shows in its own language.
+
+Custom advancements (bundled datapack, DeathMilestoneListener, ChargedCreeperKillListener)
+------------------------------------------------------------------
+A "VanillaKFC" advancement tab, in the plugin's own vanillakfc: namespace, so nothing here touches or overrides a vanilla advancement.
+- vanillakfc:root - the tab itself. Completes on its own the first tick a player is in the world (minecraft:tick trigger), so the tab is always
+  visible and everything under it is reachable from the start. Silent: no toast, no chat announcement.
+- vanillakfc:dying_grace - "Dying Grace", awarded at 40 deaths. Challenge frame, toast and chat announcement on, Totem of Undying icon.
+- vanillakfc:oh_neptune - "Oh Neptune", awarded for repairing a trident with a Heart of the Sea (see section 3). Challenge frame, toast and chat
+  announcement on, Heart of the Sea icon. Awarded when the repaired trident is actually taken out of the anvil and the Heart is gone from it, not when
+  the anvil merely previews the result - there is no "anvil used" event, so the check is whether the material was consumed, read a tick after the
+  click (at click time nothing has been applied yet, and the take can still fail on levels or on "Too Expensive!").
+- vanillakfc:fallen_angel - "Fallen Angel", awarded for killing a charged creeper. Challenge frame, toast and chat announcement on, glinting
+  Creeper Head icon. Credit goes to whoever vanilla credits with the kill, so ranged kills count; a charged creeper that blows itself up counts
+  for nobody. Re-testable with "/advancement revoke <player> only vanillakfc:fallen_angel".
+- vanillakfc:copper_is_the_new_iron - "Copper is the new Iron", awarded for crafting any copper tool or weapon (pickaxe, axe, shovel, hoe, sword
+  or spear). Regular task frame, toast and chat announcement on, Copper Pickaxe icon. Datapack-only (vanilla's recipe_crafted trigger), so it fires
+  from a crafting table or the 2x2 grid but not from a Crafter, which has no player to credit. Added 2026-10-04.
+- vanillakfc:prison_break - "Prison Break", awarded for killing a Warden. Challenge frame, toast and chat announcement on, Sculk Shrieker icon.
+  Datapack-only (vanilla's player_killed_entity trigger), so credit goes to whoever vanilla credits with the kill - ranged kills count, as do kills
+  by a tamed wolf. Re-testable with "/advancement revoke <player> only vanillakfc:prison_break". Added 2026-10-04.
+- The death count is read from the server's own scoreboard: any objective whose criterion is deathCount, whatever the objective is called, so it works
+  with an existing counter as-is. The advancement
+  then agrees with the number players already see on a sidebar. The highest such objective wins if there are several. The first count read each
+  session is logged, naming the objective it came from, so which source is in use is never a guess. With no deathCount objective on the
+  scoreboard at all, it falls back to the player's own DEATHS statistic, which vanilla always tracks. Note a sidebar fed by a plain "dummy" objective
+  is not a death counter as far as this is concerned and will land on the statistic instead.
+- Checked one tick after a death (vanilla increments the scoreboard after the death event, so reading it during the event is one behind) and again on
+  join, so anyone already past 40 earns it on their way in rather than needing one more death.
+- The advancement holds a single minecraft:impossible criterion - vanilla can count deaths in a session but not a running total, so the plugin decides
+  when it is earned. Re-testable with "/advancement revoke <player> only vanillakfc:dying_grace".
 
 Lowered first-person shield (resource pack, same pack as above)
 ------------------------------------------------------------------
@@ -680,6 +877,12 @@ Pet health display (PetHealthDisplayListener)
   so a real name tag and vanilla's default death message stay untouched - an earlier version wrote health straight into the pet's customName,
   polluting real names and death messages; any pet still carrying that pollution gets repaired to its real name (or cleared) on sight. Repositioned
   every tick to track a moving pet continuously; the health text is only re-sent when it actually changes. Removed the moment its pet dies.
+- Wolf armor counter (added 2026-10-04): a wolf wearing armor gets a second, smaller line just above its health, in aqua, showing the armor's
+  remaining/max durability (e.g. "98/128"). A text display scaled to 65%, since a name tag can't be resized; it follows the wolf the same way and
+  disappears when the armor comes off or the wolf dies. Armor still on vanilla's 64 max is converted to the plugin's 128 on sight, so the counter
+  never reads /64.
+- Note: while a wolf wears armor, vanilla puts every hit on the armor in full and the wolf takes none, until the armor breaks - except damage that
+  goes past wolf armor (falling, drowning, magic and the like). Unbreaking only slows how fast the armor wears; it doesn't change this.
 
 Cat nine lives (CatLivesListener)
 ------------------------------------------------------------------
@@ -716,6 +919,18 @@ Tamed wolves (TamedWolfListener)
   over every tamed wolf in the world - covering puppies bred from two already-tamed wolves (pre-tamed, no taming event to hook) and wolves already
   tamed before this listener loaded (e.g. an earlier session). Max health is corrected on every scan pass regardless of prior state; only the
   attack-damage multiply (unsafe to repeat) is gated behind a persistent "already buffed" tag. Wild, untamed wolves are unaffected.
+
+Dogs drawing and finding fights (WolfGuardListener)
+------------------------------------------------------------------
+Added 2026-10-04.
+- Retaliation: a hostile mob bitten by a tamed wolf turns on that wolf, instead of carrying on after the player while the dog chews on it (vanilla
+  only did this reliably for some mobs). A mob already fighting a wolf stays on that one, so it doesn't flip between dogs. Once the dog is dead or
+  out of range, the mob goes back to whoever it was after.
+- Guarding: a tamed wolf that is standing (not told to sit), with nothing to attack and its owner online within 24 blocks, goes after the nearest
+  hostile mob within 16 blocks of its owner that it can see. Checked twice a second. Not while the owner is in Creative or Spectator.
+- Both leave out mobs vanilla wolves won't fight or can't reach: creepers and ghasts (vanilla's own rule - and a creeper chasing a dog would get
+  around the rules on when a creeper may light its fuse), phantoms, vexes, blazes, wardens, and the neutral mobs (endermen, piglins, zombified
+  piglins), so a dog never starts a fight the player didn't.
 
 
 VERSION NOTES
