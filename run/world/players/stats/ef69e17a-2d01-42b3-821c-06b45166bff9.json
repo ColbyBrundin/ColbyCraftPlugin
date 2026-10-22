@@ -1,5 +1,23 @@
 {
   "stats": {
+    "minecraft:custom": {
+      "minecraft:time_since_rest": 113,
+      "minecraft:walk_one_cm": 53980,
+      "minecraft:leave_game": 9,
+      "minecraft:mob_kills": 5,
+      "minecraft:damage_taken": 621,
+      "minecraft:damage_dealt": 2108,
+      "minecraft:play_time": 16519,
+      "minecraft:jump": 270,
+      "minecraft:time_since_death": 93,
+      "minecraft:sprint_one_cm": 40745,
+      "minecraft:fall_one_cm": 8200,
+      "minecraft:total_world_time": 16519,
+      "minecraft:fly_one_cm": 127871,
+      "minecraft:crouch_one_cm": 76,
+      "minecraft:sneak_time": 29,
+      "minecraft:deaths": 2
+    },
     "minecraft:mined": {
       "minecraft:tall_grass": 2,
       "minecraft:grass_block": 1
@@ -9,36 +27,20 @@
       "minecraft:creeper": 2,
       "minecraft:enderman": 1
     },
-    "minecraft:custom": {
-      "minecraft:time_since_rest": 76,
-      "minecraft:walk_one_cm": 52685,
-      "minecraft:leave_game": 8,
-      "minecraft:mob_kills": 5,
-      "minecraft:damage_taken": 621,
-      "minecraft:damage_dealt": 2108,
-      "minecraft:play_time": 14069,
-      "minecraft:jump": 263,
-      "minecraft:time_since_death": 56,
-      "minecraft:sprint_one_cm": 39421,
-      "minecraft:fall_one_cm": 8200,
-      "minecraft:total_world_time": 14069,
-      "minecraft:fly_one_cm": 80095,
-      "minecraft:crouch_one_cm": 76,
-      "minecraft:sneak_time": 8,
-      "minecraft:deaths": 1
+    "minecraft:used": {
+      "minecraft:baked_potato": 8,
+      "minecraft:ender_eye": 12,
+      "minecraft:end_portal_frame": 13,
+      "minecraft:netherite_sword": 25,
+      "minecraft:dirt": 1,
+      "minecraft:enderman_spawn_egg": 2,
+      "minecraft:creeper_spawn_egg": 13
     },
     "minecraft:picked_up": {
       "minecraft:ender_pearl": 1,
       "minecraft:dirt": 1,
       "minecraft:wildflowers": 5,
       "minecraft:gunpowder": 2
-    },
-    "minecraft:used": {
-      "minecraft:baked_potato": 8,
-      "minecraft:netherite_sword": 25,
-      "minecraft:dirt": 1,
-      "minecraft:enderman_spawn_egg": 2,
-      "minecraft:creeper_spawn_egg": 13
     }
   },
   "DataVersion": 5023

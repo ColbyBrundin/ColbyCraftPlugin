@@ -3,5 +3,15 @@
     "sounds": [
       "vanillakfc:enderman_dodge_teleport"
     ]
+  },
+  "enderman_aggro": {
+    "sounds": [
+      "vanillakfc:enderman_aggro"
+    ]
+  },
+  "end_dragon_alive": {
+    "sounds": [
+      "vanillakfc:end_dragon_alive"
+    ]
   }
 }

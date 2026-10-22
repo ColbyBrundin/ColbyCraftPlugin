@@ -1,62 +1,186 @@
-[15:13:57] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
-[15:13:57] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
-[15:13:57] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[15:13:58] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
-[15:13:58] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
-[15:13:58] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
+[17:01:51] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
+[17:01:51] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
+[17:01:51] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
  - VanillaKFC (1.0-SNAPSHOT)
-[15:14:05] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
-[15:14:10] [Worker-Main-6/INFO]: Loaded 1867 advancements
-[15:14:11] [Server thread/INFO]: Starting minecraft server version 26.3
-[15:14:11] [Server thread/INFO]: Loading properties
-[15:14:11] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
-[15:14:11] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
-[15:14:11] [Server thread/INFO]: Server Ping Player Sample Count: 12
-[15:14:11] [Server thread/INFO]: Using 4 threads for Netty based IO
-[15:14:11] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
-[15:14:12] [Server thread/INFO]: Default game type: SURVIVAL
-[15:14:12] [Server thread/INFO]: Generating keypair
-[15:14:12] [Server thread/INFO]: Starting Minecraft server on *:25565
-[15:14:12] [Server thread/INFO]: Paper: Using Java compression from Velocity.
-[15:14:12] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
-[15:14:12] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
-[15:14:12] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
-[15:14:12] [Server thread/INFO]: Preparing level "world"
-[15:14:13] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
-[15:14:13] [Server thread/INFO]: Preparing spawn area: 100%
-[15:14:13] [Server thread/INFO]: Prepared spawn area in 6 ms
-[15:14:13] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
-[15:14:13] [Server thread/INFO]: Preparing spawn area: 100%
-[15:14:13] [Server thread/INFO]: Prepared spawn area in 13 ms
-[15:14:13] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
-[15:14:13] [Server thread/INFO]: Prepared spawn area in 14 ms
-[15:14:13] [Server thread/INFO]: Done preparing level "world" (0.759s)
-[15:14:13] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
-[15:14:15] [Server thread/INFO]: [VanillaKFC] Registered 255 recipes (237 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 54 book entries).
-[15:14:15] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
-[15:14:15] [Server thread/INFO]: [VanillaKFC] Unbreaking datapack active as 'VanillaKFC/vanillakfc' - Unbreaking applies its curve directly.
-[15:14:15] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
-[15:14:15] [Server thread/INFO]: [spark] Starting background profiler...
-[15:14:15] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
-[15:14:15] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[15:14:15] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[15:14:15] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[15:14:16] [Server thread/INFO]: Running delayed init tasks
-[15:14:16] [Server thread/INFO]: Done (19.442s)! For help, type "help"
-[15:14:18] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 24 builds behind ***
-[15:14:18] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
-[15:15:35] [Server thread/INFO]: [VanillaKFC] Night fell in 'world' - sleep streak: 0 (sleeping tonight: 0% thunderstorm chance).
-[15:16:19] [User Authenticator #0/INFO]: UUID of player VortexPhan is ef69e17a-2d01-42b3-821c-06b45166bff9
-[15:16:21] [Server thread/INFO]: System chat: VortexPhan joined the game
-[15:16:22] [Server thread/INFO]: VortexPhan[/127.0.0.1:56457] logged in with entity id 75 at ([minecraft:overworld]-291.30000001192093, 131.0, 93.69999998807907)
-[15:16:22] [Server thread/INFO]: [VanillaKFC] Resource pack status for VortexPhan: ACCEPTED (id=4408f12b-ea9e-4633-bf93-5887f154af21)
-[15:16:22] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound pack status for VortexPhan: ACCEPTED
-[15:16:22] [Server thread/INFO]: [VanillaKFC] Resource pack status for VortexPhan: DOWNLOADED (id=4408f12b-ea9e-4633-bf93-5887f154af21)
-[15:16:22] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound pack status for VortexPhan: DOWNLOADED
-[15:16:24] [Server thread/INFO]: [VanillaKFC] Resource pack status for VortexPhan: SUCCESSFULLY_LOADED (id=4408f12b-ea9e-4633-bf93-5887f154af21)
-[15:16:24] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound pack status for VortexPhan: SUCCESSFULLY_LOADED
-[15:16:28] [Server thread/INFO]: VortexPhan issued server command: /time set day
-[15:16:28] [Server thread/INFO]: System chat: [VortexPhan: Set minecraft:overworld to time marker minecraft:day]
-[15:17:42] [Server thread/INFO]: System chat: VortexPhan hit the ground too hard
-[15:17:48] [Server thread/INFO]: VortexPhan lost connection: Disconnected
-[15:17:49] [Server thread/INFO]: System chat: VortexPhan left the game
+[17:01:56] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[17:01:57] [Worker-Main-4/INFO]: Loaded 1873 advancements
+[17:01:57] [Server thread/INFO]: Starting minecraft server version 26.3
+[17:01:57] [Server thread/INFO]: Loading properties
+[17:01:57] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
+[17:01:57] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[17:01:57] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[17:01:57] [Server thread/INFO]: Using 4 threads for Netty based IO
+[17:01:58] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
+[17:01:58] [Server thread/INFO]: Default game type: SURVIVAL
+[17:01:58] [Server thread/INFO]: Generating keypair
+[17:01:58] [Server thread/INFO]: Starting Minecraft server on *:25565
+[17:01:58] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[17:01:58] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[17:01:58] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
+[17:01:58] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[17:01:58] [Server thread/INFO]: Preparing level "world"
+[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[17:01:58] [Server thread/INFO]: Preparing spawn area: 100%
+[17:01:58] [Server thread/INFO]: Prepared spawn area in 2 ms
+[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[17:01:58] [Server thread/INFO]: Prepared spawn area in 1 ms
+[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[17:01:58] [Server thread/INFO]: Prepared spawn area in 1 ms
+[17:01:58] [Server thread/INFO]: Done preparing level "world" (0.414s)
+[17:01:58] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
+[17:02:00] [Server thread/INFO]: [VanillaKFC] Registered 255 recipes (237 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 54 book entries).
+[17:02:00] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
+[17:02:00] [Server thread/INFO]: [VanillaKFC] Unbreaking datapack active as 'VanillaKFC/vanillakfc' - Unbreaking applies its curve directly.
+[17:02:00] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
+[17:02:00] [Server thread/INFO]: [spark] Starting background profiler...
+[17:02:00] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[17:02:00] [Server thread/INFO]: Running delayed init tasks
+[17:02:00] [Server thread/INFO]: Done (9.876s)! For help, type "help"
+[17:02:00] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 159 builds behind ***
+[17:02:00] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
+[17:02:01] [Server thread/INFO]: System chat: Marked 64 chunks in minecraft:the_end from [-4, -4] to [3, 3] to be force loaded
+[17:02:06] [Server thread/INFO]: System chat: Ender Dragon has the following entity data: 200.0f
+[17:02:18] [Server thread/INFO]: [VanillaKFC] First Ender Dragon killed in 'world_the_end': XP cap lifted there until 60s after its body is gone.
+[17:02:18] [Server thread/INFO]: System chat: Applied 5000.0 damage to Ender Dragon
+[17:02:30] [Server thread/INFO]: System chat: Test failed
+[17:02:32] [Server thread/INFO]: System chat: Test failed
+[17:03:11] [Server thread/INFO]: System chat: Test failed
+[17:03:13] [Server thread/INFO]: System chat: Test passed. Count: 47
+[17:03:14] [Server thread/INFO]: System chat: Test passed. Count: 10
+[17:03:15] [Server thread/INFO]: System chat: Test failed
+[17:03:16] [Server thread/INFO]: System chat: Test failed
+[17:03:17] [Server thread/INFO]: System chat: Test failed
+[17:03:18] [Server thread/INFO]: System chat: Test failed
+[17:03:19] [Server thread/INFO]: System chat: Test failed
+[17:03:38] [Server thread/INFO]: [VanillaKFC] XP cap back in effect in 'world_the_end'.
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 3
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 2477
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 7
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 3
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 617
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 307
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
+[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 2
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
+[17:03:51] [Server thread/INFO]: System chat: Stopping the server
+[17:03:51] [Server thread/INFO]: Stopping server
+[17:03:51] [Server thread/INFO]: [VanillaKFC] Disabling VanillaKFC v1.0-SNAPSHOT
+[17:03:51] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been disabled!
+[17:03:51] [Server thread/INFO]: Saving players
+[17:03:51] [Server thread/INFO]: Saving worlds
+[17:03:51] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.01s
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[17:03:52] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[17:03:52] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 146 block chunks, 146 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.06s
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[17:03:52] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[17:03:52] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[17:03:52] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[17:03:52] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

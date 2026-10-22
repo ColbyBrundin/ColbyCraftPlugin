@@ -1,0 +1,46 @@
+{
+  "anvil_cost": 4,
+  "description": {
+    "text": "Deep Quiver"
+  },
+  "effects": {
+    "minecraft:ammo_use": [
+      {
+        "effect": {
+          "type": "minecraft:set",
+          "value": 0.0
+        },
+        "requirements": {
+          "type": "minecraft:random_chance",
+          "chance": {
+            "type": "minecraft:enchantment_level",
+            "amount": {
+              "type": "minecraft:lookup",
+              "values": [
+                0.25,
+                0.4,
+                0.5
+              ],
+              "fallback": 0.5
+            }
+          }
+        }
+      }
+    ]
+  },
+  "exclusive_set": "#minecraft:exclusive_set/bow",
+  "max_cost": {
+    "base": 55,
+    "per_level_above_first": 8
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 8
+  },
+  "slots": [
+    "hand"
+  ],
+  "supported_items": "#vanillakfc:enchantable/deep_quiver",
+  "weight": 1
+}

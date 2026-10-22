@@ -1,0 +1,19 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:creeper_head",
+      "components": { "minecraft:enchantment_glint_override": true }
+    },
+    "title": "Fallen Angel",
+    "description": "Kill a charged creeper.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

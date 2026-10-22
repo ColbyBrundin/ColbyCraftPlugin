@@ -1,0 +1,17 @@
+name: VanillaKFC
+version: '${version}'
+main: com.example.vanillakfc.VanillaKFC
+# Runs before the server loads its registries, which is the only point at which
+# the bundled Unbreaking datapack can be registered.
+bootstrapper: com.example.vanillakfc.VanillaKFCBootstrap
+api-version: '26.3'
+author: YourName
+description: A test Paper plugin
+
+permissions:
+  vanillakfc.debug:
+    description: Use the plugin's debug overlays.
+    # Everyone, not just operators - the overlay is private to whoever turns it
+    # on and changes nothing in the world, so there's nothing to gate. Set this
+    # to op (or revoke the node) to restrict it again.
+    default: true

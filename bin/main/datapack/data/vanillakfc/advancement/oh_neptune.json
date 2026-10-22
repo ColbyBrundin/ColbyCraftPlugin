@@ -1,0 +1,16 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:heart_of_the_sea" },
+    "title": "Oh Neptune",
+    "description": "Repair a trident with a Heart of the Sea.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}
