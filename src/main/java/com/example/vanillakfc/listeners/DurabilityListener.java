@@ -49,10 +49,10 @@ public final class DurabilityListener implements Listener {
         Map.entry(Material.NETHERITE_SHOVEL,   4000),
         Map.entry(Material.NETHERITE_HOE,      4000),
         // Netherite armor
-        Map.entry(Material.NETHERITE_HELMET,     750),
-        Map.entry(Material.NETHERITE_CHESTPLATE, 900),
-        Map.entry(Material.NETHERITE_LEGGINGS,   850),
-        Map.entry(Material.NETHERITE_BOOTS,      800),
+        Map.entry(Material.NETHERITE_HELMET,     850),
+        Map.entry(Material.NETHERITE_CHESTPLATE, 1000),
+        Map.entry(Material.NETHERITE_LEGGINGS,   950),
+        Map.entry(Material.NETHERITE_BOOTS,      900),
         // Trident - not a tier item, so it sits on its own
         Map.entry(Material.TRIDENT,            400),
         // Wolf armor (vanilla 64). Its cracking stages are fractions of max

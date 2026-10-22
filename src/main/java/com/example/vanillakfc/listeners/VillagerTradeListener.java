@@ -23,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,9 +43,13 @@ import java.util.concurrent.ThreadLocalRandom;
  * Journeyman pool, picked with the same even odds as every other entry in
  * it - see {@link #COMMON_ENCHANTS}. It keeps its fixed level and vanilla's
  * own higher master-tier price formula when picked; every other entry in
- * the pool still rolls a random level 1-2 at 5-32 emeralds. Level 5
- * (Master) itself doesn't add or change anything - whatever book a
- * librarian rolled at level 3 is the one it keeps.
+ * the pool still rolls a random level 1-2 at 5-32 emeralds.
+ *
+ * <p>Level 5 (Master) adds a second, guaranteed book, rolled by exactly the
+ * same rules as the level 3 one - same pool, levels, prices and xp - except
+ * that it never repeats an enchantment the librarian already sells, which
+ * would just be a second copy of a trade it already has. The level 3 book
+ * is kept as it is.
  *
  * <p>The world's own minecraft:trade_rebalance feature flag is read (not
  * written) as a deliberate on/off switch for this biome flavor: with it
@@ -176,6 +181,7 @@ public final class VillagerTradeListener implements Listener {
         if (level >= 2) changed |= reconcileApprentice(recipes);
         if (level >= 3) changed |= reconcileJourneyman(villager, recipes);
         if (level >= 4) changed |= reconcileExpert(villager, recipes);
+        if (level >= 5) changed |= reconcileMaster(villager, recipes);
 
         if (changed) {
             villager.setRecipes(recipes);
@@ -246,8 +252,8 @@ public final class VillagerTradeListener implements Listener {
             if (hasInkSac) { changed |= recipes.removeIf(this::isInkSacEmerald); }
         }
 
-        if (recipes.stream().noneMatch(this::isEnchantedBookTrade)) {
-            recipes.add(createJourneymanBook(villager));
+        if (countBookTrades(recipes) < 1) {
+            recipes.add(createBook(villager, recipes));
             changed = true;
         }
 
@@ -285,6 +291,21 @@ public final class VillagerTradeListener implements Listener {
         }
 
         return changed;
+    }
+
+    // Counted rather than told apart: the two books are made by the same
+    // rules, so nothing on a trade says which tier it came from. Level 3
+    // tops the count up to one first, so this always adds the second - and a
+    // book removed for any reason (a stripped curse book, say) is replaced at
+    // whichever tier is short.
+    private boolean reconcileMaster(Villager villager, List<MerchantRecipe> recipes) {
+        if (countBookTrades(recipes) >= 2) return false;
+        recipes.add(createBook(villager, recipes));
+        return true;
+    }
+
+    private long countBookTrades(List<MerchantRecipe> recipes) {
+        return recipes.stream().filter(this::isEnchantedBookTrade).count();
     }
 
     private boolean isPaperEmerald(MerchantRecipe r) {
@@ -408,11 +429,27 @@ public final class VillagerTradeListener implements Listener {
         return recipe;
     }
 
-    private MerchantRecipe createJourneymanBook(Villager villager) {
+    // The book trade for both level 3 and level 5.
+    private MerchantRecipe createBook(Villager villager, List<MerchantRecipe> recipes) {
         boolean biomeSpecific = villager.getWorld().getFeatureFlags().contains(FeatureFlag.TRADE_REBALANCE);
         List<EnchantSpec> pool = biomeSpecific
                 ? COMMON_ENCHANTS.getOrDefault(villager.getVillagerType(), genericPool)
                 : genericPool;
+
+        // Leaves out whatever the librarian already sells, so a second book
+        // is never a copy of the first. Every pool has at least three entries,
+        // so this can't run dry - but if a pool ever could, a duplicate beats
+        // no book at all.
+        Set<Enchantment> alreadySold = new HashSet<>();
+        for (MerchantRecipe recipe : recipes) {
+            if (isEnchantedBookTrade(recipe) && recipe.getResult().getItemMeta() instanceof EnchantmentStorageMeta storage) {
+                alreadySold.addAll(storage.getStoredEnchants().keySet());
+            }
+        }
+        List<EnchantSpec> fresh = pool.stream().filter(spec -> !alreadySold.contains(spec.enchantment())).toList();
+        if (!fresh.isEmpty()) {
+            pool = fresh;
+        }
 
         // Uniform pick across the whole pool - the former "master" entry (if
         // this biome has one and the pool in use is biome-specific) is just

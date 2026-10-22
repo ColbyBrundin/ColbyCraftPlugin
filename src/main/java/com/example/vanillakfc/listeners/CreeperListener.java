@@ -11,13 +11,14 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Creepers see 32 blocks out and step/jump over terrain much more readily
- * (chase speed is handled dynamically in {@link CreeperBehaviorTask}, since
- * it only applies while actively closing in on a player). Natural spawns
- * are throttled and capped to pods of 1-2.
+ * Creepers have 12 max health (vanilla 20), see 32 blocks out and step/jump
+ * over terrain much more readily (chase speed is handled dynamically in
+ * {@link CreeperBehaviorTask}, since it only applies while actively closing
+ * in on a player). Natural spawns are throttled and capped to pods of 1-2.
  */
 public final class CreeperListener implements Listener {
 
+    private static final double MAX_HEALTH = 12.0;
     private static final double FOLLOW_RANGE = 32.0;
     private static final double STEP_HEIGHT = 1.2; // clears a full block without needing to jump
     private static final double JUMP_STRENGTH_MULTIPLIER = 1.5;
@@ -59,6 +60,11 @@ public final class CreeperListener implements Listener {
     }
 
     private void applyAttributes(Creeper creeper) {
+        AttributeInstance maxHealth = creeper.getAttribute(Attribute.MAX_HEALTH);
+        if (maxHealth != null) {
+            maxHealth.setBaseValue(MAX_HEALTH);
+            creeper.setHealth(Math.min(creeper.getHealth(), maxHealth.getValue()));
+        }
         AttributeInstance followRange = creeper.getAttribute(Attribute.FOLLOW_RANGE);
         if (followRange != null) {
             followRange.setBaseValue(FOLLOW_RANGE);

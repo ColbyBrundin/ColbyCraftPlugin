@@ -7,7 +7,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.enchantment.EnchantItemEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public final class ElytraEnchantListener implements Listener {
 
@@ -26,12 +30,28 @@ public final class ElytraEnchantListener implements Listener {
         result.setItemMeta(meta);
 
         ItemStack base = event.getInventory().getItem(0);
-        if (base != null && base.isSimilar(result)) {
-            // Removing Mending left nothing else for this anvil operation to do.
+        ItemStack addition = event.getInventory().getItem(1);
+        if (base != null && addition != null && sameEnchantsAndDamage(base, meta)) {
+            // Mending was all the second item had to give, so with it removed
+            // the anvil would take that item and the levels for nothing.
             event.setResult(null);
         } else {
             event.setResult(result);
         }
+    }
+
+    // Deliberately not ItemStack#isSimilar: the anvil has already raised the
+    // result's repair cost, so the two never compare equal, and a rename done
+    // alongside shouldn't make a wasted book look like it did something.
+    // Mending on the base is ignored, as the result has just had it removed.
+    private static boolean sameEnchantsAndDamage(ItemStack base, ItemMeta resultMeta) {
+        ItemMeta baseMeta = base.getItemMeta();
+        if (!(baseMeta instanceof Damageable baseDamage) || !(resultMeta instanceof Damageable resultDamage)) return false;
+        if (baseDamage.getDamage() != resultDamage.getDamage()) return false;
+
+        Map<Enchantment, Integer> baseEnchants = new HashMap<>(baseMeta.getEnchants());
+        baseEnchants.remove(Enchantment.MENDING);
+        return baseEnchants.equals(resultMeta.getEnchants());
     }
 
     // Defense-in-depth: Mending can't normally roll at the enchanting table,

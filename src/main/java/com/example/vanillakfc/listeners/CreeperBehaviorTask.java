@@ -23,6 +23,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.BlockIterator;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -138,8 +139,15 @@ import java.util.function.Predicate;
  *       next tick, which is what caused the fuse-primed sound to loop
  *       before this fallback also cleared the target. Once a fuse is first
  *       observed climbing while unwatched, that creeper is remembered as
- *       "permitted" and left alone from then on - even if someone starts
- *       watching partway through, it still detonates on schedule. The
+ *       "permitted" and left alone while that fuse keeps climbing - even if
+ *       someone starts watching partway through, it still detonates on
+ *       schedule. The permission ends the moment the fuse stops climbing,
+ *       watched or not: a fuse that winds back down (the player backed off
+ *       out of range) means the next approach is a fresh one. Fixed
+ *       2026-10-07 - it used to be withdrawn only while unwatched, so a
+ *       creeper whose fuse wound down while someone was watching it kept
+ *       its permission, kept its target, and fused and exploded again the
+ *       moment that player walked back up to it, looking right at it. The
  *       explicit-ignition path (flint and steel, dispensers, a plugin
  *       calling {@code ignite()}/{@code setIgnited()}) is separately
  *       covered by cancelling {@link CreeperIgniteEvent} while watched.</li>
@@ -209,13 +217,19 @@ public final class CreeperBehaviorTask implements Listener {
     // a tick early.
     private static final int UNWATCHED_DEBOUNCE_TICKS = 4;
 
+    // Leaves are drawn with gaps, so a creeper behind a bush or the edge of a
+    // canopy is in plain view - but a tree's worth of them does hide it. A
+    // sight line counts as clear through up to this many leaf blocks.
+    private static final int MAX_LEAVES_SEEN_THROUGH = 2;
+
     private final Plugin plugin;
     private final NamespacedKey freezeKey;
     private final Predicate<Block> blocksSight;
+    private final Set<Material> leaves;
     private final Set<UUID> permittedIgnitions = new HashSet<>();
     private final Map<UUID, Integer> unwatchedStreak = new HashMap<>();
     private final Map<UUID, Boolean> watchedCache = new HashMap<>();
-    private final Map<UUID, Integer> lastUnwatchedFuseTicks = new HashMap<>();
+    private final Map<UUID, Integer> lastFuseTicks = new HashMap<>();
     private final Map<UUID, Location> lastPathTarget = new HashMap<>();
     private final Map<UUID, Integer> lastPathTick = new HashMap<>();
     private final Map<UUID, Location> lastKnownPlayerLocation = new HashMap<>();
@@ -229,7 +243,9 @@ public final class CreeperBehaviorTask implements Listener {
         // constants below are server registry lookups, and the registries
         // aren't populated until the server is up.
         Set<Material> seeThrough = seeThroughMaterials();
-        this.blocksSight = block -> !seeThrough.contains(block.getType());
+        this.leaves = EnumSet.copyOf(Tag.LEAVES.getValues());
+        // Leaves are left to the ray trace's second pass, which counts them.
+        this.blocksSight = block -> !seeThrough.contains(block.getType()) && !leaves.contains(block.getType());
     }
 
     /**
@@ -238,27 +254,36 @@ public final class CreeperBehaviorTask implements Listener {
      * stops at anything with a collision box - so a player watching from
      * inside a base, through a window or over a fence, didn't count as
      * watching at all and the creeper carried on as if unobserved. Only
-     * blocks you genuinely see through are listed: leaves, slabs, stairs and
-     * walls really do hide what's behind them and keep blocking.
+     * blocks you genuinely see through are listed: slabs, stairs and walls
+     * really do hide what's behind them and keep blocking. Leaves are
+     * handled separately, by count - see {@link #MAX_LEAVES_SEEN_THROUGH}.
      */
     private static Set<Material> seeThroughMaterials() {
         Set<Material> seeThrough = EnumSet.of(
                 Material.IRON_BARS,
                 Material.SCAFFOLDING,
                 Material.BARRIER,
-                Material.LIGHT
+                Material.LIGHT,
+                // Added 2026-10-07: cages and grates you plainly see through,
+                // and the two translucent blocks.
+                Material.SPAWNER,
+                Material.TRIAL_SPAWNER,
+                Material.VAULT,
+                Material.MANGROVE_ROOTS,
+                Material.SLIME_BLOCK,
+                Material.HONEY_BLOCK
         );
         seeThrough.addAll(Tag.IMPERMEABLE.getValues()); // every glass block, tinted included
         seeThrough.addAll(Tag.ICE.getValues());
         seeThrough.addAll(Tag.FENCES.getValues());
         seeThrough.addAll(Tag.FENCE_GATES.getValues());
-        // Glass panes and chains have no vanilla tag of their own, and matching
-        // the name picks up every dyed pane and every copper-chain weathering
-        // stage without listing them all out.
+        // Glass panes, chains and copper grates have no vanilla tag of their
+        // own, and matching the name picks up every dyed pane and every
+        // weathering and waxed copper variant without listing them all out.
         for (Material material : Material.values()) {
             if (material.isLegacy()) continue;
             String name = material.name();
-            if (name.endsWith("GLASS_PANE") || name.endsWith("_CHAIN")) {
+            if (name.endsWith("GLASS_PANE") || name.endsWith("_CHAIN") || name.endsWith("COPPER_GRATE")) {
                 seeThrough.add(material);
             }
         }
@@ -306,7 +331,7 @@ public final class CreeperBehaviorTask implements Listener {
         permittedIgnitions.retainAll(liveCreepers);
         unwatchedStreak.keySet().retainAll(liveCreepers);
         watchedCache.keySet().retainAll(liveCreepers);
-        lastUnwatchedFuseTicks.keySet().retainAll(liveCreepers);
+        lastFuseTicks.keySet().retainAll(liveCreepers);
         lastPathTarget.keySet().retainAll(liveCreepers);
         lastPathTick.keySet().retainAll(liveCreepers);
         lastKnownPlayerLocation.keySet().retainAll(liveCreepers);
@@ -511,9 +536,9 @@ public final class CreeperBehaviorTask implements Listener {
 
     private void updateIgniteBlock(Creeper creeper, boolean watched) {
         UUID id = creeper.getUniqueId();
+        int fuseTicks = creeper.getFuseTicks();
+        Integer previous = lastFuseTicks.put(id, fuseTicks);
         if (!watched) {
-            int fuseTicks = creeper.getFuseTicks();
-            Integer previous = lastUnwatchedFuseTicks.put(id, fuseTicks);
             // Only an unwatched fuse that's actively climbing earns the
             // detonate-even-if-watched-later permission. One that's holding
             // or decaying (e.g. the player broke range/LOS and it's winding
@@ -530,9 +555,15 @@ public final class CreeperBehaviorTask implements Listener {
             }
             return;
         }
-        lastUnwatchedFuseTicks.remove(id);
         if (permittedIgnitions.contains(id)) {
-            return; // already fusing from before anyone watched - let it detonate
+            // Already fusing from before anyone watched - let it detonate, but
+            // only while that fuse is still climbing. Once it holds or winds
+            // down, the attempt is over and this watched creeper is stopped
+            // like any other.
+            if (fuseTicks > 0 && (previous == null || fuseTicks > previous)) {
+                return;
+            }
+            permittedIgnitions.remove(id);
         }
         // Not yet permitted and currently watched: strip the fuse and the
         // target *before* this tick's entity AI runs (this task runs early
@@ -542,6 +573,7 @@ public final class CreeperBehaviorTask implements Listener {
         boolean wasFusing = creeper.getFuseTicks() > 0;
         if (wasFusing) {
             creeper.setFuseTicks(0);
+            lastFuseTicks.put(id, 0);
         }
         if (creeper.getTarget() != null) {
             creeper.setTarget(null);
@@ -684,6 +716,24 @@ public final class CreeperBehaviorTask implements Listener {
 
         RayTraceResult hit = eye.getWorld().rayTraceBlocks(
                 eye, direction, distance, FluidCollisionMode.NEVER, true, blocksSight);
-        return hit == null;
+        return hit == null && leavesAlong(eye, direction, distance) <= MAX_LEAVES_SEEN_THROUGH;
+    }
+
+    // Leaf blocks are full cubes, so every one the line passes through is in
+    // the way. Stops counting once past the limit.
+    private int leavesAlong(Location eye, Vector direction, double distance) {
+        int count = 0;
+        try {
+            BlockIterator blocks = new BlockIterator(eye.getWorld(), eye.toVector(), direction, 0.0,
+                    (int) Math.ceil(distance));
+            while (blocks.hasNext() && count <= MAX_LEAVES_SEEN_THROUGH) {
+                if (leaves.contains(blocks.next().getType())) count++;
+            }
+        } catch (IllegalStateException e) {
+            // BlockIterator's own edge case for a start exactly on a block
+            // boundary. The solid-block trace already passed, so count it seen.
+            return 0;
+        }
+        return count;
     }
 }

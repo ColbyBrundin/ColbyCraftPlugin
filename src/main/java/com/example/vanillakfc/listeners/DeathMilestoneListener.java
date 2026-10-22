@@ -13,13 +13,16 @@ import org.bukkit.scoreboard.Criteria;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Score;
 
+import java.util.List;
+
 /**
- * Awards the "Dying Grace" advancement at {@link #DEATHS_REQUIRED} deaths.
+ * Awards the death-count advancements: "Dying Grace" at 40 deaths and
+ * "Great Scott!" at 200.
  *
- * <p>The advancement itself is in the bundled datapack and has nothing but an
- * {@code minecraft:impossible} criterion, which is the standard way to hand a
- * plugin control of when it is earned - vanilla's own triggers can count
- * deaths in a session but not a running total.
+ * <p>The advancements themselves are in the bundled datapack and have nothing
+ * but an {@code minecraft:impossible} criterion, which is the standard way to
+ * hand a plugin control of when they are earned - vanilla's own triggers can
+ * count deaths in a session but not a running total.
  *
  * <p>The count comes from the server's own scoreboard wherever possible: any
  * objective tracking {@code deathCount} is what players are already reading
@@ -32,19 +35,22 @@ import org.bukkit.scoreboard.Score;
  * <p>Checked a tick after death rather than during it, because vanilla
  * increments the scoreboard after {@link PlayerDeathEvent} has finished - read
  * inside the event, the score is still one behind. Also checked on join, so
- * anyone already past the mark before this existed earns it on their way in
+ * anyone already past a mark before it existed earns it on their way in
  * rather than having to die once more for it.
  */
 public final class DeathMilestoneListener implements Listener {
 
-    private static final int DEATHS_REQUIRED = 40;
-    private static final String ADVANCEMENT = "dying_grace";
+    private record Milestone(int deaths, String advancement) {}
+
+    private static final List<Milestone> MILESTONES = List.of(
+            new Milestone(40, "dying_grace"),
+            new Milestone(200, "great_scott")
+    );
     /** Vanilla's own criterion name for a scoreboard death counter. */
     private static final String DEATH_COUNT_CRITERION = "deathCount";
 
     private final Plugin plugin;
     private final Advancements advancements;
-    private boolean loggedSource;
 
     public DeathMilestoneListener(Plugin plugin, Advancements advancements) {
         this.plugin = plugin;
@@ -70,13 +76,16 @@ public final class DeathMilestoneListener implements Listener {
     }
 
     private void check(Player player) {
-        if (deathCount(player) < DEATHS_REQUIRED) return;
-        advancements.award(player, ADVANCEMENT);
+        int deaths = deathCount(player);
+        for (Milestone milestone : MILESTONES) {
+            if (deaths >= milestone.deaths()) {
+                advancements.award(player, milestone.advancement());
+            }
+        }
     }
 
     private int deathCount(Player player) {
         int fromScoreboard = -1;
-        String source = null;
         for (Objective objective : Bukkit.getScoreboardManager().getMainScoreboard().getObjectives()) {
             // Matched on the criterion, not the objective's name - a server's
             // death counter can be called anything ("deaths", "Deaths",
@@ -89,17 +98,9 @@ public final class DeathMilestoneListener implements Listener {
             Score score = objective.getScore(player);
             if (score.isScoreSet() && score.getScore() > fromScoreboard) {
                 fromScoreboard = score.getScore();
-                source = "scoreboard objective '" + objective.getName() + "'";
             }
         }
 
-        int deaths = fromScoreboard >= 0 ? fromScoreboard : player.getStatistic(Statistic.DEATHS);
-        if (!loggedSource) {
-            loggedSource = true;
-            plugin.getLogger().info("Dying Grace counts deaths from "
-                    + (source != null ? source : "the DEATHS statistic (no deathCount objective on the scoreboard)")
-                    + "; " + player.getName() + " is on " + deaths + " of " + DEATHS_REQUIRED + ".");
-        }
-        return deaths;
+        return fromScoreboard >= 0 ? fromScoreboard : player.getStatistic(Statistic.DEATHS);
     }
 }

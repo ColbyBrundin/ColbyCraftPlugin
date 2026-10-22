@@ -1,6 +1,7 @@
 package com.example.vanillakfc.listeners;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -11,14 +12,17 @@ import org.bukkit.entity.Enderman;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,8 +32,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * <ul>
  *   <li>Block pickup prevention (terrain griefing) - Endermen can no longer
 *   pick up any block.</li>
- *   <li>A flat attack damage reduction on top of whatever vanilla's
- *   difficulty-scaled melee damage already is.</li>
  *   <li>A chance for a player's melee hit to trigger a full dodge: instead
  *   of taking that hit, the Enderman teleports to a nearby spot biased to
  *   land behind the attacker.</li>
@@ -40,11 +42,15 @@ import java.util.concurrent.ThreadLocalRandom;
  *   knockback to shove them off their perch, then teleports back to where
  *   it started a moment later. Punishes the classic "pillar up and hit it
  *   from above" cheese without requiring any reachability analysis.</li>
+ *   <li>An aggro teleport: the moment an Enderman turns on a player - stared
+ *   at, hit, or set on them any other way - it teleports to a spot within
+ *   {@link #AGGRO_TELEPORT_MAX_DISTANCE} blocks of that player and plays a
+ *   custom sound. A dodge counts as turning on the attacker. If a dodge or
+ *   counter-move has already teleported it, that teleport stands and the
+ *   sound plays on it instead. See {@link #onEndermanAggro}.</li>
  * </ul>
  */
 public final class EndermanListener implements Listener {
-
-    private static final double ATTACK_DAMAGE_REDUCTION = 2.0;
 
     private static final double DODGE_TELEPORT_CHANCE = 0.50;
     private static final double MIN_DODGE_DISTANCE = 3.0;
@@ -69,8 +75,22 @@ public final class EndermanListener implements Listener {
     // 0.4s: long enough that the hit is visible before the Enderman vanishes again.
     private static final long COUNTER_RETURN_DELAY_TICKS = 8L;
 
+    // Not closer than 2: landing on top of the player reads as a glitch, not
+    // an arrival.
+    private static final double AGGRO_TELEPORT_MIN_DISTANCE = 2.0;
+    private static final double AGGRO_TELEPORT_MAX_DISTANCE = 5.0;
+    // An Enderman's target can drop and come straight back (line of sight
+    // lost for a moment, the player glancing away mid-stare). One arrival per
+    // burst of anger, not one per flicker.
+    private static final int AGGRO_COOLDOWN_TICKS = 100;
+
     private final Plugin plugin;
     private final Set<UUID> pendingCounterReturn = new HashSet<>();
+    // Tick each Enderman last did its aggro teleport, for the cooldown.
+    private final Map<UUID, Integer> lastAggroTick = new HashMap<>();
+    // Tick each Enderman was last moved by a dodge or counter-move, so an
+    // aggro arriving on top of one knows the Enderman has already teleported.
+    private final Map<UUID, Integer> lastOwnTeleportTick = new HashMap<>();
 
     public EndermanListener(Plugin plugin) {
         this.plugin = plugin;
@@ -83,16 +103,110 @@ public final class EndermanListener implements Listener {
         event.setCancelled(true);
     }
 
-    // Vanilla scales Enderman melee damage by difficulty internally (Easy
-    // 4.5, Normal 7, Hard 10.5) before this event ever fires, so a flat
-    // subtraction from the BASE modifier tracks whatever difficulty is
-    // active without branching on it here.
-    @SuppressWarnings("deprecation")
-    @EventHandler
-    public void onEndermanAttack(EntityDamageByEntityEvent event) {
-        if (event.getDamager().getType() != EntityType.ENDERMAN) return;
-        double base = event.getDamage(DamageModifier.BASE);
-        event.setDamage(DamageModifier.BASE, Math.max(0.0, base - ATTACK_DAMAGE_REDUCTION));
+    /**
+     * The aggro teleport. Every way an Enderman turns on a player ends in it
+     * taking that player as its target - being stared at, being hit, another
+     * part of this plugin setting it on them - so this is hung off that one
+     * event rather than each cause.
+     *
+     * <p>Only a change of target counts - an Enderman already after this
+     * player isn't newly provoked.
+     *
+     * <p>The sound always plays on a teleport, but not always this one's. If
+     * a dodge or counter-move has just teleported the Enderman, that teleport
+     * stands - a second jump would undo the dodge, and the counter is about
+     * to send the Enderman back anyway - and the sound plays from where it
+     * put the Enderman, alongside the dodge's own sound if it has one.
+     *
+     * <p>Otherwise it's carried out a tick later: the event fires from inside
+     * the Enderman's own AI, which is still part way through acting on the old
+     * position.
+     */
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onEndermanAggro(EntityTargetLivingEntityEvent event) {
+        if (!(event.getEntity() instanceof Enderman enderman)) return;
+        if (!(event.getTarget() instanceof Player player)) return;
+        if (enderman.getTarget() == player) return;
+
+        UUID id = enderman.getUniqueId();
+        int now = Bukkit.getCurrentTick();
+        Integer last = lastAggroTick.get(id);
+        if (last != null && now - last < AGGRO_COOLDOWN_TICKS) return;
+        lastAggroTick.values().removeIf(tick -> now - tick >= AGGRO_COOLDOWN_TICKS);
+        lastAggroTick.put(id, now);
+
+        if (teleportedByOtherMove(id, now)) {
+            playAggroSound(enderman);
+            return;
+        }
+        Bukkit.getScheduler().runTask(plugin, () -> aggroTeleport(enderman, player, now));
+    }
+
+    private void aggroTeleport(Enderman enderman, Player player, int triggeredTick) {
+        if (!enderman.isValid()) return;
+
+        // A dodge or counter-move got in during the tick's wait: its teleport
+        // stands, as above.
+        boolean superseded = teleportedByOtherMove(enderman.getUniqueId(), triggeredTick);
+        boolean playerReachable = player.isOnline() && !player.isDead() && player.getWorld() == enderman.getWorld();
+        if (!superseded && playerReachable) {
+            Location destination = findAggroDestination(enderman, player);
+            if (destination != null) {
+                Location origin = enderman.getLocation().clone();
+                if (enderman.teleport(destination)) {
+                    spawnTeleportParticles(enderman.getWorld(), origin);
+                    spawnTeleportParticles(enderman.getWorld(), destination);
+                }
+            }
+        }
+        // With nowhere to land it still plays, from where the Enderman is.
+        playAggroSound(enderman);
+    }
+
+    // True while a counter-move has the Enderman away from its spot, or if a
+    // dodge or counter-move teleported it on or after the given tick.
+    private boolean teleportedByOtherMove(UUID endermanId, int sinceTick) {
+        if (pendingCounterReturn.contains(endermanId)) return true;
+        Integer moved = lastOwnTeleportTick.get(endermanId);
+        return moved != null && moved >= sinceTick;
+    }
+
+    private void noteOwnTeleport(Enderman enderman) {
+        int now = Bukkit.getCurrentTick();
+        lastOwnTeleportTick.values().removeIf(tick -> now - tick > AGGRO_COOLDOWN_TICKS);
+        lastOwnTeleportTick.put(enderman.getUniqueId(), now);
+    }
+
+    // Played from the Enderman rather than at a fixed point, and after
+    // whichever teleport moved it: the sound starts at the landing spot and
+    // stays on the Enderman if it moves. No-category overload, so MASTER, for
+    // the same reason as the dodge sound below.
+    private void playAggroSound(Enderman enderman) {
+        enderman.getWorld().playSound(enderman, EndermanDodgeSoundPackListener.AGGRO_SOUND_KEY, 1.0f, 1.0f);
+    }
+
+    // Any direction around the player, on solid footing with room to stand,
+    // and within range in a straight line - the footing search can go up or
+    // down a few blocks, which on its own could put a 5-block step 6 away.
+    private Location findAggroDestination(Enderman enderman, Player player) {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        Location playerLocation = player.getLocation();
+        for (int attempt = 0; attempt < MAX_DESTINATION_ATTEMPTS; attempt++) {
+            double angle = random.nextDouble() * Math.PI * 2;
+            double distance = AGGRO_TELEPORT_MIN_DISTANCE
+                    + random.nextDouble() * (AGGRO_TELEPORT_MAX_DISTANCE - AGGRO_TELEPORT_MIN_DISTANCE);
+            double x = playerLocation.getX() + Math.cos(angle) * distance;
+            double z = playerLocation.getZ() + Math.sin(angle) * distance;
+
+            Location destination = findVerticalSlot(enderman.getWorld(), x, z, playerLocation.getY(), enderman);
+            if (destination == null) continue;
+            if (destination.distanceSquared(playerLocation) > AGGRO_TELEPORT_MAX_DISTANCE * AGGRO_TELEPORT_MAX_DISTANCE) continue;
+
+            // Arrives facing the player.
+            destination.setDirection(playerLocation.toVector().subtract(destination.toVector()));
+            return destination;
+        }
+        return null;
     }
 
     @EventHandler
@@ -123,10 +237,21 @@ public final class EndermanListener implements Listener {
 
         Location origin = enderman.getLocation().clone();
         if (!enderman.teleport(dodge.location())) return;
+        noteOwnTeleport(enderman);
 
         playTeleportEffects(enderman.getWorld(), origin, dodge.behindBiased());
         playTeleportEffects(enderman.getWorld(), dodge.location(), dodge.behindBiased());
         event.setCancelled(true);
+
+        // A dodged hit is cancelled, so vanilla never gets as far as turning
+        // the Enderman on its attacker - it would dodge and then stand there.
+        // Set here instead, which goes through onEndermanAggro like any other
+        // provocation: the dodge is the teleport, so only the sound is added.
+        // Creative and Spectator players aren't targets, as in vanilla.
+        if (enderman.getTarget() != player
+                && (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE)) {
+            enderman.setTarget(player);
+        }
     }
 
     private record DodgeOffset(Vector vector, boolean behindBiased) {}
@@ -156,6 +281,7 @@ public final class EndermanListener implements Listener {
         destination.setDirection(behind.clone().multiply(-1));
 
         if (!enderman.teleport(destination)) return false;
+        noteOwnTeleport(enderman);
 
         playTeleportEffects(world, origin, true);
         playTeleportEffects(world, destination, true);
@@ -285,7 +411,7 @@ public final class EndermanListener implements Listener {
     // uniform-angle fallback - it marks the deliberate, biased dodge
     // specifically, not just its outcome.
     private void playTeleportEffects(World world, Location location, boolean behindBiased) {
-        world.spawnParticle(Particle.PORTAL, location.clone().add(0, 1.0, 0), TELEPORT_PARTICLE_COUNT, 0.3, 0.5, 0.3, 0.0);
+        spawnTeleportParticles(world, location);
         if (behindBiased) {
             // Matches the vanilla call below in using the no-category
             // overload (SoundCategory.MASTER) rather than HOSTILE, so this
@@ -295,5 +421,9 @@ public final class EndermanListener implements Listener {
         } else {
             world.playSound(location, Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
         }
+    }
+
+    private void spawnTeleportParticles(World world, Location location) {
+        world.spawnParticle(Particle.PORTAL, location.clone().add(0, 1.0, 0), TELEPORT_PARTICLE_COUNT, 0.3, 0.5, 0.3, 0.0);
     }
 }
