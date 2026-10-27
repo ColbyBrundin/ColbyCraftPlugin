@@ -18,6 +18,8 @@ Baby animal growth time (bred, not wild)             | ~20 min                 |
 Cat max health                                       | 10 (5 hearts)           | x2 - 20 (10 hearts)
 Cat deaths before dying for good                     | 1                       | 9 - a lethal blow spends a
                                                                                  life instead, 8 times over
+Creeper max health                                   | 20 (10 hearts)          | 60 (30 hearts); 1 (half a
+                                                                                 heart) while its fuse is lit
 Creeper follow range                                 | 16 blocks (default)     | 32 blocks
 Creeper step height                                  | 0.6 (can't clear block) | 1.2 (clears a full block)
 Creeper jump strength                                | 0.42 (default)          | x1.5
@@ -37,10 +39,9 @@ Death: gear (weapons/tools/armor/shield/elytra/bow/  | drops on the ground     |
 trident) and arrows                                                             on respawn
 Item despawn time (player death drops only)          | 6000 ticks (5 min)      | 12000 ticks (10 min)
 Mob death XP                                         | vanilla amount          | x1.5 (all mobs)
-XP gain                                              | unlimited               | capped at 500 raw XP points
-                                                                                 per 5-minute server-wide window
-Enderman melee damage                                | 4.5/7/10.5              | -2.0 flat from whichever
-                                                        (Easy/Normal/Hard)       applies
+XP gain                                              | unlimited               | capped at 1000 raw XP points
+                                                                                 per 10-minute server-wide window
+Mending repair rate                                  | 2 durability per XP     | 1 durability per XP
 Enderman block pickup                                | can pick up blocks      | blocked (all blocks)
 Iron tool durability (sword/pickaxe/axe/shovel/hoe)  | 250                     | 400
 Iron Helmet/Chestplate/Leggings/Boots durability     | 165/240/225/195         | 240/330/310/275
@@ -48,7 +49,7 @@ Diamond tool durability                              | 1561                    |
 Diamond Helmet/Chestplate/Leggings/Boots durability  | 363/528/495/429         | 500/700/650/575
 Netherite tool durability (sword/spear/pickaxe/      | 2031                    | 4000
   axe/shovel/hoe)
-Netherite Helmet/Chestplate/Leggings/Boots           | 407/592/555/481         | 750/900/850/800
+Netherite Helmet/Chestplate/Leggings/Boots           | 407/592/555/481         | 850/1000/950/900
   durability
 Trident durability                                   | 250                     | 400
 Wolf armor durability                                | 64                      | 128 (cracking stages and
@@ -95,12 +96,23 @@ Anvil repair-with-material                           | 1 ingot restores 25%    |
 Anvil trident repair                                 | no repair material      | 1 Heart of the Sea restores
                                                        exists (2 tridents or     75% durability each (300 of
                                                        Mending only)             the new 400)
-Anvil prior-work penalty growth per block repair     | n -> 2n + 1             | n -> n + ceil(1.5 x (n + 1)),
-                                                        (0,1,3,7,15,31)          i.e. 50% bigger jumps
-                                                                                 (0,2,7,19,49) - "Too Expensive!"
-                                                                                 after 4 repairs instead of 6
+Anvil Elytra repair                                  | 1 Phantom Membrane      | 1 Phantom Membrane restores
+                                                        restores 25% (up to 4    100%; priced like the other
+                                                        per repair)              material repairs below
+Anvil prior-work penalty                             | one penalty shared by   | two: a repair penalty (block/
+                                                        every anvil use          ingot/Heart/membrane repairs)
+                                                                                 and vanilla's, now used only
+                                                                                 by combining (books/items)
+Anvil repair penalty growth per material repair      | n -> 2n + 1             | n -> ceil(1.5n + 1)
+                                                        (0,1,3,7,15,31)          (0,1,3,6,10,16,25,39) -
+                                                                                 "Too Expensive!" after 7
+                                                                                 repairs instead of 6
+Anvil rename                                         | prior-work penalty + 1  | free (0 levels); alongside a
+                                                        level (max 39); +1 level repair/enchant, adds nothing
+                                                        alongside other work
 Enchanting Table recipe                              | 2 Diamonds + Book +     | 2 Diamond Blocks + Book +
                                                         4 Obsidian               4 Obsidian
+Rail / Powered Rail recipe output                    | 16 / 6                  | 32 / 16 (same ingredients)
 Drowned thrown-trident damage                        | 8                       | 4 (half; melee and player
                                                                                  tridents untouched)
 Lightning strike chance per loaded chunk per tick     | 1 in 100,000            | plus an added, independent
@@ -120,6 +132,9 @@ Skeleton damage (Easy/Normal/Hard)                   | 4.5/7/10.5 (roughly,    |
                                                         velocity-dependent for   and melee
                                                         arrows)
 Tamed wolf max health                                | 40                      | 100
+Horse max health                                     | 15-30                   | 40-60 (foals inherit as in
+                                                                                 vanilla, within 40-60;
+                                                                                 existing horses scaled up)
 Tamed wolf attack damage                             | normal                  | x1.5
 Spider movement speed                                | 0.3 (base)              | x1.5
 Iron Golem death drops                               | iron ingots + poppy     | none (all drops and XP
@@ -171,6 +186,8 @@ Blaze rod drops (player kill, no Looting)            | 0-1, avg 0.5            |
 Blaze rod drops - Looting bonus per level            | +0-1, avg +0.5          | unchanged (+0-1, avg +0.5)
 Blaze rod as furnace fuel                            | 12 items (2400 ticks)   | 16 items (3200 ticks); same
                                                                                  16 in blast furnace/smoker
+Shulker boxes in ender chests                        | allowed                 | can't be put in; ones already
+                                                                                 inside stay, and can come out
 
 
 1. COMBAT & HOSTILE MOBS
@@ -178,6 +195,13 @@ Blaze rod as furnace fuel                            | 12 items (2400 ticks)   |
 
 Creepers (CreeperListener, CreeperBehaviorTask)
 ------------------------------------------------------------------
+- Max health 20->60 (30 hearts), but 1 (half a heart) while the fuse is lit (changed 2026-10-23; was 12, and 16 before 2026-10-09). The idea: a
+  creeper frozen by being looked at takes real work to kill, while one that's charging up dies to any hit at all.
+  - The drop happens the moment the fuse lights - from getting close, or from flint and steel - and holds until the fuse has wound all the way
+    back down to 0. A fuse that's decaying but not out yet still counts as lit, so it's still a one-hit kill.
+  - Once the fuse is fully out it goes back to a full 60, even if it had been hurt before it started charging.
+  - Applies to charged creepers too, and to every creeper in the world, not just new spawns: one already in the world goes to 60 (fully healed)
+    the first time it's seen.
 - Perception & mobility: follow range 16->32 blocks; step height 0.6->1.2 (clears a full block without jumping); jump strength x1.5.
 - Explosion radius: 3->4 (6->8 charged); vanilla's charged-doubling still applies on top.
 - Natural spawning: only 35% of spawn attempts succeed (vanilla: 100%, solo). A successful spawn can add a 2nd creeper within 24 blocks (50% chance,
@@ -211,13 +235,22 @@ Creepers (CreeperListener, CreeperBehaviorTask)
 - See-through blocks don't count as obstruction (as of 2026-09-20). The sight ray stops at anything with a collision box, so a player watching from
   inside a base - through a window, over a fence, behind iron bars - was not registering as watching at all, and the creeper carried on as if
   unobserved. Glass (all colours, tinted included), glass panes, iron bars, chains, fences and fence gates, scaffolding, ice, barriers and light
-  blocks are now transparent to the check. Leaves, slabs, stairs and walls still block it - they really do hide what's behind them.
+  blocks are now transparent to the check. Slabs, stairs and walls still block it - they really do hide what's behind them.
+- Fixed 2026-10-07 - creepers lunging at a player who was looking at them: a creeper only ever moves while the check says nobody is watching (a
+  frozen one's speed is multiplied to exactly zero), so any lunge under a player's gaze meant the check thought it was hidden. Leaves were the main
+  cause - a creeper behind a bush or at the edge of a tree is in plain view through the gaps, but counted as unseen, so after the 4-tick grace it
+  went straight into the 2.5x chase. A sight line now counts as clear through up to 2 leaf blocks (one deep inside a tree still hides it). Copper
+  grates (all variants), spawners, trial spawners, vaults, mangrove roots, and slime and honey blocks are now see-through as well.
 - Freezing stops the creeper outright, not just its steering (as of 2026-09-20). Zeroing the speed attribute leaves two things running: the momentum
   of a chase at speed factor 3.0, which friction takes the better part of a second to bleed off while the creeper keeps drifting toward its target,
   and the queued path, ready to resume the instant the freeze lifts. Both are now cleared on the tick the freeze goes on. Horizontal velocity is
   zeroed only on that transition, not every frozen tick, so a watched creeper can still be knocked back when hit.
-- Fuse blocked while watched: can't start swelling (hit-trigger or proximity/LoS trigger) while watched, unless already mid-fuse (which continues
-  unaffected).
+- Fuse blocked while watched: can't start swelling (hit-trigger or proximity/LoS trigger) while watched, unless already mid-fuse - a fuse that
+  started while unwatched keeps climbing and detonates on schedule even if someone then looks at it.
+- Fixed 2026-10-07 - creepers fusing while being looked at: that mid-fuse exception was only withdrawn while the creeper was unwatched. A creeper
+  whose fuse started unwatched and then wound back down while someone was watching it (they backed off out of range) kept the exception for good,
+  kept its target, and fused and exploded again as soon as that player walked back up to it, looking right at it. It now ends the moment the fuse
+  stops climbing, watched or not, so the next approach is stopped like any other.
 - Flees cats within 12 blocks - unchanged vanilla behavior, just replicated (no exposed API to retune it).
 - Charged creepers are exempt from all of the above - always treated as "unwatched."
 
@@ -246,16 +279,34 @@ Happy Ghasts (HappyGhastListener)
 Endermen (EndermanListener, EndermanDodgeSoundPackListener)
 ------------------------------------------------------------------
 - Can no longer pick up blocks (placement unaffected).
-- Melee damage: flat -2.0 off vanilla's difficulty-scaled damage (Easy 4.5->2.5, Normal 7->5, Hard 10.5->8.5).
+- Melee damage is vanilla's again (Easy 4.5, Normal 7, Hard 10.5) as of 2026-10-11. It had a flat -2.0 taken off before that (2.5 / 5 / 8.5).
 - Dodge: 50% chance to dodge any player melee hit entirely - teleports 3-7 blocks away, 65% biased into a 30 degree cone directly behind the attacker
   (custom sound on the biased case, vanilla teleport sound otherwise).
 - Pillar-punish: a hit landed while the attacker is standing at least one block above the Enderman's feet has a 50% chance to trigger a counter
   instead - teleport directly behind the player, hit with knockback strong enough to knock them off their perch, teleport back ~0.4s later.
+- Aggro teleport (added 2026-10-11): the moment an Enderman turns hostile toward a player - stared at, hit, or angered by a broken End Crystal
+  (see the dragon fight) - it teleports to a random spot 2-5 blocks from that player, on solid footing, facing them, and plays a custom sound
+  (vanillakfc:enderman_aggro, from uinote.mp3). The sound is played from the Enderman itself after the teleport, so it starts at the landing spot
+  next to the player. Portal particles at both ends; no vanilla teleport sound.
+    - Triggers on the Enderman taking the player as its target, whatever the cause, a tick after it happens. Once per Enderman per 5 seconds, so
+      a target that flickers off and on doesn't cause repeat arrivals; one already after that player doesn't re-trigger.
+    - With nowhere valid to land within 5 blocks (16 tries), it stays put and the sound still plays from where it is.
+    - A dodge now counts as turning hostile (changed 2026-10-11): a dodged hit is cancelled, so vanilla never set the Enderman on its attacker
+      and it would dodge and then just stand there. The dodge now sets it on the attacker itself (Survival/Adventure players only).
+    - The sound always plays on a teleport, but not always this one's. If a dodge or a pillar-punish has already teleported the Enderman when it
+      turns hostile, that teleport stands - a second jump would undo the dodge, and the pillar-punish is about to send it back anyway - and the
+      aggro sound plays from where it put the Enderman. On a "behind the player" dodge that means both custom sounds play together.
+    - Vanilla still applies afterwards: an Enderman being stared at from under 4 blocks teleports away again on its own.
+    - Players who declined the resource pack see the teleport but hear nothing.
 
 Skeletons (SkeletonListener)
 ------------------------------------------------------------------
 - Movement speed cut to x0.2 while actively targeting (stationary snipers instead of walking shooters).
 - Follow range 16->32 blocks.
+- Range limit (added 2026-10-07): a skeleton only keeps a target within 32 blocks and within 10 blocks of its own height, and drops it otherwise -
+  checked every 2 ticks, well inside the 1-second bow draw, so an out-of-range shot never fires. Vanilla only checks range when a skeleton first
+  finds a target on its own; a target picked up any other way - being hit, or this plugin's own fallback below - was kept at any distance, and at
+  4x arrow speed a skeleton could hit a player on a Happy Ghast 130+ blocks overhead. The fallback below obeys the same limit.
 - Shot interval hard-locked to an exact tick count: 120 ticks (6s) on Easy/Normal, 100 ticks (5s) on Hard - vs vanilla's ~60/~40-tick cooldowns -
   tracked by server tick count so it can't drift under lag. Every draw that starts always ends in a fired arrow.
 - Every arrow leaves at 4x vanilla's velocity, re-aimed straight at the target instead of vanilla's slow-speed arc (which, scaled up as-is, would sail
@@ -295,6 +346,16 @@ Mace (MaceDamageListener)
 - Raw base damage (hit + crit + fall-distance smash bonus, before armor/resistance) is capped at 40.0. Vanilla's fall-scaling smash bonus is otherwise
   unbounded, so extreme fall setups (elytra + wind charges, etc.) could produce arbitrarily large hits.
 
+Shield break on heavy hits (ShieldBreakListener)
+------------------------------------------------------------------
+Added 2026-10-07.
+- A hit worth more than 12 damage, blocked with a shield, knocks the shield down the way an axe does: the hit is still blocked, then the shield goes
+  on a 5-second cooldown (an axe's) with vanilla's shield-break sound. Works on any blocked hit - melee, projectiles and explosions - from mobs
+  and players alike.
+- "Worth" is the hit before the shield took any of it, including difficulty scaling; 12 or less, nothing changes. For scale: a Hard-difficulty
+  Iron Golem, Ravager or Warden hit, a close creeper blast, or a charged player hit with a strong weapon clears it, while ordinary zombie or
+  skeleton hits don't.
+
 Spear (SpearDamageListener)
 ------------------------------------------------------------------
 - The charge-attack bonus (extra damage scaled by relative velocity between attacker and target) is capped at 5x whatever the hit would have dealt
@@ -306,6 +367,27 @@ Beds & Respawn Anchors (BedExplosionListener)
 ------------------------------------------------------------------
 - Wrong-dimension explosion power (beds in the Nether/End, respawn anchors outside the Nether) is reduced from vanilla's 5.0 down to 1.0 - the same
   power as a ghast fireball.
+
+Ender Dragon fight (DragonFightListener)
+------------------------------------------------------------------
+Added 2026-10-06.
+- Crystals come back: every 30 seconds while a dragon is alive, if any obsidian pillar's End Crystal is gone, one empty pillar gets a new crystal
+  on its bedrock - chosen at random if several are empty, so it's one per 30 seconds however many are missing. Caged pillars included. The dragon
+  heals from it like any other crystal, so a fight needs to be won between respawns or with the crystals kept down.
+- The ten pillars are found where vanilla generates them (evenly spaced on a circle of radius 42 around the island centre), and each one's top by
+  its bedrock cap on obsidian - so a pillar whose bedrock is gone stops getting crystals. Pillars in unloaded chunks are skipped, not loaded.
+- Nothing respawns once the dragon is dead, or during the respawn ritual.
+- Breaking a crystal angers an enderman: when a player destroys any End Crystal by hitting it or with their own projectile (arrow, trident, etc.),
+  one random enderman within 64 blocks of that player turns hostile toward that player only - the same anger as being stared at. One already
+  attacking that player is skipped in favour of another. No enderman in range, no effect. Crystals destroyed by explosions or anything other than
+  a player don't count.
+- Arrival sound (added 2026-10-11): a player who loads into the End while a dragon is alive there hears a custom 7.7-second clip
+  (vanillakfc:end_dragon_alive, from warthog.m4a), played to that player only, at full volume wherever they stand. "Loads in" means arriving
+  from another dimension, or logging in already in the End. Nothing plays if the dragon is dead or mid-respawn.
+    - The dragon isn't always loaded the instant a player arrives (and on a first-ever visit hasn't been created yet), so it's looked for
+      every half second for the first 5 seconds and the clip plays the moment one is found.
+    - On a login the clip waits for the resource pack to finish loading, since the sound is in the pack and the pack is only sent on join.
+    - Players who declined the resource pack hear nothing.
 
 Lightning (LightningListener)
 ------------------------------------------------------------------
@@ -345,14 +427,37 @@ Mob XP bonus (MobXpListener)
 - Every mob drops 50% more XP on death (added 2026-10-02). Vanilla still decides whether a mob drops XP at all (e.g. it must have been killed by a
   player or tamed wolf), so mobs that drop nothing still drop nothing. Iron Golems stay at 0. Players' own death XP is unaffected.
 - Most mobs drop small amounts, so the result is rounded up or down at random in proportion: a 5-XP mob drops 7 or 8, averaging exactly 7.5.
-- The XP cap below still applies, so the bonus fills the 500-point window faster rather than raising it.
+- The XP cap below still applies, so the bonus fills the 1000-point window faster rather than raising it.
+- The Ender Dragon is boosted too (18,000 XP the first time, 750 after), since Paper spreads its XP over the death animation from the same amount.
+- A kill with a Wisdom weapon (section 3) multiplies this further. Checked by "./gradlew mobXpCheck": 1-12,000 XP at every Wisdom level, 400,000
+  rolls each, averaging exactly the intended amount and only ever landing on the two whole numbers either side of it.
 
 XP gain cap (XpCapListener)
 ------------------------------------------------------------------
-- New mechanic: each player can gain at most 500 raw XP points (not levels) within any rolling 5-minute, server-wide-aligned window. Applies to any
-  positive XP source routed through the vanilla point-grant event (mob kills, orb pickup, mining, breeding, fishing, furnace pickup, villager
-  trading). "/xp add ... levels" and other direct level grants are a separate event this cap doesn't touch.
-- Mending counts toward the same 500. XP an orb spends repairing Mending gear is added to the player's total; a repair that would go past the cap
+- New mechanic: each player can gain at most 1000 raw XP points (not levels) per 10-minute window (500 per 5 minutes until 2026-10-09 - the
+  same average rate, in longer stretches). The windows are fixed and shared by everyone, set by the clock - they reset at :00, :10, :20 and so on
+  past every hour - not a rolling 10 minutes from each player's own first gain. So up to 1000 can be earned just before a reset and another 1000
+  just after it. The count is kept in memory only: relogging doesn't reset it, but a server
+  restart does. Applies to any positive XP source routed through the vanilla point-grant event (mob kills, orb pickup, mining, breeding,
+  fishing, furnace pickup, villager trading). "/xp add ... levels" and other direct level grants are a separate event this cap doesn't touch.
+- Hitting the cap tells the player in chat, and logs a line to the console (added 2026-10-08), once per player per window, with the time left
+  until the window resets - e.g. "Steve hit the 1000 XP cap; window resets in 7:13."
+- Never silent after that (fixed 2026-10-11). The chat message is once per window, which left the cap silent for the rest of it - up to ten
+  minutes of orbs vanishing with nothing to say why, and the same again after relogging. Now every orb or Mending repair the cap swallows shows
+  "XP cap reached - resets in m:ss" above the hotbar (at most once a second), and a capped player who rejoins gets the chat message again. The
+  chat message also now says outright that XP picked up before the reset is lost.
+- Audit 2026-10-11, against the server code: the cap can only be reached by picking up an XP orb - that is the one place the server fires the
+  event it listens to - so /xp, advancement rewards and level grants can't trip it. On a pickup, Mending is paid first and counted, and only
+  the leftover reaches the cap, so no point of an orb is counted twice. No case was found of it triggering when it shouldn't; the fault was the
+  silence above.
+- Lifted for the first Ender Dragon (added 2026-10-11). The first dragon killed in an End drops 12,000 XP (18,000 with the mob XP bonus), nearly
+  all of which the cap would throw away. The cap is lifted for players in that End from the killing blow until 60 seconds after the dragon's body
+  disappears. Counted from the body, not the blow, because the dragon first flies to the portal and plays a 10-second death animation, and only
+  releases its XP in the last 2.5 seconds of it - a minute from the blow would be part gone before any XP existed. XP gained while lifted isn't
+  counted against the window. Players in the End are told when it lifts, when the 60 seconds start, and when the cap is back; the console logs
+  the start and end. Later dragons (500 XP, 750 boosted) are capped as usual. Tested live 2026-10-11 on the test server: blow 17:02:18, body gone
+  17:02:38, cap back 17:03:38, and exactly 18,000 XP in orbs on the ground.
+- Mending counts toward the same 1000. XP an orb spends repairing Mending gear is added to the player's total; a repair that would go past the cap
   is cut down to what's left, and once the cap is reached Mending stops repairing until the window resets (the orb is still used up).
   Bug fixed 2026-10-02: vanilla spends an orb's XP on Mending before the player receives any of it, and the cap only saw what was left over - so
   XP put into repairs was never counted, and a capped player could keep mending without limit.
@@ -402,14 +507,16 @@ Durability (DurabilityListener)
   Diamond Boots                           429                      575
   Netherite Sword/Spear/Pickaxe/Axe/      2031                     4000
     Shovel/Hoe
-  Netherite Helmet                        407                      750
-  Netherite Chestplate                    592                      900
-  Netherite Leggings                      555                      850
-  Netherite Boots                         481                      800
+  Netherite Helmet                        407                      850
+  Netherite Chestplate                    592                      1000
+  Netherite Leggings                      555                      950
+  Netherite Boots                         481                      900
   Trident                                 250                      400
   Wolf Armor                              64                       128
 
   Gold gear durability is untouched by this listener.
+- Netherite armor raised by 100 each on 2026-10-11 (was 750/900/850/800). Pieces pick up the new maximum the next time they take damage, with
+  durability already lost kept as-is - so a worn piece gains the full extra 100 on top of what it had left.
 - Wolf armor (added 2026-10-04): its cracking stages are fractions of max durability (95%, 69% and 32% remaining), so doubling it moves them from
   about 61/44/20 to 122/88/41 durability left, and an Armadillo Scute now repairs 16 instead of 8. Converted the moment the wolf wearing it is
   hurt, just before the hit lands - converting during the hit would set off a false crack sound on the first one. Durability already lost is
@@ -476,18 +583,36 @@ to, so armour is slightly better off at level I and worse off at level III than 
   anything no handler reached had its damage cancelled with nothing putting it back. An Unbreaking bow was simply indestructible, as were crossbows,
   tridents, shields, fishing rods, shears, flint & steel and brushes.
 
+Wisdom (bundled datapack: data/vanillakfc/enchantment/wisdom.json; MobXpListener)
+------------------------------------------------------------------
+Added 2026-10-08. A new melee weapon enchantment, levels I-III.
+- Kills made with it drop more XP: +15% / +30% / +50% at I / II / III, multiplied on top of the plugin's 1.5x mob XP bonus rather than added to
+  it - 1.725x / 1.95x / 2.25x vanilla in all. A 5-XP zombie averages 8.6 / 9.75 / 11.25 instead of 7.5. Vanilla still decides whether a mob drops
+  XP at all, and the 1000-XP-per-10-minutes cap still applies.
+- Read from the main hand of the player credited with the kill, at the moment of death - the same slot Looting works from - so a bow kill only
+  counts if the Wisdom weapon is in the main hand. Kills credited to a tamed wolf get no Wisdom bonus.
+- Mutually exclusive with Looting.
+- Same rarity and costs as Looting (weight 2, level I from power 15, each level 9 apart), on the same items (#minecraft:enchantable/melee_weapon),
+  so in an enchanting table its levels come up at Looting's own odds. Simulated on a diamond sword with vanilla's enchanting code against this
+  server's data, levels I / II / III per enchant: table level 20 - Looting 6.2% / 4.4% / 0%, Wisdom 6.1% / 4.3% / 0%; table level 30 - Looting 0%
+  / 5.6% / 8.2%, Wisdom 0% / 5.4% / 8.0%. Averaged over table levels 1-30, both 2.8% / 3.4% / 0.7%.
+- Obtained like any normal enchantment: enchanting table, anvil books, librarian trades (generic book pool), and loot.
+
 Deep Quiver (bundled datapack: data/vanillakfc/enchantment/deep_quiver.json)
 ------------------------------------------------------------------
 Added 2026-10-04. A new enchantment for bows and crossbows, levels I-III.
 - Each shot has a chance not to use up its arrow: 25% / 40% / 50% at I / II / III - the mirror of this plugin's Unbreaking, which keeps
   75% / 60% / 50% of durability damage. Works on whichever arrow the game would fire anyway (offhand first, then the inventory), plain or tipped
   or spectral. For a crossbow the roll is made when it's loaded, which is when a crossbow uses its ammo; Multishot still only ever costs one.
-- An arrow that wasn't used up can't be picked back up once fired, the same as with Infinity, so it can't be used to duplicate arrows.
+- No arrow fired from a Deep Quiver bow or crossbow can ever be picked back up, whether it hits something or not and whether or not the shot
+  used one up - every shot behaves like an Infinity arrow (DeepQuiverListener). Changed 2026-10-09: it used to be only the arrows that weren't
+  used up, which is vanilla's own rule, so a shot that did use one left an arrow that could be collected and fired again.
 - Mutually exclusive with Infinity and Mending (vanilla's own bow exclusive set, which already keeps those two apart), so a bow or crossbow can
   carry only one of the three.
-- Obtained like any normal enchantment: enchanting table, anvil books, librarian trades (it's in the generic book pool), and loot. Weight 2, as
-  rare as Punch or Flame; enchanting costs as Unbreaking's.
-- Datapack-only: it uses vanilla's own ammo-use effect (what Infinity is built on), set to 0 by a level-based random chance.
+- Obtained like any normal enchantment: enchanting table, anvil books, librarian trades (it's in the generic book pool), and loot. Weight 1, as
+  rare as Infinity (lowered from 2, Punch and Flame's, on 2026-10-08); enchanting costs as Unbreaking's.
+- The ammo chance is in the datapack, on vanilla's own ammo-use effect (what Infinity is built on), set to 0 by a level-based random chance; the
+  no-pickup rule above is the plugin's.
 
 Sharper Fangs (bundled datapack: fire_protection.json, thorns.json, unbreaking.json; SharperFangsListener)
 ------------------------------------------------------------------
@@ -529,10 +654,24 @@ Bane of the Living (bundled datapack: data/minecraft/enchantment/bane_of_arthrop
   enchanting table, anvils and trades. It's plain text rather than a translation key, so it reads "Bane of the Living" in every client language.
   The internal id is still minecraft:bane_of_arthropods, which is what commands like /enchant take, so existing enchanted items carry over as-is.
 
+Mending repair rate (bundled datapack: data/minecraft/enchantment/mending.json)
+------------------------------------------------------------------
+Added 2026-10-09.
+- Mending restores 1 durability per XP point instead of vanilla's 2, so repairing the same damage takes twice the XP. Everything else about it
+  is vanilla - which item gets repaired, the leftover XP going to the player, where it can be found.
+- With the plugin's doubled-and-more durabilities and the XP cap (1000 per 10 minutes, which Mending draws from), one window's XP now mends at most
+  1000 durability rather than 2000.
+- Done by overriding Mending's own definition with vanilla's, changing only the repair multiplier from 2.0 to 1.0. Disabling the "VanillaKFC"
+  datapack reverts it.
+
 Elytra & Mending (ElytraEnchantListener)
 ------------------------------------------------------------------
 - Mending can no longer end up on an Elytra by any means - stripped if produced by combining at an anvil, and defensively stripped if it's ever
   somehow rolled at an enchanting table.
+- Fixed 2026-10-13 - a Mending book was eaten for nothing: an Elytra plus a Mending book still showed a result, the same Elytra without Mending,
+  and taking it cost the book and the levels and raised the Elytra's anvil penalty. The anvil now gives no result whenever Mending is all the second
+  item would add - a Mending book, or an undamaged Elytra combined with a Mending Elytra - renamed in the same go or not. If the second item does
+  anything else (repairs the Elytra, adds Unbreaking), the result is offered as before, without Mending.
 
 Anvil repair-with-material (AnvilRepairListener)
 ------------------------------------------------------------------
@@ -542,18 +681,47 @@ Anvil repair-with-material (AnvilRepairListener)
 - Netherite tools, weapons, and armor take a Netherite Ingot instead of a block: 1 ingot restores 75%, on the same terms otherwise (at most 2 per
   repair, same penalty and level cost). Netherite Blocks no longer repair them. Changed 2026-10-04
   (previously a Netherite Block, like the other tiers).
-- Each block (or Netherite Ingot) repair raises the item's prior-work penalty - the hidden counter added to every future anvil cost - by 50% more than a vanilla anvil use
-  would. Vanilla takes n to 2n+1 (an increase of n+1); this takes n to n + ceil(1.5 x (n+1)). From new, that runs 0, 2, 7, 19, 49 against vanilla's
-  0, 1, 3, 7, 15, 31, so an item reaches "Too Expensive!" after 4 block repairs instead of 6. The higher penalty carries into anything else done with
-  that item at an anvil afterwards.
+- Repairing and combining have separate penalties (changed 2026-10-22). Vanilla keeps one hidden prior-work penalty per item that every anvil use
+  charges and raises, so a much-enchanted item was expensive to repair and a much-repaired one expensive to enchant. Now every material repair
+  (blocks, Netherite Ingots, Hearts of the Sea, Phantom Membranes) charges and raises a repair penalty of its own, stored on the item, and leaves
+  vanilla's penalty alone. Combining (enchanted books, or two items - including two damaged items) uses only vanilla's penalty, priced and raised
+  exactly as vanilla does (n to 2n+1). Neither penalty is ever charged for the other kind of work.
+- That covers vanilla's own material repairs too - copper, leather, wood and stone gear, chainmail, shields, the mace, turtle shells, wolf armor
+  and anything else repaired with a material - which keep vanilla's 25% per unit but are priced on the repair penalty like everything above.
+- Combining two items keeps the higher of each penalty: the result's repair penalty is the higher of the two items' (combining doesn't raise it),
+  and its combining penalty is the higher of the two, then raised once for this combine, as vanilla does. E.g. a pickaxe with 3 combines and 1
+  repair merged with one with 1 combine and 4 repairs comes out with 4 repairs and 4 combines (the merge itself is the 4th).
+- A material repair costs the repair penalty plus 1 level per unit of material consumed, and takes the repair penalty from n to ceil(1.5n + 1):
+  from new, 0, 1, 3, 6, 10, 16, 25, 39, so an item gets 7 repairs before "Too Expensive!" (vanilla's 0, 1, 3, 7, 15, 31 allowed 6). Before
+  2026-10-22 block repairs raised the shared penalty from n to n + ceil(1.5 x (n+1)) (0, 2, 7, 19, 49 - only 4 repairs); deliberately cut back.
+- One-time reset of existing items: the first time an item from before the split goes in an anvil (the result shows a tick later than usual that
+  once), both its penalties start over at 0, whatever it had built up - so anything that was "Too Expensive!" can be worked again. Its old single
+  number mixed repairing and combining with no record of which was which, so there was nothing reliable to split it by.
+- A grindstone still resets vanilla's penalty as usual (it strips the enchantments that built it) but leaves the repair penalty alone.
 - Tridents can be repaired with a Heart of the Sea, 75% of durability each - 300 of the trident's 400 (added 2026-09-25). Purely an
   addition: vanilla has no repair material for a trident at all, so combining two tridents and Mending were the only options, and both still work.
-- Level cost follows vanilla's formula: the item's existing penalty plus 1 level per unit of material consumed.
+- An Elytra is fully repaired by a single Phantom Membrane, however damaged it is (added 2026-10-13). Vanilla's restores 25% each, so a worn-out
+  Elytra took 4. Only one membrane is ever used, whatever the size of the stack in the anvil. Since 2026-10-22 it's priced like the other material
+  repairs - repair penalty plus 1 level, same growth, 7 repairs - where it used vanilla's shared penalty and growth before. Renaming in the same
+  operation works, unless the Elytra's combining penalty alone would make vanilla call it "Too Expensive!", in which case it's repaired without
+  the new name. Mending is still stripped from an Elytra repaired this way.
 - Two long-standing bugs fixed alongside that (2026-09-19): block repairs never raised the penalty at all (the result was a straight copy of the
   input), and the level cost ignored the item's anvil history entirely, charging 1 level per block however worn the item was. Vanilla's "Too
   Expensive!" refusal at 40 levels was also being skipped, because it is checked before the plugin substitutes its own result; it is now re-applied
   (creative exempt).
 - Known gap, unchanged: renaming an item in the same operation as a block repair still discards the new name.
+
+Free anvil renaming (AnvilRenameListener)
+------------------------------------------------------------------
+Added 2026-10-22. Renaming at an anvil no longer costs XP.
+- A rename on its own costs 0 levels, however high the item's prior-work penalty (vanilla charges the penalty plus 1 level, capped at 39). Taking
+  off a custom name counts as a rename and is free too.
+- A rename done alongside combining no longer adds its 1 level; the rest of the operation costs what it did. Material repairs never charge for a
+  name (a block repair drops the new name anyway - see the known gap above).
+- Neither penalty is changed by renaming: a rename on its own leaves both where they were (as vanilla already does), and alongside other work the
+  penalty for that work grows once, the same as without a new name.
+- Edge case: vanilla decides "Too Expensive!" before the plugin takes the rename's level back off, so an operation that only goes over the limit
+  because of the rename is still refused. Doing the rename separately gets around it.
 
 
 4. CRAFTING & RECIPES (CustomRecipes, RecipeDiscoveryListener)
@@ -578,6 +746,12 @@ Anvil repair-with-material (AnvilRepairListener)
 - Netherite smithing upgrades switched to Block: every smithing-table upgrade recipe now takes a Netherite Block as its "addition" instead of an
   ingot.
 - Chain output doubled (vanilla's ingredients/shape otherwise untouched).
+- Shulker Box recipe changed (added 2026-10-09; bundled datapack, data/minecraft/recipe/shulker_box.json): a Chest surrounded by 8 Shulker Shells,
+  instead of vanilla's 2 (one above the chest, one below). Same recipe id, so it unlocks in the recipe book the same way as before. Dyeing a
+  shulker box is unchanged.
+- Rail output doubled and Powered Rail output raised (added 2026-10-23; bundled datapack, data/minecraft/recipe/rail.json and powered_rail.json):
+  one craft makes 32 Rails instead of 16, and 16 Powered Rails instead of 6. Ingredients, shapes and recipe ids are vanilla's, so they unlock in
+  the recipe book as before. Detector and Activator Rails are unchanged.
 - Chainmail armor recipes added: no vanilla recipe exists for any of the 4 pieces; this adds one for each, mirroring other armor tiers' shapes with
   Chains filling every ingredient slot.
 - Leather armor reworked: all 4 recipes replaced - instead of leather-only, each needs Leather (or Rotten Flesh, 1-for-1) plus String and Wood Planks
@@ -593,8 +767,8 @@ Anvil repair-with-material (AnvilRepairListener)
 
 5. VILLAGER TRADING - LIBRARIANS (VillagerTradeListener)
 ==================================================================
-Every librarian trade for levels 1-4 (Novice-Expert) is generated directly by this listener - no bundled datapack. Level 5 ("Master") adds nothing: a
-librarian just keeps whatever book it already rolled at level 3. Vanilla's own trade-unlock pipeline still fires as a librarian levels up, but any
+Every librarian trade for levels 1-4 (Novice-Expert), plus a second enchanted book at level 5 (Master), is generated directly by this listener - no
+bundled datapack. Vanilla's own trade-unlock pipeline still fires as a librarian levels up, but any
 enchanted-book trade it tries to add is cancelled outright at every level (see safety net below); the listener tops up whatever's missing for the
 villager's current level each time a player opens its trade menu.
 
@@ -618,6 +792,12 @@ villager's current level each time a player opens its trade menu.
     - Always guaranteed a "2 Writable Books -> 1 Emerald" trade.
     - Never offers a plain enchanted-book trade.
     - Always exactly one of "5 Emerald -> 1 Clock" or "4 Emerald -> 1 Compass" (12 uses), chosen once and fixed thereafter.
+- Master (5) (added 2026-10-05):
+    - Always guaranteed a second enchanted-book trade, on top of the level 3 one (which is kept). Rolled by exactly the same rules as the level 3 book
+      - same pool (biome-specific or generic, per trade_rebalance), same odds, same levels and prices, same villager xp - except it never repeats an
+      enchantment the librarian already sells. Chosen once and fixed for life.
+    - Librarians already at Master get theirs the next time a player opens their trade menu.
+    - Vanilla's own Master trades (e.g. the Name Tag) are unaffected.
 - Each biome's folded-in strongest enchant is checked directly against this Minecraft version's actual trade_rebalance data (extracted from the server
   jar). Swamp is changed from vanilla's Mending to Thorns II; the other six match vanilla exactly:
 
@@ -650,6 +830,16 @@ Diamond gear trade prices (DiamondTradePriceListener)
   villager XP and demand pricing. Copies are now built from the trade's real values. Trades already broken this way are rebuilt when the villager is
   next loaded or its menu opened: 3 uses (vanilla's for every diamond gear trade), villager XP 30 for sword/pickaxe/helmet/chestplate, 10 for the
   hoe, 15 for the rest, and vanilla's price multiplier. The doubled price is kept.
+
+Cartographers (bundled datapack: data/minecraft/tags/villager_trade/cartographer/level_3.json)
+------------------------------------------------------------------
+Added 2026-10-09.
+- Journeyman (level 3) cartographers always offer both the Ocean Explorer Map (monument) and the Trial Explorer Map (trial chambers), at vanilla's
+  prices. Vanilla picks 2 of 3 trades at this level, the third being "1 Compass -> 1 Emerald"; that trade is removed from the pool, leaving
+  exactly the two maps for the two picks.
+- A map trade still needs its structure to be findable: vanilla searches around the villager when the trade is made and drops the trade if
+  nothing turns up (e.g. no ocean monument anywhere near an inland village). That's unchanged, so in that rare case only the other map appears.
+- Applies to cartographers reaching level 3 from now on. Ones already at level 3 or above keep the trades they rolled.
 
 
 6. FARMING & FOOD
@@ -718,12 +908,16 @@ Fish, rotten flesh, composite dishes (pumpkin pie, beetroot soup, stews), and no
 
 Custom Enderman dodge sound (EndermanDodgeSoundPackListener)
 ------------------------------------------------------------------
-Hosts a tiny resource pack (a self-run local HTTP server) that adds one new, purely additive sound event, played when an Enderman's dodge-teleport
-lands with the "behind the player" bias. It never overrides any vanilla sound and layers safely alongside a player's own resource packs.
+Hosts a tiny resource pack (a self-run local HTTP server) that adds three new, purely additive sound events: one played when an Enderman's
+dodge-teleport lands with the "behind the player" bias, one (added 2026-10-11) played when an Enderman turns hostile and teleports in next to
+the player, and one (added 2026-10-11) played to a player arriving in the End while a dragon is alive. It never overrides any vanilla sound and layers safely alongside a player's own resource packs.
 - Host and port come from config.yml (resource-pack-host, resource-pack-port; defaults 127.0.0.1 and 25566). The default only reaches players
   connecting from the same machine the server runs on - a public deployment needs a reachable host set here and that port opened.
 - Pack format declares 97 (26.3) and accepts formats 88 upwards. It previously pinned max_format to 88 (26.2 only), which made 26.3 clients reject the
   whole pack: every vanilla Enderman sound kept working while this one silently never played.
+- Serves up to 8 downloads at once and drops a connection that takes over 15s to send its request or 120s to finish its download (fixed
+  2026-10-18). Before, downloads ran one at a time with no time limit, so one stalled connection - a player who dropped mid-download, or a port
+  scanner - quietly left every later player without the pack (no sounds, vanilla shield) until the server restarted.
 
 Charged creeper death messages (ChargedCreeperDeathMessageListener)
 ------------------------------------------------------------------
@@ -740,6 +934,8 @@ A "VanillaKFC" advancement tab, in the plugin's own vanillakfc: namespace, so no
 - vanillakfc:root - the tab itself. Completes on its own the first tick a player is in the world (minecraft:tick trigger), so the tab is always
   visible and everything under it is reachable from the start. Silent: no toast, no chat announcement.
 - vanillakfc:dying_grace - "Dying Grace", awarded at 40 deaths. Challenge frame, toast and chat announcement on, Totem of Undying icon.
+- vanillakfc:great_scott - "Great Scott!", awarded at 200 deaths. Challenge frame, toast and chat announcement on, Clock icon. Counted and awarded
+  exactly as Dying Grace is (see below), from the same death count; a player already past 200 gets both on joining. Added 2026-10-13.
 - vanillakfc:oh_neptune - "Oh Neptune", awarded for repairing a trident with a Heart of the Sea (see section 3). Challenge frame, toast and chat
   announcement on, Heart of the Sea icon. Awarded when the repaired trident is actually taken out of the anvil and the Heart is gone from it, not when
   the anvil merely previews the result - there is no "anvil used" event, so the check is whether the material was consumed, read a tick after the
@@ -755,14 +951,14 @@ A "VanillaKFC" advancement tab, in the plugin's own vanillakfc: namespace, so no
   by a tamed wolf. Re-testable with "/advancement revoke <player> only vanillakfc:prison_break". Added 2026-10-04.
 - The death count is read from the server's own scoreboard: any objective whose criterion is deathCount, whatever the objective is called, so it works
   with an existing counter as-is. The advancement
-  then agrees with the number players already see on a sidebar. The highest such objective wins if there are several. The first count read each
-  session is logged, naming the objective it came from, so which source is in use is never a guess. With no deathCount objective on the
+  then agrees with the number players already see on a sidebar. The highest such objective wins if there are several. (The first count read each
+  session used to be logged, naming the objective it came from; removed 2026-10-09.) With no deathCount objective on the
   scoreboard at all, it falls back to the player's own DEATHS statistic, which vanilla always tracks. Note a sidebar fed by a plain "dummy" objective
   is not a death counter as far as this is concerned and will land on the statistic instead.
 - Checked one tick after a death (vanilla increments the scoreboard after the death event, so reading it during the event is one behind) and again on
-  join, so anyone already past 40 earns it on their way in rather than needing one more death.
-- The advancement holds a single minecraft:impossible criterion - vanilla can count deaths in a session but not a running total, so the plugin decides
-  when it is earned. Re-testable with "/advancement revoke <player> only vanillakfc:dying_grace".
+  join, so anyone already past 40 (or 200) earns it on their way in rather than needing one more death.
+- Each death advancement holds a single minecraft:impossible criterion - vanilla can count deaths in a session but not a running total, so the plugin
+  decides when it is earned. Re-testable with "/advancement revoke <player> only vanillakfc:dying_grace" (or vanillakfc:great_scott).
 
 Lowered first-person shield (resource pack, same pack as above)
 ------------------------------------------------------------------
@@ -791,6 +987,56 @@ Nether roof void damage (NetherRoofVoidDamageListener)
 - New mechanic: the Nether's bedrock roof can never generate above Y=127 (derived from the dimension's noise settings - min_y 0, height 128, roof
   carved 6 blocks from the top, matching logical_height of 128). Any player at Y >= 128 while in the Nether takes vanilla's out-of-world damage (4
   dmg/10 ticks), bypassing Creative/Spectator invulnerability and totems, exactly like vanilla's own below-world void damage.
+
+Water evaporates in the End (bundled datapack: data/minecraft/dimension_type/the_end.json)
+------------------------------------------------------------------
+Added 2026-10-06.
+- Water behaves in the End exactly as in the Nether: emptying a water bucket (by hand or from a dispenser) just hisses and leaves no water, breaking
+  ice leaves nothing behind, and a placed wet sponge dries out at once. It's the Nether's own switch (minecraft:gameplay/water_evaporates) turned on
+  for the End, not a copy of its behaviour, so anything vanilla ties to it follows along.
+- Done by overriding the End's dimension type with vanilla's own definition plus that one setting, so everything else about the End is unchanged.
+  Takes effect on server start. If a future Minecraft version changes the End's dimension type, this file needs updating to match, or it will hold
+  the End at today's definition. Disabling the "VanillaKFC" datapack reverts it.
+
+Beacons (BeaconListener)
+------------------------------------------------------------------
+Added 2026-10-06.
+- Height: a beacon's effects reach the full height of the world, from the bottom (bedrock) to the build limit. Vanilla's reach all the way up but
+  only as far below the beacon as its radius.
+- Radius: a flat 10, plus the sum of the blocks in the beacon's pyramid, rounded up to a whole block - replacing vanilla's 20/30/40/50 by tier:
+      Iron Block       +0.3 each
+      Gold Block       +0.5 each
+      Emerald Block    +0.7 each
+      Diamond Block    +2.0 each
+      Netherite Block  +30.0 each (raised from +10.0 on 2026-10-23)
+  Only the layers that count toward the tier count here (9/25/49/81 blocks per layer, 164 in a full tier 4); blocks in an incomplete layer below
+  them add nothing, as they add nothing to the tier. Mixed pyramids add up per block. Examples: full iron tier 1 = 10 + 2.7 = 12.7, so 13
+  (vanilla 20); full iron tier 4 = 10 + 49.2 = 59.2, so 60 (vanilla 50); full diamond tier 4 = 10 + 328 = 338 (vanilla 50). (+10 base and rounding
+  added 2026-10-06; it was the bare block sum at first.)
+- Full netherite tier 4 (all 164 blocks netherite): the effects reach every player in that beacon's dimension, anywhere.
+- Radius is measured like vanilla's - a square, not a circle: X and Z are each checked on their own, so the corners count. It's measured out from
+  the beacon block's own edges to the edge of the player's hitbox, so at radius 13 a player standing in the 13th block out in X and/or Z is
+  covered, and so is one just stepping over into the 14th (vanilla's hitbox overlap, 0.3 of a block).
+- Everything else is vanilla: effects every 4 seconds, the same durations (9 + 2 x tier seconds) and amplifiers, the secondary effect and level II
+  primary at tier 4, ambient particles, and the beam must reach the sky (any block that blocks all light, tinted glass included, stops it; bedrock
+  doesn't). Players only, as in vanilla. Vanilla's own effect application is cancelled so nothing is applied twice.
+- Fixed 2026-10-08 - level II never applied: choosing the primary effect again as the tier 4 secondary (e.g. Haste + Haste for Haste II) gave
+  only level I. The plugin looked for that choice in the beacon's secondary effect, which Paper reports as empty whenever it matches the primary,
+  so it never saw it. It now takes the level from the primary effect, which carries vanilla's own amplifier for exactly that case.
+- Active beacons stay loaded: each working beacon (complete layer 1 and a clear beam) holds its chunk loaded with a plugin chunk ticket, so its
+  effects keep going with nobody nearby. Like a spawn chunk, that chunk's mobs, crops and redstone keep running too. A beacon that loses its base or
+  beam lets its chunk go, and picks it up again once it works. Beacon locations are saved in each world's data, so they're loaded again after a
+  restart; beacons built before this existed are found as their chunks load.
+
+No shulker boxes in ender chests (EnderChestShulkerListener)
+------------------------------------------------------------------
+Added 2026-10-12.
+- A shulker box (any colour, empty or full) can no longer be put into an ender chest. Every way in is refused: placing it from the cursor,
+  shift-clicking it up from the inventory, swapping it in with a number key or the off-hand key, and dragging it across a slot. The item simply
+  stays where it was.
+- Shulker boxes already in an ender chest are untouched: they stay there and can be taken out as normal, but can't be put back once out. Taking
+  one out by swapping it with another item still works, as long as the item going in isn't itself a shulker box.
+- Everything else about ender chests is vanilla.
 
 
 9. LOOT TABLES
@@ -911,6 +1157,22 @@ Hostile mob and passive animal health display (MobHealthDisplayListener)
 - Tamed animals are excluded here, since the pet display above already gives them a permanent label; without that exclusion a pet would carry two
   stacked labels. Look-triggered rather than always-visible matters more for animals than it did for hostiles: a render distance routinely holds whole
   herds and full farm pens, and permanent labels would mean an armor stand per animal, all re-positioned every tick.
+- Labels are no longer saved with the world (changed 2026-10-05). They used to be, so a label left up when its chunk unloaded or the server stopped
+  mid-look stayed in the world for good, invisible, with nothing ever removing it. Now they simply vanish with the chunk or on shutdown, and the next
+  look makes a new one - no visible difference. Leftovers from before are removed automatically as their chunks load.
+
+Horse health (HorseHealthListener)
+------------------------------------------------------------------
+Added 2026-10-06.
+- Horses spawn with 40-60 max health instead of vanilla's 15-30. Rolled as 40 + 0-10 + 0-10, the same shape as vanilla's 15 + 0-7 + 0-8, so
+  most horses land near 50 and 40 or 60 are rare. Covers wild horses, spawn eggs and /summon.
+- Foals follow vanilla's inheritance, moved onto the new range: the parents' average plus a random spread (their difference plus 15% of the
+  range either way, leaning to the middle), reflected back inside 40-60 if it runs past an end. Vanilla's own roll is capped at 30, so it's redone
+  from the parents.
+- Existing horses are brought onto the new range (added 2026-10-09): any horse still under 40 max health is scaled up in proportion rather than
+  re-rolled - vanilla's 15 becomes 40, 30 becomes 60, and everything between keeps its place (22.5 -> 50) - so a horse bred to be good stays good.
+  It is healed to its new full health. Happens once per horse, when its chunk loads or at startup if it's already loaded, and each batch is logged.
+- Horses only - donkeys, mules, and skeleton and zombie horses are unchanged.
 
 Tamed wolves (TamedWolfListener)
 ------------------------------------------------------------------

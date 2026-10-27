@@ -1,7 +1,9 @@
 package com.example.vanillakfc;
 
 import com.example.vanillakfc.advancements.Advancements;
+import com.example.vanillakfc.listeners.AnvilRenameListener;
 import com.example.vanillakfc.listeners.AnvilRepairListener;
+import com.example.vanillakfc.listeners.BeaconListener;
 import com.example.vanillakfc.listeners.BedExplosionListener;
 import com.example.vanillakfc.listeners.BreedingGrowthListener;
 import com.example.vanillakfc.listeners.ChargedCreeperDeathMessageListener;
@@ -15,11 +17,14 @@ import com.example.vanillakfc.listeners.CropGrowthListener;
 import com.example.vanillakfc.debug.LightLevelDebug;
 import com.example.vanillakfc.listeners.DeathDropListener;
 import com.example.vanillakfc.listeners.DeathMilestoneListener;
+import com.example.vanillakfc.listeners.DeepQuiverListener;
 import com.example.vanillakfc.listeners.DiamondTradePriceListener;
+import com.example.vanillakfc.listeners.DragonFightListener;
 import com.example.vanillakfc.listeners.DrownedTridentListener;
 import com.example.vanillakfc.listeners.DurabilityListener;
 import com.example.vanillakfc.listeners.ElytraEnchantListener;
 import com.example.vanillakfc.listeners.EndCityLootListener;
+import com.example.vanillakfc.listeners.EnderChestShulkerListener;
 import com.example.vanillakfc.listeners.EndermanDodgeSoundPackListener;
 import com.example.vanillakfc.listeners.EndermanListener;
 import com.example.vanillakfc.listeners.FishingLootListener;
@@ -27,6 +32,7 @@ import com.example.vanillakfc.listeners.FoodSaturationListener;
 import com.example.vanillakfc.listeners.FortuneLootListener;
 import com.example.vanillakfc.listeners.MobHealthDisplayListener;
 import com.example.vanillakfc.listeners.HappyGhastListener;
+import com.example.vanillakfc.listeners.HorseHealthListener;
 import com.example.vanillakfc.listeners.IronGolemListener;
 import com.example.vanillakfc.listeners.LightningListener;
 import com.example.vanillakfc.listeners.MaceDamageListener;
@@ -37,6 +43,7 @@ import com.example.vanillakfc.listeners.PetHealthDisplayListener;
 import com.example.vanillakfc.listeners.PodSpawnCooldownListener;
 import com.example.vanillakfc.listeners.RecipeDiscoveryListener;
 import com.example.vanillakfc.listeners.SharperFangsListener;
+import com.example.vanillakfc.listeners.ShieldBreakListener;
 import com.example.vanillakfc.listeners.SkeletonListener;
 import com.example.vanillakfc.listeners.SleepStreakListener;
 import com.example.vanillakfc.listeners.SpearDamageListener;
@@ -50,9 +57,6 @@ import com.example.vanillakfc.listeners.XpCapListener;
 import com.example.vanillakfc.listeners.ZombiePodListener;
 import com.example.vanillakfc.recipes.CustomRecipes;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class VanillaKFC extends JavaPlugin {
@@ -65,6 +69,9 @@ public class VanillaKFC extends JavaPlugin {
     private PetHealthDisplayListener petHealthDisplayListener;
     private HappyGhastListener happyGhastListener;
     private CatLivesListener catLivesListener;
+    private BeaconListener beaconListener;
+    private DragonFightListener dragonFightListener;
+    private SkeletonListener skeletonListener;
     private TamedWolfListener tamedWolfListener;
     private WolfGuardListener wolfGuardListener;
     private MobHealthDisplayListener mobHealthDisplayListener;
@@ -80,17 +87,25 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BedExplosionListener(), this);
         getServer().getPluginManager().registerEvents(new CreeperListener(), this);
         getServer().getPluginManager().registerEvents(new IronGolemListener(), this);
+        HorseHealthListener horseHealthListener = new HorseHealthListener(getLogger());
+        getServer().getPluginManager().registerEvents(horseHealthListener, this);
+        horseHealthListener.convertLoaded();
         getServer().getPluginManager().registerEvents(new EndermanListener(this), this);
         getServer().getPluginManager().registerEvents(new DrownedTridentListener(), this);
         getServer().getPluginManager().registerEvents(new SpiderListener(), this);
         getServer().getPluginManager().registerEvents(new ZombiePodListener(), this);
         getServer().getPluginManager().registerEvents(new PodSpawnCooldownListener(), this);
-        getServer().getPluginManager().registerEvents(new SkeletonListener(this), this);
+        skeletonListener = new SkeletonListener(this);
+        getServer().getPluginManager().registerEvents(skeletonListener, this);
+        skeletonListener.start();
         getServer().getPluginManager().registerEvents(new WeaponStatListener(), this);
         getServer().getPluginManager().registerEvents(new ElytraEnchantListener(), this);
         getServer().getPluginManager().registerEvents(new MaceDamageListener(), this);
+        getServer().getPluginManager().registerEvents(new DeepQuiverListener(), this);
+        getServer().getPluginManager().registerEvents(new ShieldBreakListener(this), this);
         getServer().getPluginManager().registerEvents(new SpearDamageListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilRepairListener(this, advancements), this);
+        getServer().getPluginManager().registerEvents(new AnvilRenameListener(), this);
         getServer().getPluginManager().registerEvents(new VillagerTradeListener(this), this);
         DiamondTradePriceListener diamondTradePriceListener = new DiamondTradePriceListener(this);
         getServer().getPluginManager().registerEvents(diamondTradePriceListener, this);
@@ -98,7 +113,7 @@ public class VanillaKFC extends JavaPlugin {
         SharperFangsListener sharperFangsListener = new SharperFangsListener(this);
         getServer().getPluginManager().registerEvents(sharperFangsListener, this);
         sharperFangsListener.convertLoaded();
-        getServer().getPluginManager().registerEvents(new XpCapListener(), this);
+        getServer().getPluginManager().registerEvents(new XpCapListener(this), this);
         getServer().getPluginManager().registerEvents(new MobXpListener(), this);
         sleepStreakListener = new SleepStreakListener(this);
         getServer().getPluginManager().registerEvents(sleepStreakListener, this);
@@ -124,7 +139,7 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DeathMilestoneListener(this, advancements), this);
         getServer().getPluginManager().registerEvents(new ChargedCreeperKillListener(advancements), this);
         getServer().getPluginManager().registerEvents(new ChargedCreeperDeathMessageListener(), this);
-        getServer().getPluginManager().registerEvents(new ResourcePackStatusLogger(), this);
+        getServer().getPluginManager().registerEvents(new EnderChestShulkerListener(), this);
         CustomRecipes.registerAll(this, getLogger());
 
         // Must come after registerAll - it reads the registry that call fills.
@@ -163,6 +178,8 @@ public class VanillaKFC extends JavaPlugin {
         wolfGuardListener.start();
 
         mobHealthDisplayListener = new MobHealthDisplayListener(this);
+        getServer().getPluginManager().registerEvents(mobHealthDisplayListener, this);
+        mobHealthDisplayListener.removeStrandedLabels();
         mobHealthDisplayListener.start();
 
         catLivesListener = new CatLivesListener(this);
@@ -171,6 +188,14 @@ public class VanillaKFC extends JavaPlugin {
 
         happyGhastListener = new HappyGhastListener(this);
         happyGhastListener.start();
+
+        beaconListener = new BeaconListener(this);
+        getServer().getPluginManager().registerEvents(beaconListener, this);
+        beaconListener.start();
+
+        dragonFightListener = new DragonFightListener(this);
+        getServer().getPluginManager().registerEvents(dragonFightListener, this);
+        dragonFightListener.start();
 
         getLogger().info("Unbreaking datapack " + UnbreakingDatapack.describe() + ".");
         getLogger().info("VanillaKFC has been enabled!");
@@ -211,6 +236,15 @@ public class VanillaKFC extends JavaPlugin {
         if (happyGhastListener != null) {
             happyGhastListener.stop();
         }
+        if (beaconListener != null) {
+            beaconListener.stop();
+        }
+        if (dragonFightListener != null) {
+            dragonFightListener.stop();
+        }
+        if (skeletonListener != null) {
+            skeletonListener.stop();
+        }
         if (sleepStreakListener != null) {
             sleepStreakListener.stop();
         }
@@ -221,18 +255,5 @@ public class VanillaKFC extends JavaPlugin {
             recipeDiscoveryListener.stop();
         }
         getLogger().info("VanillaKFC has been disabled!");
-    }
-
-    // Temporary diagnostic: the client gives no visible feedback when a
-    // server-wide resource pack (set via server.properties) silently fails
-    // to load, so this logs every player's actual pack status to the
-    // console - the only way to tell a real load failure apart from the
-    // Enderman dodge sound just not having rolled yet.
-    private class ResourcePackStatusLogger implements Listener {
-        @EventHandler
-        public void onResourcePackStatus(PlayerResourcePackStatusEvent event) {
-            getLogger().info("Resource pack status for " + event.getPlayer().getName()
-                    + ": " + event.getStatus() + " (id=" + event.getID() + ")");
-        }
     }
 }

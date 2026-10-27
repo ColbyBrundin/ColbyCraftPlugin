@@ -45,6 +45,16 @@ tasks.register<JavaExec>("unbreakingCheck") {
     })
 }
 
+tasks.register<JavaExec>("mobXpCheck") {
+    group = "verification"
+    description = "Checks the mob XP boost averages exactly 1.5x after rounding."
+    classpath = sourceSets["harness"].runtimeClasspath
+    mainClass.set("com.example.vanillakfc.listeners.MobXpCheck")
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(25))
+    })
+}
+
 tasks.processResources {
     val props = mapOf("version" to version)
     inputs.properties(props)

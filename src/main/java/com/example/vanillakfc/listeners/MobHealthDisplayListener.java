@@ -12,12 +12,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
+import org.bukkit.World;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
+import org.bukkit.event.world.EntitiesLoadEvent;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.RayTraceResult;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -47,8 +52,16 @@ import java.util.UUID;
  * <p>Tamed animals are deliberately excluded - {@link PetHealthDisplayListener}
  * already gives those a permanent label, and adding a second one here would
  * stack a duplicate at the same height above the pet.
+ *
+ * <p>Labels are never saved with the world. One only lives while a player
+ * is looking, so a chunk unload or a restart ends it anyway, and the next
+ * look makes a new one. They used to be saved, which stranded a label for
+ * good whenever its chunk unloaded or the server stopped mid-look - nothing
+ * ever came back to remove it. Since nothing saves them any more, a tagged
+ * label loaded from disk can only be one of those leftovers, so each is
+ * removed as its chunk's entities load.
  */
-public final class MobHealthDisplayListener {
+public final class MobHealthDisplayListener implements Listener {
 
     private static final long POLL_INTERVAL_TICKS = 1L;
     private static final double LOOK_RANGE = 40.0;
@@ -77,6 +90,31 @@ public final class MobHealthDisplayListener {
         if (task != null) {
             task.cancel();
             task = null;
+        }
+        for (UUID mobId : new HashSet<>(companions.keySet())) {
+            removeCompanion(mobId);
+        }
+    }
+
+    /** Clears leftover saved labels in everything already loaded at startup. */
+    public void removeStrandedLabels() {
+        for (World world : Bukkit.getWorlds()) {
+            removeStrandedLabels(world.getEntitiesByClass(ArmorStand.class));
+        }
+    }
+
+    @EventHandler
+    public void onEntitiesLoad(EntitiesLoadEvent event) {
+        removeStrandedLabels(event.getEntities());
+    }
+
+    private void removeStrandedLabels(Collection<? extends Entity> entities) {
+        for (Entity entity : entities) {
+            if (entity instanceof ArmorStand stand
+                    && stand.getPersistentDataContainer().has(ownerKey, PersistentDataType.STRING)
+                    && !companions.containsValue(stand)) {
+                stand.remove();
+            }
         }
     }
 
@@ -152,7 +190,7 @@ public final class MobHealthDisplayListener {
                     stand.setGravity(false);
                     stand.setInvulnerable(true);
                     stand.setCustomNameVisible(true);
-                    stand.setPersistent(true);
+                    stand.setPersistent(false);
                     stand.getPersistentDataContainer().set(ownerKey, PersistentDataType.STRING, mob.getUniqueId().toString());
                 });
         companions.put(mob.getUniqueId(), created);

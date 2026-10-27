@@ -1,0 +1,19 @@
+# Host/IP the Enderman dodge-teleport sound resource pack is advertised to
+# players from. It's served by a tiny embedded HTTP server on this same
+# machine (port 25566), but the *server* binding to all interfaces doesn't
+# help players whose client can't reach that address.
+#
+# The default, 127.0.0.1, only resolves for a player on the same machine the
+# server runs on - every other player's client will fail to download the
+# pack (harmless: it's an optional cosmetic sound, nothing is blocked).
+#
+# To make it work for remote players, set this to a host/IP they can
+# actually reach (your public IP or a domain pointed at it) and forward the
+# port below on your router/firewall, the same way you already forward the
+# main server port.
+resource-pack-host: 127.0.0.1
+
+# Port the embedded resource-pack HTTP server binds to and advertises in the
+# download URL. Change this if 25566 is already in use by something else on
+# this machine/host.
+resource-pack-port: 25566

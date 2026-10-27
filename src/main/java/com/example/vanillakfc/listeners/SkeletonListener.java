@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.NamespacedKey;
+import org.bukkit.World;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.attribute.AttributeModifier;
@@ -26,6 +27,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import java.util.EnumSet;
@@ -82,12 +84,24 @@ import java.util.UUID;
  * normal API on a later tick goes through the same path any legitimate
  * target change does (same as vanilla's own retaliation logic), keeping
  * both in sync.
+ *
+ * <p><b>Range.</b> A skeleton only fights a target within {@link #VIEW_RANGE}
+ * blocks and within {@link #MAX_HEIGHT_DIFFERENCE} blocks of its own height;
+ * outside that it drops the target. Vanilla only checks range when a
+ * skeleton first picks a target - and only its own target-finding goal does
+ * even that - so a target handed over another way (being hit, this class's
+ * own fallback above) was kept at any distance, and with arrows at 4x speed
+ * a skeleton could hit a player 130+ blocks overhead. {@link #enforceRange}
+ * checks every skeleton's target every {@link #RANGE_CHECK_TICKS} ticks, well
+ * inside the 20-tick bow draw, so an out-of-range draw never gets to fire.
  */
 public final class SkeletonListener implements Listener {
 
     private static final double TARGETING_SPEED_MULTIPLIER = -0.8;
     private static final double SHOT_VELOCITY_MULTIPLIER = 4.0;
     private static final double VIEW_RANGE = 32.0;
+    private static final double MAX_HEIGHT_DIFFERENCE = 10.0;
+    private static final long RANGE_CHECK_TICKS = 2L;
     private static final int THROTTLE_GOAL_PRIORITY = 0; // must outrank RangedBowAttackGoal to win the MOVE-flag conflict
     private static final int THROTTLE_TICKS_EASY_NORMAL = 120; // 6s
     private static final int THROTTLE_TICKS_HARD = 100; // 5s
@@ -110,10 +124,43 @@ public final class SkeletonListener implements Listener {
     // current target is lost.
     private final Map<UUID, UUID> lastAttacker = new HashMap<>();
 
+    private BukkitTask rangeTask;
+
     public SkeletonListener(Plugin plugin) {
         this.plugin = plugin;
         this.targetingSpeedKey = new NamespacedKey(plugin, "skeleton_targeting_slow");
         this.throttleGoalKey = new NamespacedKey(plugin, "skeleton_attack_throttle");
+    }
+
+    public void start() {
+        rangeTask = Bukkit.getScheduler().runTaskTimer(plugin, this::enforceRange, RANGE_CHECK_TICKS, RANGE_CHECK_TICKS);
+    }
+
+    public void stop() {
+        if (rangeTask != null) {
+            rangeTask.cancel();
+            rangeTask = null;
+        }
+    }
+
+    // Dropped through setTarget(null), the same path as any other lost
+    // target - so onSkeletonTarget lifts the slow and looks for a fallback,
+    // which inRange() keeps from being the same out-of-range target again.
+    private void enforceRange() {
+        for (World world : Bukkit.getWorlds()) {
+            for (Skeleton skeleton : world.getEntitiesByClass(Skeleton.class)) {
+                LivingEntity target = skeleton.getTarget();
+                if (target != null && !inRange(skeleton, target)) {
+                    skeleton.setTarget(null);
+                }
+            }
+        }
+    }
+
+    private static boolean inRange(LivingEntity skeleton, LivingEntity target) {
+        if (target.getWorld() != skeleton.getWorld()) return false;
+        if (Math.abs(target.getY() - skeleton.getY()) > MAX_HEIGHT_DIFFERENCE) return false;
+        return target.getLocation().distanceSquared(skeleton.getLocation()) <= VIEW_RANGE * VIEW_RANGE;
     }
 
     @EventHandler
@@ -235,12 +282,11 @@ public final class SkeletonListener implements Listener {
 
     private boolean isValidTarget(LivingEntity skeleton, LivingEntity candidate) {
         if (candidate.isDead() || !candidate.isValid()) return false;
-        if (candidate.getWorld() != skeleton.getWorld()) return false;
         if (candidate instanceof Player player
                 && (player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)) {
             return false;
         }
-        if (candidate.getLocation().distanceSquared(skeleton.getLocation()) > VIEW_RANGE * VIEW_RANGE) return false;
+        if (!inRange(skeleton, candidate)) return false;
         return skeleton.hasLineOfSight(candidate);
     }
 

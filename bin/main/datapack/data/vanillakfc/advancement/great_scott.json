@@ -1,0 +1,16 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:clock" },
+    "title": "Great Scott!",
+    "description": "Die 200 times. This is heavy.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

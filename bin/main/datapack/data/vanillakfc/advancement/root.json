@@ -1,0 +1,16 @@
+{
+  "criteria": {
+    "joined": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:cooked_chicken" },
+    "title": "VanillaKFC",
+    "description": "House rules. This tab unlocks on its own.",
+    "background": "minecraft:gui/advancements/backgrounds/stone",
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false
+  }
+}
