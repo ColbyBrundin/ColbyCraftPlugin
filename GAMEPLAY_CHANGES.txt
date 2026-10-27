@@ -18,7 +18,8 @@ Baby animal growth time (bred, not wild)             | ~20 min                 |
 Cat max health                                       | 10 (5 hearts)           | x2 - 20 (10 hearts)
 Cat deaths before dying for good                     | 1                       | 9 - a lethal blow spends a
                                                                                  life instead, 8 times over
-Creeper max health                                   | 20 (10 hearts)          | 12 (6 hearts)
+Creeper max health                                   | 20 (10 hearts)          | 60 (30 hearts); 1 (half a
+                                                                                 heart) while its fuse is lit
 Creeper follow range                                 | 16 blocks (default)     | 32 blocks
 Creeper step height                                  | 0.6 (can't clear block) | 1.2 (clears a full block)
 Creeper jump strength                                | 0.42 (default)          | x1.5
@@ -111,6 +112,7 @@ Anvil rename                                         | prior-work penalty + 1  |
                                                         alongside other work
 Enchanting Table recipe                              | 2 Diamonds + Book +     | 2 Diamond Blocks + Book +
                                                         4 Obsidian               4 Obsidian
+Rail / Powered Rail recipe output                    | 16 / 6                  | 32 / 16 (same ingredients)
 Drowned thrown-trident damage                        | 8                       | 4 (half; melee and player
                                                                                  tridents untouched)
 Lightning strike chance per loaded chunk per tick     | 1 in 100,000            | plus an added, independent
@@ -193,8 +195,13 @@ Shulker boxes in ender chests                        | allowed                 |
 
 Creepers (CreeperListener, CreeperBehaviorTask)
 ------------------------------------------------------------------
-- Max health 20->12 (6 hearts). Was 16 from 2026-10-07, lowered to 12 on 2026-10-09. Applied as creepers spawn, like the rest of this list, so
-  creepers already in the world keep what they spawned with.
+- Max health 20->60 (30 hearts), but 1 (half a heart) while the fuse is lit (changed 2026-10-23; was 12, and 16 before 2026-10-09). The idea: a
+  creeper frozen by being looked at takes real work to kill, while one that's charging up dies to any hit at all.
+  - The drop happens the moment the fuse lights - from getting close, or from flint and steel - and holds until the fuse has wound all the way
+    back down to 0. A fuse that's decaying but not out yet still counts as lit, so it's still a one-hit kill.
+  - Once the fuse is fully out it goes back to a full 60, even if it had been hurt before it started charging.
+  - Applies to charged creepers too, and to every creeper in the world, not just new spawns: one already in the world goes to 60 (fully healed)
+    the first time it's seen.
 - Perception & mobility: follow range 16->32 blocks; step height 0.6->1.2 (clears a full block without jumping); jump strength x1.5.
 - Explosion radius: 3->4 (6->8 charged); vanilla's charged-doubling still applies on top.
 - Natural spawning: only 35% of spawn attempts succeed (vanilla: 100%, solo). A successful spawn can add a 2nd creeper within 24 blocks (50% chance,
@@ -742,6 +749,9 @@ Added 2026-10-22. Renaming at an anvil no longer costs XP.
 - Shulker Box recipe changed (added 2026-10-09; bundled datapack, data/minecraft/recipe/shulker_box.json): a Chest surrounded by 8 Shulker Shells,
   instead of vanilla's 2 (one above the chest, one below). Same recipe id, so it unlocks in the recipe book the same way as before. Dyeing a
   shulker box is unchanged.
+- Rail output doubled and Powered Rail output raised (added 2026-10-23; bundled datapack, data/minecraft/recipe/rail.json and powered_rail.json):
+  one craft makes 32 Rails instead of 16, and 16 Powered Rails instead of 6. Ingredients, shapes and recipe ids are vanilla's, so they unlock in
+  the recipe book as before. Detector and Activator Rails are unchanged.
 - Chainmail armor recipes added: no vanilla recipe exists for any of the 4 pieces; this adds one for each, mirroring other armor tiers' shapes with
   Chains filling every ingredient slot.
 - Leather armor reworked: all 4 recipes replaced - instead of leather-only, each needs Leather (or Rotten Flesh, 1-for-1) plus String and Wood Planks
@@ -998,7 +1008,7 @@ Added 2026-10-06.
       Gold Block       +0.5 each
       Emerald Block    +0.7 each
       Diamond Block    +2.0 each
-      Netherite Block  +10.0 each
+      Netherite Block  +30.0 each (raised from +10.0 on 2026-10-23)
   Only the layers that count toward the tier count here (9/25/49/81 blocks per layer, 164 in a full tier 4); blocks in an incomplete layer below
   them add nothing, as they add nothing to the tier. Mixed pyramids add up per block. Examples: full iron tier 1 = 10 + 2.7 = 12.7, so 13
   (vanilla 20); full iron tier 4 = 10 + 49.2 = 59.2, so 60 (vanilla 50); full diamond tier 4 = 10 + 328 = 338 (vanilla 50). (+10 base and rounding

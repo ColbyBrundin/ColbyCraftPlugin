@@ -42,7 +42,7 @@ import java.util.Set;
  * below the beacon.
  * <li><b>Radius:</b> a flat {@link #BASE_RADIUS} plus the sum of the blocks
  * in the layers that count toward the beacon's tier - Iron 0.3, Gold 0.5,
- * Emerald 0.7, Diamond 2.0 and Netherite 10.0 each - rounded up to a whole
+ * Emerald 0.7, Diamond 2.0 and Netherite 30.0 each - rounded up to a whole
  * block, in place of vanilla's 10 + 10 per tier. Blocks in an incomplete
  * layer below the last full one don't count, as they don't for the tier
  * either. A full iron tier 1 is 10 + 2.7 = 12.7, so 13. Like vanilla's, the
@@ -86,7 +86,7 @@ public final class BeaconListener implements Listener {
             Material.GOLD_BLOCK, 5,
             Material.EMERALD_BLOCK, 7,
             Material.DIAMOND_BLOCK, 20,
-            Material.NETHERITE_BLOCK, 100
+            Material.NETHERITE_BLOCK, 300
     ));
 
     private final Plugin plugin;

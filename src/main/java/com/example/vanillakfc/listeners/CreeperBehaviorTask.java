@@ -308,6 +308,8 @@ public final class CreeperBehaviorTask implements Listener {
                 liveCreepers.add(creeper.getUniqueId());
                 boolean watched = resolveWatched(creeper);
                 updateIgniteBlock(creeper, watched);
+                // After the ignite block, so a fuse it just snuffed reads as out.
+                CreeperListener.applyFuseHealth(creeper);
                 boolean frozen = updateFreeze(creeper, watched);
                 if (!frozen && creeper.getTarget() == null) {
                     reacquireTarget(creeper);
