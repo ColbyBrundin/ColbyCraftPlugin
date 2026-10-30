@@ -1,5 +1,6 @@
 package com.example.vanillakfc.listeners;
 
+import com.example.vanillakfc.items.CustomItems;
 import io.papermc.paper.event.entity.EntityDamageItemEvent;
 import org.bukkit.Material;
 import org.bukkit.entity.Wolf;
@@ -100,6 +101,9 @@ public final class DurabilityListener implements Listener {
      * @return true if the item was changed
      */
     static boolean applyDurability(ItemStack item) {
+        // Custom items set their own (the Warden Helmet is a netherite helmet
+        // with 600, not netherite's 850).
+        if (CustomItems.isCustom(item)) return false;
         Integer target = CUSTOM_DURABILITY.get(item.getType());
         if (target == null) return false;
 

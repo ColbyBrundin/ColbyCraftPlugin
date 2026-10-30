@@ -16,6 +16,7 @@ import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.event.player.PlayerItemMendEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -54,7 +55,10 @@ import java.util.UUID;
  * nothing to say why, and the same again after a relog - so every pickup or
  * repair the cap swallows also shows a line above the hotbar with the time
  * left (at most once a second), and a capped player who rejoins is told
- * again in chat.
+ * again in chat. When the window resets, every online player who had hit
+ * the cap in it is told in chat that XP counts again - checked once a
+ * second, as the reset is set by the clock rather than by anything the
+ * server does.
  *
  * <p><b>The first Ender Dragon.</b> The first dragon killed in an End drops
  * 12,000 XP (18,000 with {@link MobXpListener}), all of which the cap would
@@ -75,6 +79,7 @@ public final class XpCapListener implements Listener {
     private static final int XP_CAP = 1000;
 
     private static final long NOTICE_INTERVAL_MILLIS = 1000L;
+    private static final long RESET_CHECK_TICKS = 20L;
 
     private static final long DRAGON_GRACE_TICKS = 60L * 20L;
     // If the dragon's removal is somehow never seen (the fight's chunks
@@ -108,9 +113,40 @@ public final class XpCapListener implements Listener {
     private final Map<UUID, DragonLift> dragonLifts = new HashMap<>();
 
     private final Plugin plugin;
+    private long lastWindowIndex = currentWindowIndex();
+    private BukkitTask resetTask;
 
     public XpCapListener(Plugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void start() {
+        resetTask = Bukkit.getScheduler().runTaskTimer(plugin, this::checkWindowReset, RESET_CHECK_TICKS, RESET_CHECK_TICKS);
+    }
+
+    public void stop() {
+        if (resetTask != null) {
+            resetTask.cancel();
+            resetTask = null;
+        }
+    }
+
+    // Only players who hit the cap in the window that just ended - anyone else
+    // was never held back, so has nothing to be told. A capped player who was
+    // offline for the reset just finds the cap gone when they're back.
+    private void checkWindowReset() {
+        long window = currentWindowIndex();
+        if (window == lastWindowIndex) return;
+        long ended = lastWindowIndex;
+        lastWindowIndex = window;
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            WindowState state = windowStates.get(player.getUniqueId());
+            if (state == null || state.windowIndex != ended || state.xpGained < XP_CAP) continue;
+            player.sendMessage(Component.text(
+                    "Your XP cap has reset - you can gain XP again (up to " + XP_CAP + " in the next "
+                            + WINDOW_MINUTES + " minutes).", NamedTextColor.GREEN));
+        }
     }
 
     @EventHandler

@@ -18,6 +18,19 @@ repositories {
 
 dependencies {
     compileOnly("io.papermc.paper:paper-api:26.3.build.16-alpha")
+    // Server internals, for the one thing the API can't do: showing a mob's
+    // glowing outline to a single player (WardenGlow). 26.x server code ships
+    // unobfuscated, so this compiles straight against the local server jar and
+    // its libraries - no paperweight, which this machine couldn't download
+    // anyway. Must point at the jar for the same Paper build as paper-api.
+    compileOnly(files("run/versions/26.3/paper-26.3.jar"))
+    // Minus paper-api: the declaration above is the API, and run/libraries
+    // still holds copies from every earlier server version (1.21.11, 26.1.2,
+    // 26.2), which shadow it with older classes.
+    compileOnly(fileTree("run/libraries") {
+        include("**/*.jar")
+        exclude("io/papermc/paper/paper-api/**")
+    })
 }
 
 // A source set for checks that run against the built plugin classes. There is

@@ -15,3 +15,6 @@ permissions:
     # on and changes nothing in the world, so there's nothing to gate. Set this
     # to op (or revoke the node) to restrict it again.
     default: true
+  vanillakfc.give:
+    description: Use /customgive to give the plugin's custom items.
+    default: op

@@ -1,5 +1,6 @@
 package com.example.vanillakfc.recipes;
 
+import com.example.vanillakfc.items.CustomItems;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -127,6 +128,8 @@ public final class CustomRecipes {
      */
     private static final Set<NamespacedKey> HIDDEN_ALTERNATES = new HashSet<>();
 
+    private static final Set<NamespacedKey> CUSTOM_ITEM_RECIPES = new HashSet<>();
+
     private CustomRecipes() {
     }
 
@@ -172,6 +175,7 @@ public final class CustomRecipes {
     public static void registerAll(Plugin plugin, Logger logger) {
         REGISTERED.clear();
         HIDDEN_ALTERNATES.clear();
+        CUSTOM_ITEM_RECIPES.clear();
         for (Material tool : TOOLS_AND_WEAPONS) {
             replaceIngotsWithBlock(plugin, tool, 1, CraftingBookCategory.EQUIPMENT, logger);
         }
@@ -191,6 +195,7 @@ public final class CustomRecipes {
         doubleChainRecipeOutput(logger);
         registerChainmailRecipes(plugin);
         registerLeatherArmorRecipes();
+        registerWardenHelmetRecipe(plugin);
 
         long pluginNamespaced = REGISTERED.keySet().stream()
                 .filter(key -> key.getNamespace().equals(plugin.getName().toLowerCase()))
@@ -199,6 +204,31 @@ public final class CustomRecipes {
                 + " under this plugin's namespace, which need explicit recipe-book unlocking; "
                 + HIDDEN_ALTERNATES.size() + " of those are alternate block positions kept out of the book, "
                 + "leaving " + (REGISTERED.size() - HIDDEN_ALTERNATES.size()) + " book entries).");
+    }
+
+    /**
+     * Whether a recipe is meant to take custom items - the only ones
+     * {@code CustomItemGuardListener} lets craft with one in the grid.
+     */
+    public static boolean acceptsCustomItems(NamespacedKey key) {
+        return CUSTOM_ITEM_RECIPES.contains(key);
+    }
+
+    // A helmet's shape with the Heart top-centre, an Amethyst Shard either
+    // side of it and an Echo Shard under each of those. The Heart is matched
+    // by its custom-item tag rather than as an exact copy, so one that's been
+    // renamed still fits; the shards by type, and a custom item built on
+    // either is turned away by the guard.
+    private static void registerWardenHelmetRecipe(Plugin plugin) {
+        NamespacedKey key = new NamespacedKey(plugin, CustomItems.WARDEN_HELMET);
+        ShapedRecipe recipe = new ShapedRecipe(key, CustomItems.wardenHelmet());
+        recipe.shape("AHA", "E E");
+        recipe.setIngredient('H', RecipeChoice.predicateChoice(CustomItems::isWardenHeart, CustomItems.wardenHeart()));
+        recipe.setIngredient('A', Material.AMETHYST_SHARD);
+        recipe.setIngredient('E', Material.ECHO_SHARD);
+        recipe.setCategory(CraftingBookCategory.EQUIPMENT);
+        register(recipe);
+        CUSTOM_ITEM_RECIPES.add(key);
     }
 
     // Keeps the vanilla shape/ingredients (whatever they are) and only

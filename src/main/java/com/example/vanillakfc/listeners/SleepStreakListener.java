@@ -1,5 +1,6 @@
 package com.example.vanillakfc.listeners;
 
+import com.example.vanillakfc.advancements.Advancements;
 import io.papermc.paper.event.player.PlayerBedFailEnterEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TranslatableComponent;
@@ -75,7 +76,10 @@ public final class SleepStreakListener implements Listener {
     // here needs tick-level precision to notice it.
     private static final long DAY_NIGHT_POLL_TICKS = 20L;
 
+    private static final String GAMBLING_ADVANCEMENT = "gambling_addiction";
+
     private final Plugin plugin;
+    private final Advancements advancements;
     private final Map<UUID, Integer> streaks = new HashMap<>();
     // Worlds whose current night has been slept through. Cleared at every
     // nightfall so each night starts unslept, and consumed at sunrise to
@@ -87,8 +91,9 @@ public final class SleepStreakListener implements Listener {
     private final Map<UUID, Boolean> wasDayTime = new HashMap<>();
     private BukkitTask dayNightTask;
 
-    public SleepStreakListener(Plugin plugin) {
+    public SleepStreakListener(Plugin plugin, Advancements advancements) {
         this.plugin = plugin;
+        this.advancements = advancements;
     }
 
     public void start() {
@@ -268,6 +273,17 @@ public final class SleepStreakListener implements Listener {
         // the time the storm message lands a tick later.
         double chance = stormChanceAfterSleeping(streak - 1);
         boolean stormTriggered = chance > 0.0 && ThreadLocalRandom.current().nextDouble() < chance;
+
+        // "Gambling Addiction": went to bed knowing the storm was certain.
+        // Vanilla wakes everyone only after this event, so whoever is still
+        // in bed right now is exactly who slept the night away.
+        if (chance >= 1.0) {
+            for (Player player : world.getPlayers()) {
+                if (player.isSleeping()) {
+                    advancements.award(player, GAMBLING_ADVANCEMENT);
+                }
+            }
+        }
 
         plugin.getLogger().info("Night slept through in '" + world.getName() + "' - sleep streak increased to "
                 + streak + " (storm chance was " + formatPercent(chance) + ", "

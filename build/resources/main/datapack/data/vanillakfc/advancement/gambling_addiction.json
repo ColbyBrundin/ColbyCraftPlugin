@@ -1,0 +1,16 @@
+{
+  "parent": "vanillakfc:root",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": { "id": "minecraft:red_bed" },
+    "title": "Gambling Addiction",
+    "description": "Sleep through a night with a 100% chance of a thunderstorm.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}
