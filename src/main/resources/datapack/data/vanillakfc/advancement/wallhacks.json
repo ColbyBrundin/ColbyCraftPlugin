@@ -1,0 +1,19 @@
+{
+  "parent": "vanillakfc:prison_break",
+  "criteria": {
+    "earned": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "icon": {
+      "id": "minecraft:netherite_helmet",
+      "components": { "minecraft:item_model": "vanillakfc:warden_helmet" }
+    },
+    "title": "Wallhacks",
+    "description": "Craft the Warden Helmet.",
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true
+  }
+}

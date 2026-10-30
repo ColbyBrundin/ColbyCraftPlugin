@@ -17,3 +17,11 @@ resource-pack-host: 127.0.0.1
 # download URL. Change this if 25566 is already in use by something else on
 # this machine/host.
 resource-pack-port: 25566
+
+# Whether players must accept the resource pack to play. It holds the models
+# for the plugin's custom items (Warden Heart, Warden Helmet), which look like
+# their vanilla base items without it. With true, a joining player is asked to
+# accept it, and declining - or having server resource packs set to Disabled
+# for this server - disconnects them. Set to false if the pack server ever
+# stops working: a required pack that can't be downloaded keeps everyone out.
+resource-pack-required: true

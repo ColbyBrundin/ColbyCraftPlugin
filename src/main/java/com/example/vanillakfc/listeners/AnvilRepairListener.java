@@ -1,6 +1,7 @@
 package com.example.vanillakfc.listeners;
 
 import com.example.vanillakfc.advancements.Advancements;
+import com.example.vanillakfc.items.CustomItems;
 import com.example.vanillakfc.recipes.CustomRecipes;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Bukkit;
@@ -189,6 +190,29 @@ public final class AnvilRepairListener implements Listener {
         ItemStack base = event.getInventory().getItem(BASE_SLOT);
         ItemStack material = event.getInventory().getItem(MATERIAL_SLOT);
         if (base == null || material == null) return;
+
+        // Custom items go by what they are, not the vanilla type underneath:
+        // the Warden Helmet is a netherite helmet that Netherite Ingots mustn't
+        // repair, and merging it with a plain one would keep only whichever is
+        // on the left. So an Echo Shard repairs it (75%, like the blocks), and
+        // otherwise a custom item only combines with an enchanted book or
+        // another of its own kind.
+        String baseId = CustomItems.id(base);
+        String materialId = CustomItems.id(material);
+        if (CustomItems.WARDEN_HELMET.equals(baseId) && material.getType() == Material.ECHO_SHARD && materialId == null) {
+            repairPerUnit(event, base, material, (int) Math.ceil(maxDamage(base) * REPAIR_FRACTION_PER_UNIT));
+            return;
+        }
+        if (baseId != null || materialId != null) {
+            boolean sameKind = baseId != null && baseId.equals(materialId);
+            boolean book = baseId != null && materialId == null && material.getType() == Material.ENCHANTED_BOOK;
+            if (sameKind || book) {
+                combine(event, base, material);
+            } else {
+                event.setResult(null);
+            }
+            return;
+        }
 
         // One Phantom Membrane mends an Elytra completely, where vanilla's
         // restores a quarter each.

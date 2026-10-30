@@ -1,46 +1,61 @@
 {
   "stats": {
     "minecraft:custom": {
-      "minecraft:time_since_rest": 113,
-      "minecraft:walk_one_cm": 53980,
-      "minecraft:leave_game": 9,
-      "minecraft:mob_kills": 5,
-      "minecraft:damage_taken": 621,
-      "minecraft:damage_dealt": 2108,
-      "minecraft:play_time": 16519,
-      "minecraft:jump": 270,
-      "minecraft:time_since_death": 93,
-      "minecraft:sprint_one_cm": 40745,
-      "minecraft:fall_one_cm": 8200,
-      "minecraft:total_world_time": 16519,
-      "minecraft:fly_one_cm": 127871,
-      "minecraft:crouch_one_cm": 76,
-      "minecraft:sneak_time": 29,
+      "minecraft:interact_with_crafting_table": 1,
+      "minecraft:time_since_rest": 20697,
+      "minecraft:walk_one_cm": 88471,
+      "minecraft:leave_game": 13,
+      "minecraft:mob_kills": 6,
+      "minecraft:walk_under_water_one_cm": 1706,
+      "minecraft:damage_taken": 631,
+      "minecraft:damage_dealt": 2995,
+      "minecraft:play_time": 37103,
+      "minecraft:jump": 513,
+      "minecraft:time_since_death": 20677,
+      "minecraft:sprint_one_cm": 73108,
+      "minecraft:fall_one_cm": 12475,
+      "minecraft:total_world_time": 37103,
+      "minecraft:fly_one_cm": 358584,
+      "minecraft:interact_with_anvil": 1,
+      "minecraft:walk_on_water_one_cm": 51,
+      "minecraft:crouch_one_cm": 1864,
+      "minecraft:sneak_time": 556,
       "minecraft:deaths": 2
+    },
+    "minecraft:picked_up": {
+      "minecraft:dirt": 1,
+      "minecraft:ender_pearl": 1,
+      "minecraft:rabbit": 1,
+      "minecraft:sculk_catalyst": 1,
+      "minecraft:nether_star": 1,
+      "minecraft:wildflowers": 5,
+      "minecraft:gunpowder": 2
+    },
+    "minecraft:crafted": {
+      "minecraft:netherite_helmet": 1
     },
     "minecraft:mined": {
       "minecraft:tall_grass": 2,
       "minecraft:grass_block": 1
     },
-    "minecraft:killed": {
-      "minecraft:happy_ghast": 2,
-      "minecraft:creeper": 2,
-      "minecraft:enderman": 1
-    },
     "minecraft:used": {
+      "minecraft:sculk_catalyst": 4,
       "minecraft:baked_potato": 8,
       "minecraft:ender_eye": 12,
+      "minecraft:spider_spawn_egg": 1,
+      "minecraft:crafting_table": 1,
       "minecraft:end_portal_frame": 13,
-      "minecraft:netherite_sword": 25,
+      "minecraft:netherite_sword": 35,
+      "minecraft:stripped_jungle_wood": 17,
+      "minecraft:anvil": 1,
       "minecraft:dirt": 1,
       "minecraft:enderman_spawn_egg": 2,
-      "minecraft:creeper_spawn_egg": 13
+      "minecraft:creeper_spawn_egg": 15
     },
-    "minecraft:picked_up": {
-      "minecraft:ender_pearl": 1,
-      "minecraft:dirt": 1,
-      "minecraft:wildflowers": 5,
-      "minecraft:gunpowder": 2
+    "minecraft:killed": {
+      "minecraft:happy_ghast": 2,
+      "minecraft:creeper": 3,
+      "minecraft:enderman": 1
     }
   },
   "DataVersion": 5023

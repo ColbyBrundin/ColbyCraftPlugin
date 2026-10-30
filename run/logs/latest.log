@@ -1,186 +1,240 @@
-[17:01:51] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
-[17:01:51] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
-[17:01:51] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
-[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
-[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
-[17:01:52] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
+[23:45:47] [ServerMain/INFO]: [bootstrap] Running Java 25 (OpenJDK 64-Bit Server VM 25.0.3+9-LTS; Eclipse Adoptium Temurin-25.0.3+9) on Windows 11 10.0 (amd64)
+[23:45:47] [ServerMain/INFO]: [bootstrap] Loading Paper 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) for Minecraft 26.3
+[23:45:47] [ServerMain/WARN]: [oshi.driver.windows.perfmon.PerfmonDisabled] Invalid registry value type detected for PerfOS counters. Should be REG_DWORD. Ignoring: HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\PerfOS\Performance\Disable Performance Counters.
+[23:45:48] [ServerMain/INFO]: [PluginInitializerManager] Initializing plugins...
+[23:45:48] [ServerMain/INFO]: [PluginInitializerManager] Initialized 1 plugin
+[23:45:48] [ServerMain/INFO]: [PluginInitializerManager] Paper plugins (1):
  - VanillaKFC (1.0-SNAPSHOT)
-[17:01:56] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
-[17:01:57] [Worker-Main-4/INFO]: Loaded 1873 advancements
-[17:01:57] [Server thread/INFO]: Starting minecraft server version 26.3
-[17:01:57] [Server thread/INFO]: Loading properties
-[17:01:57] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
-[17:01:57] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
-[17:01:57] [Server thread/INFO]: Server Ping Player Sample Count: 12
-[17:01:57] [Server thread/INFO]: Using 4 threads for Netty based IO
-[17:01:58] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
-[17:01:58] [Server thread/INFO]: Default game type: SURVIVAL
-[17:01:58] [Server thread/INFO]: Generating keypair
-[17:01:58] [Server thread/INFO]: Starting Minecraft server on *:25565
-[17:01:58] [Server thread/INFO]: Paper: Using Java compression from Velocity.
-[17:01:58] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
-[17:01:58] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
-[17:01:58] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
-[17:01:58] [Server thread/INFO]: Preparing level "world"
-[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
-[17:01:58] [Server thread/INFO]: Preparing spawn area: 100%
-[17:01:58] [Server thread/INFO]: Prepared spawn area in 2 ms
-[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
-[17:01:58] [Server thread/INFO]: Prepared spawn area in 1 ms
-[17:01:58] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
-[17:01:58] [Server thread/INFO]: Prepared spawn area in 1 ms
-[17:01:58] [Server thread/INFO]: Done preparing level "world" (0.414s)
-[17:01:58] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
-[17:02:00] [Server thread/INFO]: [VanillaKFC] Registered 255 recipes (237 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 54 book entries).
-[17:02:00] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
-[17:02:00] [Server thread/INFO]: [VanillaKFC] Unbreaking datapack active as 'VanillaKFC/vanillakfc' - Unbreaking applies its curve directly.
-[17:02:00] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
-[17:02:00] [Server thread/INFO]: [spark] Starting background profiler...
-[17:02:00] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
-[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[17:02:00] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[17:02:00] [Server thread/INFO]: Running delayed init tasks
-[17:02:00] [Server thread/INFO]: Done (9.876s)! For help, type "help"
-[17:02:00] [Paper Async Task Handler Thread - 1/INFO]: *** Currently you are 159 builds behind ***
-[17:02:00] [Paper Async Task Handler Thread - 1/INFO]: *** It is highly recommended to download the latest build from https://papermc.io/downloads/paper ***
-[17:02:01] [Server thread/INFO]: System chat: Marked 64 chunks in minecraft:the_end from [-4, -4] to [3, 3] to be force loaded
-[17:02:06] [Server thread/INFO]: System chat: Ender Dragon has the following entity data: 200.0f
-[17:02:18] [Server thread/INFO]: [VanillaKFC] First Ender Dragon killed in 'world_the_end': XP cap lifted there until 60s after its body is gone.
-[17:02:18] [Server thread/INFO]: System chat: Applied 5000.0 damage to Ender Dragon
-[17:02:30] [Server thread/INFO]: System chat: Test failed
-[17:02:32] [Server thread/INFO]: System chat: Test failed
-[17:03:11] [Server thread/INFO]: System chat: Test failed
-[17:03:13] [Server thread/INFO]: System chat: Test passed. Count: 47
-[17:03:14] [Server thread/INFO]: System chat: Test passed. Count: 10
-[17:03:15] [Server thread/INFO]: System chat: Test failed
-[17:03:16] [Server thread/INFO]: System chat: Test failed
-[17:03:17] [Server thread/INFO]: System chat: Test failed
-[17:03:18] [Server thread/INFO]: System chat: Test failed
-[17:03:19] [Server thread/INFO]: System chat: Test failed
-[17:03:38] [Server thread/INFO]: [VanillaKFC] XP cap back in effect in 'world_the_end'.
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 3
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 2477
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 7
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 3
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 617
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 307
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 37
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 149
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1237
-[17:03:38] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 17
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 2
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:40] [Server thread/INFO]: System chat: Experience Orb has the following entity data: 1
-[17:03:51] [Server thread/INFO]: System chat: Stopping the server
-[17:03:51] [Server thread/INFO]: Stopping server
-[17:03:51] [Server thread/INFO]: [VanillaKFC] Disabling VanillaKFC v1.0-SNAPSHOT
-[17:03:51] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been disabled!
-[17:03:51] [Server thread/INFO]: Saving players
-[17:03:51] [Server thread/INFO]: Saving worlds
-[17:03:51] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.01s
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
-[17:03:52] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
-[17:03:52] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Saved 146 block chunks, 146 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.06s
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
-[17:03:52] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
-[17:03:52] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
-[17:03:52] [Server thread/INFO]: All RegionFile I/O tasks to complete
-[17:03:52] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
-[17:03:52] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...
+[23:45:51] [ServerMain/INFO]: [com.destroystokyo.paper.profile.PaperServicesDiscoveryService] Environment: Environment[discoveryUrl=https://discovery.minecraftservices.com/minecraft/client, name=PROD]
+[23:45:52] [Minecraft Services Discovery/WARN]: Failed to connect
+com.mojang.authlib.exceptions.MinecraftClientException: Failed to read from https://discovery.minecraftservices.com/minecraft/client due to (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readServiceResponse(MinecraftClient.java:151) ~[authlib-10.0.77.jar:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.getWithEtag(MinecraftClient.java:81) ~[authlib-10.0.77.jar:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.get(MinecraftClient.java:65) ~[authlib-10.0.77.jar:?]
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.lambda$createDiscoverySupplier$1(MinecraftServicesDiscoveryService.java:76) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.RetryableFetch$1.run(RetryableFetch.java:42) ~[authlib-10.0.77.jar:26.3-16-71696fd]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328) ~[?:?]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:309) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+Caused by: javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115) ~[?:?]
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199) ~[?:?]
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:483) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:187) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1377) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1302) ~[?:?]
+	at java.base/java.net.HttpURLConnection.getResponseCode(HttpURLConnection.java:493) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getResponseCode(HttpsURLConnectionImpl.java:307) ~[?:?]
+	at com.mojang.authlib.minecraft.client.MinecraftClient.readServiceResponse(MinecraftClient.java:130) ~[authlib-10.0.77.jar:?]
+	... 10 more
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270) ~[?:?]
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279) ~[?:?]
+	... 28 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148) ~[?:?]
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129) ~[?:?]
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382) ~[?:?]
+	... 33 more
+[23:45:52] [Minecraft Services Discovery/WARN]: Services are unavailable, unable to fetch uri for AUTHENTICATION/getPublicKeys
+[23:45:52] [Minecraft Services Discovery/WARN]: Failed to connect
+com.mojang.authlib.exceptions.MinecraftClientException: Services are unavailable
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.getEndpoint(MinecraftServicesDiscoveryService.java:139) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.getUrl(MinecraftServicesDiscoveryService.java:125) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.lambda$getServicesKeySet$0(MinecraftServicesDiscoveryService.java:117) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.RetryableFetch$1.run(RetryableFetch.java:40) ~[authlib-10.0.77.jar:26.3-16-71696fd]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328) ~[?:?]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:309) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[23:45:52] [Minecraft Services Discovery/WARN]: Services are unavailable, unable to fetch uri for AUTHENTICATION/getPublicKeys
+[23:45:52] [Minecraft Services Discovery/WARN]: Failed to connect
+com.mojang.authlib.exceptions.MinecraftClientException: Services are unavailable
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.getEndpoint(MinecraftServicesDiscoveryService.java:139) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.getUrl(MinecraftServicesDiscoveryService.java:125) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.MinecraftServicesDiscoveryService.lambda$getServicesKeySet$0(MinecraftServicesDiscoveryService.java:117) ~[paper-26.3.jar:26.3-16-71696fd]
+	at com.mojang.authlib.services.RetryableFetch$1.run(RetryableFetch.java:40) ~[authlib-10.0.77.jar:26.3-16-71696fd]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:545) ~[?:?]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:328) ~[?:?]
+	at java.base/java.util.concurrent.ScheduledThreadPoolExecutor$ScheduledFutureTask.run(ScheduledThreadPoolExecutor.java:309) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+[23:45:53] [Worker-Main-3/INFO]: Loaded 1876 advancements
+[23:45:53] [Server thread/INFO]: Starting minecraft server version 26.3
+[23:45:53] [Server thread/INFO]: Loading properties
+[23:45:53] [Server thread/INFO]: This server is running Paper version 26.3-16-dev/26.3@71696fd (2026-09-17T20:23:27Z) (Implementing API version 26.3.build.16-alpha)
+[23:45:53] [Server thread/INFO]: [spark] This server bundles the spark profiler. For more information please visit https://docs.papermc.io/paper/profiling
+[23:45:53] [Server thread/INFO]: Server Ping Player Sample Count: 12
+[23:45:53] [Server thread/INFO]: Using 4 threads for Netty based IO
+[23:45:53] [Server thread/INFO]: [MoonriseCommon] Paper is using 5 worker threads, 1 I/O threads
+[23:45:53] [Server thread/INFO]: Default game type: SURVIVAL
+[23:45:53] [Server thread/INFO]: Generating keypair
+[23:45:53] [Server thread/INFO]: Starting Minecraft server on *:25565
+[23:45:53] [Server thread/INFO]: Paper: Using Java compression from Velocity.
+[23:45:53] [Server thread/INFO]: Paper: Using Java cipher from Velocity.
+[23:45:53] [Server thread/INFO]: [VanillaKFC] Loading server plugin VanillaKFC v1.0-SNAPSHOT
+[23:45:53] [Server thread/INFO]: Server permissions file permissions.yml is empty, ignoring it
+[23:45:53] [Server thread/INFO]: Preparing level "world"
+[23:45:54] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:overworld'...
+[23:45:54] [Server thread/INFO]: Preparing spawn area: 100%
+[23:45:54] [Server thread/INFO]: Prepared spawn area in 2 ms
+[23:45:54] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_nether'...
+[23:45:54] [Server thread/INFO]: Prepared spawn area in 2 ms
+[23:45:54] [Server thread/INFO]: Loading 0 persistent chunks for level 'minecraft:the_end'...
+[23:45:54] [Server thread/INFO]: Prepared spawn area in 2 ms
+[23:45:54] [Server thread/INFO]: Done preparing level "world" (0.359s)
+[23:45:54] [Server thread/INFO]: [VanillaKFC] Enabling VanillaKFC v1.0-SNAPSHOT
+[23:45:55] [Server thread/INFO]: [VanillaKFC] Registered 256 recipes (238 under this plugin's namespace, which need explicit recipe-book unlocking; 201 of those are alternate block positions kept out of the book, leaving 55 book entries).
+[23:45:55] [Server thread/INFO]: [VanillaKFC] Enderman dodge sound resource pack server started - serving http://127.0.0.1:25566/resourcepack.zip (listening on all interfaces, port 25566)
+[23:45:55] [Server thread/INFO]: [VanillaKFC] Unbreaking datapack active as 'VanillaKFC/vanillakfc' - Unbreaking applies its curve directly.
+[23:45:55] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been enabled!
+[23:45:55] [Server thread/INFO]: [spark] Starting background profiler...
+[23:45:55] [Server thread/INFO]: [spark] The async-profiler engine is not supported for your os/arch (windows11/amd64), so the built-in Java engine will be used instead.
+[23:45:55] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[23:45:55] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[23:45:55] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[23:45:55] [Server thread/INFO]: Running delayed init tasks
+[23:45:55] [Server thread/INFO]: Done (8.970s)! For help, type "help"
+[23:45:55] [Paper Async Task Handler Thread - 1/ERROR]: [PaperVersionFetcher] Error while parsing version list
+javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115) ~[?:?]
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199) ~[?:?]
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:483) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:187) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1377) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1302) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:223) ~[?:?]
+	at com.destroystokyo.paper.PaperVersionFetcher.fetchMinecraftVersionList(PaperVersionFetcher.java:150) ~[paper-26.3.jar:?]
+	at com.destroystokyo.paper.PaperVersionFetcher.getUpdateStatusStartupMessage(PaperVersionFetcher.java:74) ~[paper-26.3.jar:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1825) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270) ~[?:?]
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279) ~[?:?]
+	... 22 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148) ~[?:?]
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129) ~[?:?]
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382) ~[?:?]
+	... 27 more
+[23:45:55] [Paper Async Task Handler Thread - 1/ERROR]: [PaperVersionFetcher] Error while parsing version
+javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115) ~[?:?]
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477) ~[?:?]
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448) ~[?:?]
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199) ~[?:?]
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455) ~[?:?]
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsClient.afterConnect(HttpsClient.java:483) ~[?:?]
+	at java.base/sun.net.www.protocol.https.AbstractDelegateHttpsURLConnection.connect(AbstractDelegateHttpsURLConnection.java:187) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1377) ~[?:?]
+	at java.base/sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1302) ~[?:?]
+	at java.base/sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:223) ~[?:?]
+	at com.destroystokyo.paper.PaperVersionFetcher.fetchDistanceFromSiteApi(PaperVersionFetcher.java:209) ~[paper-26.3.jar:?]
+	at com.destroystokyo.paper.PaperVersionFetcher.getUpdateStatusStartupMessage(PaperVersionFetcher.java:76) ~[paper-26.3.jar:?]
+	at java.base/java.util.concurrent.CompletableFuture$AsyncRun.run(CompletableFuture.java:1825) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090) ~[?:?]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614) ~[?:?]
+	at java.base/java.lang.Thread.run(Thread.java:1474) ~[?:?]
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270) ~[?:?]
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230) ~[?:?]
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132) ~[?:?]
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279) ~[?:?]
+	... 22 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148) ~[?:?]
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129) ~[?:?]
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299) ~[?:?]
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382) ~[?:?]
+	... 27 more
+[23:45:55] [Paper Async Task Handler Thread - 1/ERROR]: *** Error obtaining version information! Cannot fetch version info ***
+[23:45:56] [Server thread/INFO]: System chat: Stopping the server
+[23:45:56] [Server thread/INFO]: Stopping server
+[23:45:56] [Server thread/INFO]: [VanillaKFC] Disabling VanillaKFC v1.0-SNAPSHOT
+[23:45:56] [Server thread/INFO]: [VanillaKFC] VanillaKFC has been disabled!
+[23:45:56] [Server thread/INFO]: Saving players
+[23:45:56] [Server thread/INFO]: Saving worlds
+[23:45:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:overworld'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:overworld'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:overworld'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:overworld' in 0.00s
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:overworld'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:overworld'
+[23:45:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_nether'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_nether'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_nether'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_nether' in 0.00s
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_nether'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_nether'
+[23:45:56] [Server thread/INFO]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk system to halt for world 'minecraft:the_end'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted chunk system for world 'minecraft:the_end'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saving all chunkholders for world 'minecraft:the_end'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Saved 0 block chunks, 0 entity chunks, 0 poi chunks in world 'minecraft:the_end' in 0.00s
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Waiting 60s for chunk I/O to halt for world 'minecraft:the_end'
+[23:45:56] [Server thread/INFO]: [ChunkHolderManager] Halted I/O scheduler for world 'minecraft:the_end'
+[23:45:56] [Server thread/INFO]: Waiting for all RegionFile I/O tasks to complete...
+[23:45:56] [Server thread/INFO]: All RegionFile I/O tasks to complete
+[23:45:56] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of worker pool for up to 60s...
+[23:45:56] [Server thread/INFO]: [MoonriseCommon] Awaiting termination of I/O pool for up to 60s...

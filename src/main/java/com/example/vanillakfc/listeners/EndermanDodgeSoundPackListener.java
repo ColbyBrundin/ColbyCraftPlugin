@@ -42,6 +42,14 @@ import java.util.zip.ZipOutputStream;
  * only reachable from a client on the same machine the server runs on. Set
  * that option to a real reachable host/IP (and forward the configured port)
  * to serve remote players.
+ *
+ * <p>Since the custom items (the Warden Heart and Helmet), the pack is
+ * required by default ({@code resource-pack-required}): the client asks a
+ * joining player to accept it, and declining disconnects them, as does a
+ * player whose server-list entry has server packs set to Disabled. Turning
+ * the option off makes the pack optional again - worth doing if the pack
+ * server itself ever breaks, since a required pack that can't be downloaded
+ * keeps everyone out.
  */
 public final class EndermanDodgeSoundPackListener implements Listener {
 
@@ -67,12 +75,17 @@ public final class EndermanDodgeSoundPackListener implements Listener {
     private Logger logger;
     private String packHost;
     private int packPort;
+    private boolean packRequired;
 
     public void start(Plugin plugin, File pluginJarFile) {
         logger = plugin.getLogger();
         plugin.saveDefaultConfig();
         packHost = plugin.getConfig().getString("resource-pack-host", "127.0.0.1");
         packPort = plugin.getConfig().getInt("resource-pack-port", DEFAULT_HTTP_PORT);
+        // A config.yml written before this option existed doesn't have it, and
+        // saveDefaultConfig never adds to an existing file - so the default
+        // here is what an existing server gets.
+        packRequired = plugin.getConfig().getBoolean("resource-pack-required", true);
         try {
             packBytes = buildPackZip(pluginJarFile);
             packHash = MessageDigest.getInstance("SHA-1").digest(packBytes);
@@ -159,8 +172,11 @@ public final class EndermanDodgeSoundPackListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (httpServer == null) return;
         Player player = event.getPlayer();
-        player.addResourcePack(packId, buildPackUrl(), packHash,
-                "Adds custom Enderman and End sounds and a lower first-person shield (optional)", false);
+        String prompt = packRequired
+                ? "This server's resource pack is required: it has the models for custom items like the Warden Helmet, "
+                        + "plus custom sounds and a lower first-person shield."
+                : "Adds custom item models, custom Enderman and End sounds and a lower first-person shield (optional)";
+        player.addResourcePack(packId, buildPackUrl(), packHash, prompt, packRequired);
     }
 
     // Logs only when this pack (matched by packId, since a player may have

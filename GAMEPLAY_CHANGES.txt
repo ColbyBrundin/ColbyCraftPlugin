@@ -113,6 +113,7 @@ Anvil rename                                         | prior-work penalty + 1  |
 Enchanting Table recipe                              | 2 Diamonds + Book +     | 2 Diamond Blocks + Book +
                                                         4 Obsidian               4 Obsidian
 Rail / Powered Rail recipe output                    | 16 / 6                  | 32 / 16 (same ingredients)
+Armor trim template duplication                      | 7 Diamonds              | 7 Leather (template + base block same)
 Drowned thrown-trident damage                        | 8                       | 4 (half; melee and player
                                                                                  tridents untouched)
 Lightning strike chance per loaded chunk per tick     | 1 in 100,000            | plus an added, independent
@@ -446,6 +447,9 @@ XP gain cap (XpCapListener)
   minutes of orbs vanishing with nothing to say why, and the same again after relogging. Now every orb or Mending repair the cap swallows shows
   "XP cap reached - resets in m:ss" above the hotbar (at most once a second), and a capped player who rejoins gets the chat message again. The
   chat message also now says outright that XP picked up before the reset is lost.
+- Reset message (added 2026-10-27): when the window resets, every online player who had hit the cap in it is told in chat, in green, "Your XP
+  cap has reset - you can gain XP again (up to 1000 in the next 10 minutes)." It comes within a second of the reset. Players who never reached
+  the cap aren't told, and nor is a capped player who was offline at the reset - the cap is simply gone when they're back.
 - Audit 2026-10-11, against the server code: the cap can only be reached by picking up an XP orb - that is the one place the server fires the
   event it listens to - so /xp, advancement rewards and level grants can't trip it. On a pickup, Mending is paid first and counted, and only
   the leftover reaches the cap, so no point of an orb is counted twice. No case was found of it triggering when it shouldn't; the fault was the
@@ -723,6 +727,40 @@ Added 2026-10-22. Renaming at an anvil no longer costs XP.
 - Edge case: vanilla decides "Too Expensive!" before the plugin takes the rename's level back off, so an operation that only goes over the limit
   because of the rename is still refused. Doing the rename separately gets around it.
 
+Warden Heart & Warden Helmet (CustomItems, WardenHelmetListener, CustomItemGuardListener)
+------------------------------------------------------------------
+Added 2026-10-29. The plugin's first custom items: vanilla items with their look, name and stats replaced, tagged so the plugin can tell them
+apart from the plain item underneath.
+- Warden Heart: every Warden drops one when it dies, however it dies. A Nether Star underneath, so it shrugs off explosions like one; it
+  can't be used in the beacon recipe or anywhere else a Nether Star goes.
+- Warden Helmet recipe (crafting table, Equipment tab):
+      Amethyst Shard   Warden Heart   Amethyst Shard
+      Echo Shard       (empty)        Echo Shard
+  Shows in the recipe book once a player holds a Heart, an Amethyst Shard and an Echo Shard. A renamed Heart still works.
+- Stats: +2 armor, +1 armor toughness, no knockback resistance, 600 durability. A Netherite Helmet underneath, so it takes every helmet
+  enchantment (Protection, Respiration, Aqua Affinity, Thorns, Unbreaking, Mending, ...) at netherite's enchantability, survives lava and fire
+  like netherite, and is kept on death like other helmets.
+- Repairs at an anvil with Echo Shards, 75% of durability each (450), at most 2, on the same repair penalty and level cost as block repairs
+  (section 3). Netherite Ingots don't repair it. It combines with enchanted books and with another Warden Helmet, but not with a plain netherite
+  helmet, and the crafting grid and grindstone won't merge it with one either.
+- Glow pulse: every 6 seconds, every hostile mob within 20 blocks of the wearer starts glowing for 12 seconds - visible to the wearer only.
+  Anything that stays in range glows without a break; something that leaves keeps glowing for up to 12 seconds after it was last caught.
+  Taking the helmet off lets the current glows run out rather than cutting them off.
+- Resistance: the same pulse gives Resistance I for 12 seconds while the wearer is in the Overworld below Y=0, so it never lapses down there.
+- Footsteps: every step a hostile mob within 20 blocks takes is played to the wearer a second time, on top of the normal sound. Vanilla's
+  fade to silence by 16 blocks; these stay audible to 20 and barely fade on the way (about 0.3 volume close by to 0.2 at 20 blocks), and
+  creepers are twice as loud as that (0.6 to 0.45). Mobs with a step sound of their own (zombies, skeletons, spiders, the Warden, ...) use it;
+  the rest, creepers included, use the sound of the block they're walking on. Only the wearer hears the extra steps.
+- Looks (own textures since 2026-10-29, in the resource pack under assets/vanillakfc/textures/): the Heart is a cyan Warden heart in the
+  Warden's own palette, split by dark seams like the one on its chest; the Helmet is the netherite shape in a dark Warden blue, with amethyst
+  crystals on the top corners and cheek plates coloured like the Warden's tendrils - the icon (item/warden_helmet.png) and the worn armor
+  (entity/equipment/humanoid/warden.png) alike. Items only carry the texture's name, so editing the PNGs changes every existing one too.
+- /customgive <targets> <item> [amount] (operators only, permission vanillakfc.give): gives the custom items, named vanillakfc:warden_heart
+  and vanillakfc:warden_helmet (tab-completed; the bare id works too). Vanilla's /give can't name them - they're vanilla items underneath, and
+  new item ids need a client mod. Leftovers that don't fit are dropped at the player's feet, as with /give.
+- The wearer-only glow needs server internals the Paper API doesn't offer, so the plugin now also builds against the local server jar (see
+  build.gradle.kts). It has to be pointed at the new jar whenever Paper is updated.
+
 
 4. CRAFTING & RECIPES (CustomRecipes, RecipeDiscoveryListener)
 ==================================================================
@@ -752,6 +790,10 @@ Added 2026-10-22. Renaming at an anvil no longer costs XP.
 - Rail output doubled and Powered Rail output raised (added 2026-10-23; bundled datapack, data/minecraft/recipe/rail.json and powered_rail.json):
   one craft makes 32 Rails instead of 16, and 16 Powered Rails instead of 6. Ingredients, shapes and recipe ids are vanilla's, so they unlock in
   the recipe book as before. Detector and Activator Rails are unchanged.
+- Armor trim template duplication takes 7 Leather instead of 7 Diamonds (added 2026-10-29; bundled datapack,
+  data/minecraft/recipe/<trim>_armor_trim_smithing_template.json for all 18 trims). The template and its base block (Cobblestone, Sandstone,
+  Copper Block, etc.) stay where they were, and it still makes 2. Recipe ids are vanilla's, so they unlock in the recipe book as before. The
+  Netherite Upgrade template is unchanged and still takes diamonds.
 - Chainmail armor recipes added: no vanilla recipe exists for any of the 4 pieces; this adds one for each, mirroring other armor tiers' shapes with
   Chains filling every ingredient slot.
 - Leather armor reworked: all 4 recipes replaced - instead of leather-only, each needs Leather (or Rotten Flesh, 1-for-1) plus String and Wood Planks
@@ -918,6 +960,9 @@ the player, and one (added 2026-10-11) played to a player arriving in the End wh
 - Serves up to 8 downloads at once and drops a connection that takes over 15s to send its request or 120s to finish its download (fixed
   2026-10-18). Before, downloads ran one at a time with no time limit, so one stalled connection - a player who dropped mid-download, or a port
   scanner - quietly left every later player without the pack (no sounds, vanilla shield) until the server restarted.
+- Required by default since 2026-10-29 (resource-pack-required in config.yml), as it now carries the custom items' models. A joining player is
+  asked to accept it; declining disconnects them, as does having server resource packs set to Disabled for this server. Set the option to
+  false to make it optional again - worth doing if the pack server ever breaks, since a required pack that can't download keeps everyone out.
 
 Charged creeper death messages (ChargedCreeperDeathMessageListener)
 ------------------------------------------------------------------
@@ -928,7 +973,7 @@ Added 2026-10-04. A player killed by a charged creeper's death message names it 
   combat history.
 - "Charged Creeper" is plain English text, not translated - unlike vanilla's "Creeper", which each client shows in its own language.
 
-Custom advancements (bundled datapack, DeathMilestoneListener, ChargedCreeperKillListener)
+Custom advancements (bundled datapack, DeathMilestoneListener, ChargedCreeperKillListener, WallhacksListener, SleepStreakListener)
 ------------------------------------------------------------------
 A "VanillaKFC" advancement tab, in the plugin's own vanillakfc: namespace, so nothing here touches or overrides a vanilla advancement.
 - vanillakfc:root - the tab itself. Completes on its own the first tick a player is in the world (minecraft:tick trigger), so the tab is always
@@ -949,6 +994,15 @@ A "VanillaKFC" advancement tab, in the plugin's own vanillakfc: namespace, so no
 - vanillakfc:prison_break - "Prison Break", awarded for killing a Warden. Challenge frame, toast and chat announcement on, Sculk Shrieker icon.
   Datapack-only (vanilla's player_killed_entity trigger), so credit goes to whoever vanilla credits with the kill - ranged kills count, as do kills
   by a tamed wolf. Re-testable with "/advancement revoke <player> only vanillakfc:prison_break". Added 2026-10-04.
+- vanillakfc:wallhacks - "Wallhacks", awarded for crafting the Warden Helmet. Sits after Prison Break in the tab (its child). Challenge frame,
+  toast and chat announcement on, Warden Helmet icon (shows the custom texture with the pack, a Netherite Helmet without). Awarded by
+  WallhacksListener rather than recipe_crafted, since the helmet recipe is the plugin's own. A click that takes nothing (cursor already holding
+  something, or a shift-click into a full inventory) doesn't count. Not from a Crafter. Re-testable with
+  "/advancement revoke <player> only vanillakfc:wallhacks". Added 2026-10-29.
+- vanillakfc:gambling_addiction - "Gambling Addiction", awarded for sleeping through a night when the sleep-streak thunderstorm chance was 100%
+  (a streak of 4 going in, so the 5th night in a row). Challenge frame, toast and chat announcement on, Red Bed icon. Awarded by
+  SleepStreakListener to every player still in bed when the night skips - players who weren't sleeping don't get it, even in the same world.
+  Re-testable with "/advancement revoke <player> only vanillakfc:gambling_addiction". Added 2026-10-29.
 - The death count is read from the server's own scoreboard: any objective whose criterion is deathCount, whatever the objective is called, so it works
   with an existing counter as-is. The advancement
   then agrees with the number players already see on a sidebar. The highest such objective wins if there are several. (The first count read each
@@ -968,7 +1022,7 @@ screen. Width, tilt and scale are unchanged; it's only moved down.
   view is exactly vanilla.
 - Third person, inventory/GUI, item frames, shelves and dropped shields are all unchanged - the pack's shield.json copies vanilla's values for every
   display slot except firstperson_righthand/lefthand, whose Y translation drops by 4 (1.75 -> -2.25 right, 0 -> -4 left).
-- Visual only, and only for players who accept the (optional) pack. Unlike the sound, this one does override a vanilla asset, so a player's own pack
+- Visual only, and only for players with the pack loaded (required by default since 2026-10-29). Unlike the sound, this one does override a vanilla asset, so a player's own pack
   that also replaces models/item/shield.json will win or lose depending on pack order.
 
 

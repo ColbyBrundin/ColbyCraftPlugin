@@ -1,7 +1,10 @@
 package com.example.vanillakfc;
 
 import com.example.vanillakfc.advancements.Advancements;
+import com.example.vanillakfc.items.CustomGiveCommand;
 import com.example.vanillakfc.listeners.AnvilRenameListener;
+import com.example.vanillakfc.listeners.CustomItemGuardListener;
+import com.example.vanillakfc.listeners.WardenHelmetListener;
 import com.example.vanillakfc.listeners.AnvilRepairListener;
 import com.example.vanillakfc.listeners.BeaconListener;
 import com.example.vanillakfc.listeners.BedExplosionListener;
@@ -46,6 +49,7 @@ import com.example.vanillakfc.listeners.SharperFangsListener;
 import com.example.vanillakfc.listeners.ShieldBreakListener;
 import com.example.vanillakfc.listeners.SkeletonListener;
 import com.example.vanillakfc.listeners.SleepStreakListener;
+import com.example.vanillakfc.listeners.WallhacksListener;
 import com.example.vanillakfc.listeners.SpearDamageListener;
 import com.example.vanillakfc.listeners.SpiderListener;
 import com.example.vanillakfc.listeners.TamedWolfListener;
@@ -77,6 +81,8 @@ public class VanillaKFC extends JavaPlugin {
     private MobHealthDisplayListener mobHealthDisplayListener;
     private RecipeDiscoveryListener recipeDiscoveryListener;
     private SleepStreakListener sleepStreakListener;
+    private XpCapListener xpCapListener;
+    private WardenHelmetListener wardenHelmetListener;
     private LightLevelDebug lightLevelDebug;
 
     @Override
@@ -106,6 +112,10 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new SpearDamageListener(), this);
         getServer().getPluginManager().registerEvents(new AnvilRepairListener(this, advancements), this);
         getServer().getPluginManager().registerEvents(new AnvilRenameListener(), this);
+        getServer().getPluginManager().registerEvents(new CustomItemGuardListener(), this);
+        wardenHelmetListener = new WardenHelmetListener(this);
+        getServer().getPluginManager().registerEvents(wardenHelmetListener, this);
+        wardenHelmetListener.start();
         getServer().getPluginManager().registerEvents(new VillagerTradeListener(this), this);
         DiamondTradePriceListener diamondTradePriceListener = new DiamondTradePriceListener(this);
         getServer().getPluginManager().registerEvents(diamondTradePriceListener, this);
@@ -113,9 +123,11 @@ public class VanillaKFC extends JavaPlugin {
         SharperFangsListener sharperFangsListener = new SharperFangsListener(this);
         getServer().getPluginManager().registerEvents(sharperFangsListener, this);
         sharperFangsListener.convertLoaded();
-        getServer().getPluginManager().registerEvents(new XpCapListener(this), this);
+        xpCapListener = new XpCapListener(this);
+        getServer().getPluginManager().registerEvents(xpCapListener, this);
+        xpCapListener.start();
         getServer().getPluginManager().registerEvents(new MobXpListener(), this);
-        sleepStreakListener = new SleepStreakListener(this);
+        sleepStreakListener = new SleepStreakListener(this, advancements);
         getServer().getPluginManager().registerEvents(sleepStreakListener, this);
         sleepStreakListener.start();
 
@@ -124,9 +136,12 @@ public class VanillaKFC extends JavaPlugin {
         // Paper plugins have no commands: block and no getCommand(); the
         // registrar event is where a command tree gets handed over, and it
         // re-fires on /reload so it has to be a handler, not a one-off call.
-        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event ->
-                event.registrar().register(lightLevelDebug.buildCommand(),
-                        "Toggle a private overlay marking nearby spots dark enough for hostile mobs to spawn."));
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> {
+            event.registrar().register(lightLevelDebug.buildCommand(),
+                    "Toggle a private overlay marking nearby spots dark enough for hostile mobs to spawn.");
+            event.registrar().register(CustomGiveCommand.build(),
+                    "Give the plugin's custom items, e.g. /customgive @s vanillakfc:warden_helmet.");
+        });
         lightLevelDebug.start();
         getServer().getPluginManager().registerEvents(new CropGrowthListener(), this);
         getServer().getPluginManager().registerEvents(new FoodSaturationListener(), this);
@@ -138,6 +153,7 @@ public class VanillaKFC extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EndCityLootListener(), this);
         getServer().getPluginManager().registerEvents(new DeathMilestoneListener(this, advancements), this);
         getServer().getPluginManager().registerEvents(new ChargedCreeperKillListener(advancements), this);
+        getServer().getPluginManager().registerEvents(new WallhacksListener(advancements), this);
         getServer().getPluginManager().registerEvents(new ChargedCreeperDeathMessageListener(), this);
         getServer().getPluginManager().registerEvents(new EnderChestShulkerListener(), this);
         CustomRecipes.registerAll(this, getLogger());
@@ -253,6 +269,12 @@ public class VanillaKFC extends JavaPlugin {
         }
         if (recipeDiscoveryListener != null) {
             recipeDiscoveryListener.stop();
+        }
+        if (xpCapListener != null) {
+            xpCapListener.stop();
+        }
+        if (wardenHelmetListener != null) {
+            wardenHelmetListener.stop();
         }
         getLogger().info("VanillaKFC has been disabled!");
     }
